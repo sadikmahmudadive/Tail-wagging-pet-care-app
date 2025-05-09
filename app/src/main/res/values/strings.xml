@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Tail Wagging</string>
+    <string name="client_id">160632957908-aulcqbu7ago0of50sm5f8aug5ap37jo7.apps.googleusercontent.com</string>
+    <string name="paw_icon">Paw icon</string>
 </resources>

@@ -1,8 +1,509 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"/>
+    android:background="@drawable/background_dashboard"
+    tools:context=".MainActivity">
+
+    <!-- Top Bar: Statically Positioned -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:layout_anchorGravity="top">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <!-- Logout Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/buttonLogout"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/logout_button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userProfilePhoto"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/ic_username"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:fontFamily="@font/fredoka_bold"
+                android:text="Loading..."
+                android:textColor="@color/dark_blue"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="@+id/userProfilePhoto"
+                app:layout_constraintEnd_toStartOf="@+id/userProfilePhoto"
+                app:layout_constraintTop_toTopOf="@+id/userProfilePhoto" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Main Scrollable Content -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollableContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="76dp"
+        android:layout_marginTop="90dp"
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:id="@+id/scrollableInnerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <!-- My Pets Headline with Paw Icon -->
+            <LinearLayout
+                android:id="@+id/layoutMyPetsHeader"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="24dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageViewPaw"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_paw"
+                    android:contentDescription="@string/paw_icon" />
+
+                <TextView
+                    android:id="@+id/textViewMyPets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="My Pets"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="@color/dark_blue"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/fredoka_bold"/>
+            </LinearLayout>
+
+            <!-- RecyclerView for Registered Pets -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewPets"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="16dp"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_pet_horizontal" />
+
+            <!-- Custom ProgressBar overlay for RecyclerView -->
+            <FrameLayout
+                android:id="@+id/petsProgressOverlay"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="-120dp"
+                android:background="@android:color/transparent"
+                android:visibility="gone"
+                android:elevation="2dp">
+
+                <ProgressBar
+                    android:id="@+id/progressBarPets"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    style="@style/Widget.AppCompat.ProgressBar"
+                    android:indeterminate="true"
+                    android:indeterminateTint="@color/orange"
+                    android:visibility="visible"/>
+            </FrameLayout>
+
+            <!-- Pet Location & Pet Status Cards -->
+            <LinearLayout
+                android:id="@+id/pet_dashboard_cards"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="0dp">
+
+                <!-- Pet Location Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardPetLocation"
+                    android:layout_width="0dp"
+                    android:layout_height="370dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/white"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="Location Icon"
+                                android:src="@drawable/ic_location_pin" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:fontFamily="@font/fredoka_bold"
+                                android:text="Pet Location"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/imageMap"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"
+                            android:layout_weight="1"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/sample_map" />
+
+                        <Button
+                            android:id="@+id/btnTrackPets"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:text="Track Pets"
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <!-- Pet Status Card -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardPetStatus"
+                    android:layout_width="0dp"
+                    android:layout_height="370dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1"
+                    android:background="@android:color/white"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="2dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@color/white"
+                        android:orientation="vertical"
+                        android:padding="18dp">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:contentDescription="Status Icon"
+                                android:src="@drawable/ic_status" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:fontFamily="@font/fredoka_bold"
+                                android:text="Pet Status"
+                                android:textColor="@color/black"
+                                android:textSize="20sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- RecyclerView for Pets' Statuses -->
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewPetStatus"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_marginTop="12dp"
+                            android:layout_marginBottom="12dp"
+                            android:layout_weight="1"
+                            android:overScrollMode="never"
+                            tools:listitem="@layout/item_pet_status"/>
+
+                        <Button
+                            android:id="@+id/btnCheckPets"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@android:color/transparent"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:paddingTop="8dp"
+                            android:paddingBottom="8dp"
+                            android:text="Check Pets"
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardPetCalendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="30dp"
+                app:cardElevation="2dp"
+                android:background="@android:color/white">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@color/white"
+                    android:padding="18dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@drawable/ic_calendar"
+                            android:contentDescription="Calendar Icon"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Pet Events and Reminders"
+                            android:textStyle="bold"
+                            android:textSize="20sp"
+                            android:textColor="@color/dark_blue"
+                            android:layout_marginStart="8dp"
+                            android:fontFamily="@font/fredoka_bold"/>
+                    </LinearLayout>
+
+                    <!-- CalendarView for visual dates -->
+                    <CalendarView
+                        android:id="@+id/calendarView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- RecyclerView for upcoming events/reminders -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewCalendarEvents"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        tools:listitem="@layout/item_calendar_event"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Place for more features/cards -->
+            <!-- Add more views here for additional features, they will be scrollable. -->
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Navigation Bar: Statically Positioned at Bottom -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/navigationCard"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="bottom"
+        android:padding="8dp"
+        app:cardCornerRadius="10dp"
+        android:background="@drawable/bg_nav_card_top_rounded"
+        app:cardElevation="8dp"
+        app:cardPreventCornerOverlap="false"
+        app:cardUseCompatPadding="true"
+        app:layout_anchorGravity="bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <!-- Home -->
+            <LinearLayout
+                android:id="@+id/navHome"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="Home"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="HOME"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Discover -->
+            <LinearLayout
+                android:id="@+id/navDiscover"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="Discover"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="DISCOVER"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Explore -->
+            <LinearLayout
+                android:id="@+id/navExplore"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="Explore"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="EXPLORE"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Manage -->
+            <LinearLayout
+                android:id="@+id/navManage"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="Manage"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="MANAGE"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <!-- Profile -->
+            <LinearLayout
+                android:id="@+id/navProfile"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="Profile"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="PROFILE"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
