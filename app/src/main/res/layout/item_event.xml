@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_rounded_gray"
+    android:layout_marginBottom="10dp">
+
+    <TextView
+        android:id="@+id/tvEventTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Title"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:textColor="#222222"/>
+
+    <TextView
+        android:id="@+id/tvEventDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2025-05-09 | 14:00 - 15:00"
+        android:textColor="#555"
+        android:textSize="14sp"
+        android:layout_marginTop="2dp"/>
+
+    <TextView
+        android:id="@+id/tvEventCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Category"
+        android:textColor="#7D5FFF"
+        android:textSize="14sp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"/>
+
+    <TextView
+        android:id="@+id/tvEventNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Note"
+        android:textColor="#666"
+        android:textSize="14sp"
+        android:layout_marginTop="2dp"/>
+</LinearLayout>

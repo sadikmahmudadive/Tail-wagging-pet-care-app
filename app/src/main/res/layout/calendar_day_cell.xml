@@ -1,0 +1,16 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="48dp"
+    android:layout_height="48dp"
+    android:layout_margin="3dp">
+
+    <TextView
+        android:id="@+id/tvDay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="14"
+        android:textSize="18sp"
+        android:textColor="#222222"
+        android:gravity="center"
+        android:fontFamily="sans-serif-medium"
+        android:background="@android:color/transparent"/>
+</FrameLayout>

@@ -49,6 +49,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage-ktx")
     implementation ("com.google.firebase:firebase-database-ktx")
     implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.code.gson:gson:2.10.1") //calendar store event
 
 // Glide for image loading
     implementation ("com.github.bumptech.glide:glide:4.16.0")
@@ -64,5 +65,5 @@ dependencies {
 
     implementation ("de.hdodenhof:circleimageview:3.1.0")
 
-    //third-party calendar
+
 }

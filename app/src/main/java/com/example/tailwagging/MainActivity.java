@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,9 +48,17 @@ public class MainActivity extends AppCompatActivity {
 
         logoutButton = findViewById(R.id.buttonLogout);
         textView = findViewById(R.id.userName);
-// profileImage is removed
 
-// Logout functionality with confirmation
+        // --- NAVIGATION BAR: CALENDAR ---
+        LinearLayout navCalendar = findViewById(R.id.navCalendar);
+        navCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchCalendarActivity();
+            }
+        });
+
+        // Logout functionality with confirmation
         logoutButton.setOnClickListener(v -> {
             new AlertDialog.Builder(MainActivity.this)
                     .setTitle("Logout")
@@ -64,15 +72,20 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         });
 
-// Check if user is logged in
+        // Check if user is logged in
         if (user == null) {
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
             textView.setText("Guest");
             return;
         }
 
-// Fetch and display user data
+        // Fetch and display user data
         fetchAndDisplayUserData();
+    }
+
+    private void launchCalendarActivity() {
+        Intent intent = new Intent(MainActivity.this, Calendar.class); // <-- Use your custom calendar class here
+        startActivity(intent);
     }
 
     private void fetchAndDisplayUserData() {
@@ -111,9 +124,9 @@ public class MainActivity extends AppCompatActivity {
 
         //spinner
         FrameLayout petsProgressOverlay = findViewById(R.id.petsProgressOverlay);
-// Show while loading:
+        // Show while loading:
         petsProgressOverlay.setVisibility(View.VISIBLE);
-// Hide when done loading:
+        // Hide when done loading:
         petsProgressOverlay.setVisibility(View.GONE);
     }
 }

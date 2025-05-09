@@ -20,6 +20,12 @@
         android:theme="@style/Theme.TailWagging"
         tools:targetApi="31">
         <activity
+            android:name=".EventsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Calendar"
+            android:exported="false" />
+        <activity
             android:name=".Registration"
             android:exported="false" />
         <activity

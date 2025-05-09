@@ -335,21 +335,13 @@
                             android:fontFamily="@font/fredoka_bold"/>
                     </LinearLayout>
 
-                    <!-- CalendarView for visual dates -->
-                    <CalendarView
-                        android:id="@+id/calendarView"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginBottom="8dp"/>
-
-                    <!-- RecyclerView for upcoming events/reminders -->
                     <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewCalendarEvents"
+                        android:id="@+id/recyclerViewPetEvents"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        tools:listitem="@layout/item_calendar_event"/>
+                        android:layout_height="180dp"
+                        android:layout_margin="16dp"
+                        android:clipToPadding="false"
+                        android:paddingBottom="8dp"/>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -411,7 +403,7 @@
 
             <!-- Discover -->
             <LinearLayout
-                android:id="@+id/navDiscover"
+                android:id="@+id/navCalendar"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -422,13 +414,14 @@
                 <ImageView
                     android:layout_width="28dp"
                     android:layout_height="28dp"
-                    android:contentDescription="Discover"/>
+                    android:src="@drawable/ic_calendar"
+                    android:contentDescription="Calendar"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/fredoka_bold"
-                    android:text="DISCOVER"
+                    android:text="CALENDAR"
                     android:textColor="@color/dark_blue"
                     android:textSize="11sp" />
             </LinearLayout>

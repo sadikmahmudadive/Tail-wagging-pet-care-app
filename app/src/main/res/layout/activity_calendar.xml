@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#F8F8FC"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Header Section (stays fixed) -->
+
+    <!-- Everything else scrolls -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- Month/Year Picker Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:background="@android:color/transparent"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="2dp">
+
+                <TextView
+                    android:id="@+id/tvYearPicker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2025"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:drawableRight="@drawable/ic_arrow_down"
+                    android:drawablePadding="4dp"
+                    android:padding="10dp"
+                    android:background="@drawable/bg_year_chip"
+                    android:textColor="#4029B7"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="10dp"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/monthPickerRecyclerView"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:scrollbars="none" />
+            </LinearLayout>
+
+            <!-- Month + Year Label -->
+            <TextView
+                android:id="@+id/monthYearTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="March 2025"
+                android:textSize="22sp"
+                android:textColor="#222222"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="2dp" />
+
+            <!-- Days of week header -->
+            <LinearLayout
+                android:id="@+id/daysOfWeekLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:layout_marginBottom="2dp"
+                android:background="@android:color/transparent">
+
+                <TextView style="@style/CalendarWeekDay" android:text="Su"/>
+                <TextView style="@style/CalendarWeekDay" android:text="Mo"/>
+                <TextView style="@style/CalendarWeekDay" android:text="Tu"/>
+                <TextView style="@style/CalendarWeekDay" android:text="We"/>
+                <TextView style="@style/CalendarWeekDay" android:text="Th"/>
+                <TextView style="@style/CalendarWeekDay" android:text="Fr"/>
+                <TextView style="@style/CalendarWeekDay" android:text="Sa"/>
+            </LinearLayout>
+
+            <!-- Calendar grid in a square -->
+            <com.example.tailwagging.SquareFrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_square_border">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/calendarRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="8dp"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:scrollbars="none"/>
+            </com.example.tailwagging.SquareFrameLayout>
+
+            <!-- Today's Events Section -->
+            <TextView
+                android:id="@+id/tvTodayEventsLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Today's Events"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:paddingStart="24dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="8dp"
+                android:textColor="#222222"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/todayEventsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:background="@android:color/transparent"
+                android:paddingBottom="8dp"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:scrollbars="none"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="12dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnEvents"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginBottom="4dp"
+                android:backgroundTint="#8E7BEF"
+                android:text="View All Events"
+                android:textAllCaps="false"
+                android:textColor="#fff"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>
