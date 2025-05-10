@@ -52,6 +52,14 @@ public class EventStore {
         saveEvents();
     }
 
+    // Remove event by event object (new method for deletion)
+    public void deleteEvent(Event event) {
+        if (events.remove(event)) {
+            saveEvents();
+        }
+    }
+
+    // Remove event by id (existing, for compatibility)
     public void removeEvent(int eventId) {
         for (int i = 0; i < events.size(); i++) {
             if (events.get(i).id == eventId) {

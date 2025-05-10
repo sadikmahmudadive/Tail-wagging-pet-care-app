@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -56,7 +55,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_calendar);
         initWidgets();
         selectedDate = LocalDate.now();
         selectedYear = selectedDate.getYear();
@@ -186,6 +185,55 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                 updateTodayEvents();
             }
         }
+    }
+
+    @Override
+    public void onItemLongClick(int position, DayCell dayCell) {
+        // Only allow delete if this is not an empty cell and not from another month
+        if (!dayCell.dayText.isEmpty() && !dayCell.isOtherMonth) {
+            LocalDate eventDate = LocalDate.of(selectedYear, selectedDate.getMonthValue(), Integer.parseInt(dayCell.dayText));
+            List<Event> events = EventStore.getInstance(this).getEventsForDate(eventDate);
+            if (events == null || events.isEmpty()) {
+                Toast.makeText(this, "No event to delete on this day", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // If there is more than one event, show a dialog to select which one to delete
+            if (events.size() == 1) {
+                showDeleteEventDialog(events.get(0), eventDate);
+            } else {
+                showSelectEventToDeleteDialog(events, eventDate);
+            }
+        }
+    }
+
+    private void showDeleteEventDialog(Event event, LocalDate eventDate) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Event")
+                .setMessage("Delete event: \"" + event.title + "\" for this day?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    EventStore.getInstance(this).deleteEvent(event);
+                    AlarmHelper.cancelEventAlarm(this, event.id);
+                    Toast.makeText(this, "Event deleted", Toast.LENGTH_SHORT).show();
+                    if (eventDate.equals(LocalDate.now())) {
+                        updateTodayEvents();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showSelectEventToDeleteDialog(List<Event> events, LocalDate eventDate) {
+        String[] eventTitles = new String[events.size()];
+        for (int i = 0; i < events.size(); i++) {
+            eventTitles[i] = events.get(i).title;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("Select Event to Delete")
+                .setItems(eventTitles, (dialog, which) -> {
+                    showDeleteEventDialog(events.get(which), eventDate);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TodayEventAdapter extends RecyclerView.Adapter<TodayEventAdapter.TodayEventViewHolder> {
@@ -24,7 +25,7 @@ public class TodayEventAdapter extends RecyclerView.Adapter<TodayEventAdapter.To
     }
 
     public TodayEventAdapter(Context context, List<Event> events, OnEventChangedListener listener) {
-        this.events = events;
+        this.events = new ArrayList<>(events);
         this.context = context;
         this.eventChangedListener = listener;
     }
@@ -59,6 +60,23 @@ public class TodayEventAdapter extends RecyclerView.Adapter<TodayEventAdapter.To
                     .setNegativeButton("Cancel", null)
                     .show();
         });
+
+        // Optional: support long-press-to-delete as well
+        holder.itemView.setOnLongClickListener(v -> {
+            new AlertDialog.Builder(context)
+                    .setTitle("Delete Event")
+                    .setMessage("Are you sure you want to delete this event?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        EventStore.getInstance(context).removeEvent(event.id);
+                        AlarmHelper.cancelEventAlarm(context, event.id);
+                        events.remove(position);
+                        notifyItemRemoved(position);
+                        if (eventChangedListener != null) eventChangedListener.onEventDeleted();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+            return true;
+        });
     }
 
     @Override
@@ -67,7 +85,7 @@ public class TodayEventAdapter extends RecyclerView.Adapter<TodayEventAdapter.To
     }
 
     public void setEvents(List<Event> events) {
-        this.events = events;
+        this.events = new ArrayList<>(events); // Defensive copy
         notifyDataSetChanged();
     }
 

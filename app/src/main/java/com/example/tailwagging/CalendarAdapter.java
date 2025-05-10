@@ -60,5 +60,6 @@ public class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder> {
 
     public interface OnItemListener {
         void onItemClick(int position, DayCell dayCell);
+        void onItemLongClick(int position, DayCell dayCell); // Added for long press
     }
 }
