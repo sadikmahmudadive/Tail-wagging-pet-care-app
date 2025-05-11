@@ -1,10 +1,12 @@
 package com.example.tailwagging;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +31,7 @@ public class AddEditPet extends AppCompatActivity {
             return insets;
         });
 
-        // Gender Dropdown Setup
+        // --- Gender Dropdown Setup ---
         AutoCompleteTextView genderDropdown = findViewById(R.id.etPetGender);
         String[] genderOptions = new String[] { "Male", "Female", "Other" };
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, genderOptions);
@@ -38,13 +40,22 @@ public class AddEditPet extends AppCompatActivity {
         genderDropdown.setKeyListener(null);
         genderDropdown.setOnClickListener(v -> genderDropdown.showDropDown());
 
-        // Date of Birth Picker Setup
+        // --- Date of Birth Picker Setup ---
         etPetDob = findViewById(R.id.etPetDob);
         etPetDob.setOnClickListener(v -> showDatePickerDialog());
+
+        // --- Back Button: Go to MainActivity ---
+        ImageView backBtn = findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(AddEditPet.this, MainActivity.class);
+            // Clear top so MainActivity is not duplicated in the stack
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            startActivity(intent);
+            finish();
+        });
     }
 
     private void showDatePickerDialog() {
-        // Use current date as default
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH); // 0-based!
