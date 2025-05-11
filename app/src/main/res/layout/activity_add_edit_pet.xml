@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_dashboard">
+
+    <!-- Top Bar -->
+    <LinearLayout
+        android:id="@+id/topBar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:orientation="horizontal"
+        android:background="@color/dark_blue"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp">
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/ic_arrow_back"
+            android:contentDescription="Back"
+            android:layout_marginEnd="8dp"/>
+        <TextView
+            android:id="@+id/tvAddPetsTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Add Pets"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:fontFamily="@font/fredoka_bold"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_below="@id/topBar"
+        android:background="@color/dark_blue"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="82dp"
+        android:layout_marginBottom="16dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Added Pets Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Added Pets"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/mat_black"
+                android:fontFamily="@font/fredoka_bold"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Example: Horizontal LinearLayout for added pets list (use RecyclerView in real app) -->
+            <LinearLayout
+                android:id="@+id/layoutAddedPets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Example Pet Item -->
+                <!-- Repeat this block programmatically for each pet in the list -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/bg_pet_card"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="12dp"
+                    android:elevation="4dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/petImage1"
+                        android:layout_width="54dp"
+                        android:layout_height="54dp"
+                        android:layout_marginStart="12dp"
+                        android:src="@drawable/pet1"
+                        android:background="@drawable/bg_circle_accent"
+                        android:contentDescription="Pet"/>
+                    <TextView
+                        android:id="@+id/petName1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:text="Bella"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/fredoka_bold"/>
+                </LinearLayout>
+                <!-- Repeat for more pets as needed -->
+            </LinearLayout>
+
+            <!-- Add Pet Form -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Pet"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@color/mat_black"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="@font/fredoka_bold"/>
+
+            <!-- Pet Name -->
+            <EditText
+                android:id="@+id/etPetName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_edittext_rounded"
+                android:hint="Pet Name"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/mat_black"
+                android:textColorHint="@color/mat_black"
+                android:fontFamily="@font/fredoka_bold"
+                android:textSize="15sp"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Breed Name -->
+            <EditText
+                android:id="@+id/etBreedName"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_edittext_rounded"
+                android:hint="Breed Name"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:textColor="@color/mat_black"
+                android:textColorHint="@color/mat_black"
+                android:fontFamily="@font/fredoka_bold"
+                android:textSize="15sp"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginBottom="8dp">
+
+                <!-- Gender Dropdown -->
+                <AutoCompleteTextView
+                    android:id="@+id/etPetGender"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:hint="Gender"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="@color/mat_black"
+                    android:textColorHint="@color/mat_black"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textSize="15sp"
+                    android:dropDownWidth="match_parent"/>
+
+                <!-- Age -->
+                <EditText
+                    android:id="@+id/etPetAge"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:hint="Age"
+                    android:inputType="number"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="@color/mat_black"
+                    android:textColorHint="@color/mat_black"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textSize="15sp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"/>
+
+                <!-- Date of Birth -->
+                <EditText
+                    android:id="@+id/etPetDob"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:hint="Date of Birth"
+                    android:focusable="false"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="@color/mat_black"
+                    android:textColorHint="@color/mat_black"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textSize="14sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="8dp">
+
+                <!-- Color -->
+                <EditText
+                    android:id="@+id/etPetColor"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:hint="Color"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="@color/mat_black"
+                    android:textColorHint="@color/mat_black"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textSize="15sp"
+                    android:layout_marginEnd="8dp"/>
+
+                <!-- Sound -->
+                <EditText
+                    android:id="@+id/etPetSound"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:hint="Sound"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="@color/mat_black"
+                    android:textColorHint="@color/mat_black"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textSize="15sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="8dp">
+
+                <!-- Height -->
+                <EditText
+                    android:id="@+id/etPetHeight"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:hint="Height"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="@color/mat_black"
+                    android:textColorHint="@color/mat_black"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textSize="15sp"
+                    android:layout_marginEnd="8dp"/>
+
+                <!-- Weight -->
+                <EditText
+                    android:id="@+id/etPetWeight"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:hint="Weight"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:textColor="@color/mat_black"
+                    android:textColorHint="@color/mat_black"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textSize="15sp"/>
+            </LinearLayout>
+
+            <!-- Upload Photo Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnUploadPhoto"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Uplode Photo"
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_btn_orange"
+                android:textStyle="bold"
+                android:fontFamily="@font/fredoka_bold"
+                android:textSize="17sp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:elevation="2dp"/>
+
+            <!-- Add Pet Button -->
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btnAddPet"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="Add Pet"
+                android:textColor="@android:color/white"
+                android:background="@drawable/bg_btn_orange"
+                android:textStyle="bold"
+                android:fontFamily="@font/fredoka_bold"
+                android:textSize="17sp"
+                android:elevation="2dp"/>
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Navigation Bar (if needed, include here) -->
+    <!-- <include layout="@layout/layout_navigation_bar"
+        android:layout_gravity="bottom"/> -->
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

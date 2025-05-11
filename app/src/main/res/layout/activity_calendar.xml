@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:text="March 2025"
                 android:textSize="22sp"
-                android:textColor="#222222"
+                android:textColor="#fffdfc"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="center"
@@ -128,7 +128,7 @@
                 android:paddingStart="24dp"
                 android:paddingTop="12dp"
                 android:paddingBottom="8dp"
-                android:textColor="#222222"/>
+                android:textColor="#fffdfc"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/todayEventsRecyclerView"

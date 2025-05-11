@@ -49,12 +49,23 @@ public class MainActivity extends AppCompatActivity {
         logoutButton = findViewById(R.id.buttonLogout);
         textView = findViewById(R.id.userName);
 
-        // --- NAVIGATION BAR: CALENDAR ---
+        // --- NAVIGATION BAR:
+        // CALENDAR ---
         LinearLayout navCalendar = findViewById(R.id.navCalendar);
         navCalendar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 launchCalendarActivity();
+            }
+        });
+
+        // --- NAVIGATION BAR:
+        // ADD PET ---
+        LinearLayout navAddPet = findViewById(R.id.navAddPet);
+        navAddPet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchAddEditPetActivity();
             }
         });
 
@@ -85,6 +96,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchCalendarActivity() {
         Intent intent = new Intent(MainActivity.this, Calendar.class); // <-- Use your custom calendar class here
+        startActivity(intent);
+    }
+
+    // New method to launch AddEditPetActivity
+    private void launchAddEditPetActivity() {
+        Intent intent = new Intent(MainActivity.this, AddEditPet.class); // Make sure this class exists
         startActivity(intent);
     }
 

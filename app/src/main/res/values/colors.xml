@@ -8,4 +8,6 @@
     <color name="orange">#FEB941</color>
     <color name="green">#03ffb3</color>
     <color name="red">#ff035f</color>
+    <color name="light_gray">#F7F8FB</color>
+    <color name="mat_black">#222222</color>
 </resources>
