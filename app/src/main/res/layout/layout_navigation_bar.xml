@@ -25,9 +25,9 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-        <!-- Home -->
+        <!-- Profile -->
         <LinearLayout
-            android:id="@+id/navHome"
+            android:id="@+id/navProfile"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -38,13 +38,14 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
+                android:src="@drawable/ic_profile"
                 android:contentDescription="Home"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/fredoka_bold"
-                android:text="HOME"
+                android:text="PROFILE"
                 android:textColor="@color/dark_blue"
                 android:textSize="11sp" />
         </LinearLayout>
@@ -123,9 +124,9 @@
                 android:textSize="11sp" />
         </LinearLayout>
 
-        <!-- Profile -->
+        <!-- Vet -->
         <LinearLayout
-            android:id="@+id/navProfile"
+            android:id="@+id/navVet"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -136,7 +137,7 @@
             <ImageView
                 android:layout_width="28dp"
                 android:layout_height="28dp"
-                android:contentDescription="Profile"/>
+                android:contentDescription="Vet"/>
 
             <TextView
                 android:layout_width="wrap_content"
