@@ -1,302 +1,322 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/profileMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@drawable/background_dashboard">
 
-    <!-- Top Bar -->
     <LinearLayout
-        android:id="@+id/topBar"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="horizontal"
-        android:background="@color/dark_blue"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp">
-
-        <ImageView
-            android:id="@+id/backBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back"
-            android:layout_marginEnd="8dp"/>
-        <TextView
-            android:id="@+id/tvProfileTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="User Name"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:fontFamily="@font/fredoka_bold"/>
-    </LinearLayout>
-
-    <!-- Background Profile Banner -->
-    <ImageView
-        android:id="@+id/profileBanner"
-        android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_profile"
-        android:layout_gravity="top"
-        android:background="@color/light_gray"
-        />
-
-    <!-- Profile Card -->
-    <LinearLayout
-        android:id="@+id/profileCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="140dp"
-        android:background="@drawable/bg_profile_card"
-        android:elevation="8dp"
-        android:padding="18dp">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-        <!-- User Info Row -->
-        <LinearLayout
+        <!-- Header -->
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="top">
+            android:layout_height="88dp"
+            android:background="@color/dark_blue"
+            android:elevation="3dp">
+
+            <ImageView
+                android:id="@+id/backButton"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:src="@drawable/ic_arrow_back"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="16dp"
+                app:tint="@color/white" />
 
             <TextView
-                android:id="@+id/tvUserName"
-                android:layout_width="0dp"
+                android:id="@+id/userNameHeader"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="User Name"
-                android:textSize="22sp"
-                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:textSize="20sp"
                 android:fontFamily="@font/fredoka_bold"
-                android:textColor="@color/mat_black"
-                android:layout_marginBottom="4dp"/>
-            <TextView
-                android:id="@+id/tvSignOut"
-                android:layout_width="wrap_content"
+                android:layout_centerInParent="true" />
+        </RelativeLayout>
+
+        <!-- Banner -->
+        <ImageView
+            android:id="@+id/profileBanner"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:scaleType="centerCrop"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="-68dp"/>
+
+        <!-- Profile Image (overlapping card and banner) -->
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profileImage"
+            android:layout_width="136dp"
+            android:layout_height="136dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="-68dp"
+            android:src="@drawable/sample_profile"
+            android:background="@drawable/bg_circle_white"
+            app:civ_border_width="5dp"
+            app:civ_border_color="@color/white"
+            android:elevation="8dp"/>
+
+        <!-- Info Card -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="18dp"
+            android:background="@drawable/bg_profile_card"
+            android:elevation="6dp"
+            android:padding="22dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sign out"
-                android:textSize="15sp"
-                android:textColor="@color/error_red"
-                android:fontFamily="@font/fredoka_bold"
-                android:layout_marginTop="4dp"
-                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp">
+
+                <TextView
+                    android:id="@+id/userName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="User Name"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/dark_blue" />
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:gravity="center_vertical"
+                    android:clickable="true"
+                    android:focusable="true">
+
+                    <TextView
+                        android:id="@+id/signOut"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sign out"
+                        android:textColor="@color/red"
+                        android:textSize="16sp"
+                        android:fontFamily="@font/fredoka_bold"/>
+                </LinearLayout>
+            </RelativeLayout>
+
+            <!-- Email -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_profile_input"
+                android:gravity="center_vertical"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="7dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_email"/>
+
+                <TextView
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="pixelposse@gmail.com"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/fredoka"/>
+            </LinearLayout>
+
+            <!-- Phone -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:orientation="horizontal"
+                android:background="@drawable/bg_profile_input"
+                android:gravity="center_vertical"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_phone"/>
+
+                <TextView
+                    android:layout_marginStart="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0758519048"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/fredoka"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Menu Options Card -->
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginEnd="18dp"
+            android:background="@drawable/bg_profile_input"
+            android:elevation="4dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="0dp">
+
+            <!-- Option Item 1 -->
+            <LinearLayout
+                android:id="@+id/optionAboutMe"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 android:clickable="true"
-                android:focusable="true"/>
-        </LinearLayout>
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp">
 
-        <!-- Email Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="8dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_about_me"
+                    android:contentDescription="About me"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="About me"
+                    android:textSize="17sp"
+                    android:textColor="@color/dark_blue"
+                    android:fontFamily="@font/fredoka"
+                    android:layout_marginStart="14dp"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="Go"
+                    app:tint="@color/dark_blue" />
+            </LinearLayout>
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/ic_email"
-                android:tint="@color/mat_black"
-                android:contentDescription="Email"/>
-            <TextView
-                android:id="@+id/tvUserEmail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="pixelposse@gmail.com"
-                android:layout_marginStart="10dp"
-                android:textSize="15sp"
-                android:textColor="@color/mat_black"
-                android:fontFamily="@font/fredoka_regular"/>
-        </LinearLayout>
+            <!-- Option Item 2 -->
+            <LinearLayout
+                android:id="@+id/optionMyPets"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp">
 
-        <!-- Phone Row -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="5dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_pets"
+                    android:contentDescription="My Pets"
+                    app:tint="@color/dark_blue" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="My Pets"
+                    android:textSize="17sp"
+                    android:textColor="@color/dark_blue"
+                    android:fontFamily="@font/fredoka"
+                    android:layout_marginStart="14dp"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    android:contentDescription="Go"
+                    app:tint="@color/dark_blue" />
+            </LinearLayout>
 
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/ic_phone"
-                android:tint="@color/mat_black"
-                android:contentDescription="Phone"/>
-            <TextView
-                android:id="@+id/tvUserPhone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0758519048"
-                android:layout_marginStart="10dp"
-                android:textSize="15sp"
-                android:textColor="@color/mat_black"
-                android:fontFamily="@font/fredoka_regular"/>
-        </LinearLayout>
-    </LinearLayout>
+            <!-- Option Item 3 -->
+            <LinearLayout
+                android:id="@+id/optionAddDevice"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp">
 
-    <!-- Profile List Card -->
-    <LinearLayout
-        android:id="@+id/profileListCard"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="18dp"
-        android:layout_marginEnd="18dp"
-        android:layout_marginTop="330dp"
-        android:background="@drawable/bg_profile_list_card"
-        android:elevation="4dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp">
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_add_device"
+                    android:contentDescription="Add Device"
+                    app:tint="@color/dark_blue" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Add Device"
+                    android:textSize="17sp"
+                    android:textColor="@color/dark_blue"
+                    android:fontFamily="@font/fredoka"
+                    android:layout_marginStart="14dp"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="@color/dark_blue"
+                    android:contentDescription="Go"/>
+            </LinearLayout>
 
-        <!-- About me -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
+            <!-- Option Item 4 -->
+            <LinearLayout
+                android:id="@+id/optionFavoriteVet"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp">
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_about_me"
-                android:tint="@color/mat_black"
-                android:contentDescription="About me"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="About me"
-                android:textSize="16sp"
-                android:textColor="@color/mat_black"
-                android:fontFamily="@font/fredoka_regular"
-                android:layout_marginStart="14dp"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_right_arrow"
-                android:tint="@color/mat_black"
-                android:contentDescription="Go"/>
-        </LinearLayout>
-
-        <!-- My Pets -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_pets"
-                android:tint="@color/mat_black"
-                android:contentDescription="My Pets"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="My Pets"
-                android:textSize="16sp"
-                android:textColor="@color/mat_black"
-                android:fontFamily="@font/fredoka_regular"
-                android:layout_marginStart="14dp"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_right_arrow"
-                android:tint="@color/mat_black"
-                android:contentDescription="Go"/>
-        </LinearLayout>
-
-        <!-- Add Device -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_add_device"
-                android:tint="@color/mat_black"
-                android:contentDescription="Add Device"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Add Device"
-                android:textSize="16sp"
-                android:textColor="@color/mat_black"
-                android:fontFamily="@font/fredoka_regular"
-                android:layout_marginStart="14dp"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_right_arrow"
-                android:tint="@color/mat_black"
-                android:contentDescription="Go"/>
-        </LinearLayout>
-
-        <!-- Favorite Vet -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?android:attr/selectableItemBackground"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@drawable/ic_favorite_vet"
-                android:tint="@color/mat_black"
-                android:contentDescription="Favorite Vet"/>
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Favorite Vet"
-                android:textSize="16sp"
-                android:textColor="@color/mat_black"
-                android:fontFamily="@font/fredoka_regular"
-                android:layout_marginStart="14dp"/>
-            <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:src="@drawable/ic_right_arrow"
-                android:tint="@color/mat_black"
-                android:contentDescription="Go"/>
+                <ImageView
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:src="@drawable/ic_favorite_vet"
+                    app:tint="@color/dark_blue"
+                    android:contentDescription="Favorite Vet"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Favorite Vet"
+                    android:textSize="17sp"
+                    android:textColor="@color/dark_blue"
+                    android:fontFamily="@font/fredoka"
+                    android:layout_marginStart="14dp"/>
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_arrow_right"
+                    app:tint="@color/dark_blue"
+                    android:contentDescription="Go"/>
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</ScrollView>
