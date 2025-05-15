@@ -69,6 +69,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // --- NAVIGATION BAR:
+        // PROFILE ---
+        LinearLayout navProfile = findViewById(R.id.navProfile);
+        navProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchProfileActivity();
+            }
+        });
+
         // Logout functionality with confirmation
         logoutButton.setOnClickListener(v -> {
             new AlertDialog.Builder(MainActivity.this)
@@ -102,6 +112,12 @@ public class MainActivity extends AppCompatActivity {
     // New method to launch AddEditPetActivity
     private void launchAddEditPetActivity() {
         Intent intent = new Intent(MainActivity.this, AddEditPet.class); // Make sure this class exists
+        startActivity(intent);
+    }
+
+    // New method to launch ProfileActivity
+    private void launchProfileActivity() {
+        Intent intent = new Intent(MainActivity.this, Profile.class); // Make sure this class exists
         startActivity(intent);
     }
 

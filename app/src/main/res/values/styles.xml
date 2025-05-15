@@ -19,4 +19,26 @@
         <item name="android:textSize">14sp</item>
         <item name="android:background">@drawable/chip_gray</item>
     </style>
+    <!-- Custom Dialog Theme -->
+    <style name="MyCustomDialogTheme" parent="Theme.AppCompat.Dialog">
+        <!-- Background with rounded corners -->
+        <item name="android:windowBackground">@drawable/bg_profile_popup</item>
+        <!-- Window min width as percentage -->
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <!-- Remove default dialog title divider -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- Animations -->
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+        <!-- Accent and text colors -->
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/dark_gray</item>
+    </style>
+
+    <!-- Dialog animation style -->
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
 </resources>

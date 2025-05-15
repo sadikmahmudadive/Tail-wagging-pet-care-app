@@ -10,4 +10,6 @@
     <color name="red">#ff035f</color>
     <color name="light_gray">#F7F8FB</color>
     <color name="mat_black">#222222</color>
+    <color name="colorAccent">#FFC107</color>
+    <color name="dark_gray">#666666</color>
 </resources>

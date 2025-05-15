@@ -21,6 +21,10 @@
         android:theme="@style/Theme.TailWagging"
         tools:targetApi="31">
         <activity
+            android:name=".EditUserProfileActivity"
+            android:theme="@style/Theme.AppCompat.Dialog"
+            android:exported="false" />
+        <activity
             android:name=".Profile"
             android:exported="false" />
         <activity
