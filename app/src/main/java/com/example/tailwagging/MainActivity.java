@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView; // <-- Add this import
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide; // <-- Add this import
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     Button logoutButton;
     TextView textView;
     FirebaseFirestore db;
+    ImageView userProfilePhoto; // <-- Add this line
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
         logoutButton = findViewById(R.id.buttonLogout);
         textView = findViewById(R.id.userName);
+        userProfilePhoto = findViewById(R.id.userProfilePhoto); // <-- Add this line
 
         // --- NAVIGATION BAR:
         // CALENDAR ---
@@ -97,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
         if (user == null) {
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
             textView.setText("Guest");
+            // Optionally set a default image
+            userProfilePhoto.setImageResource(R.drawable.ic_profile);
             return;
         }
 
@@ -129,26 +135,39 @@ public class MainActivity extends AppCompatActivity {
         if (displayName != null && !displayName.isEmpty()) {
             textView.setText(displayName);
         } else {
-            // Fetch display name from Firestore if not available in Firebase Auth
-            fetchDisplayNameFromFirestore();
+            // Fetch display name and profile photo from Firestore if not available in Firebase Auth
+            fetchUserFieldsFromFirestore();
         }
     }
 
-    private void fetchDisplayNameFromFirestore() {
+    private void fetchUserFieldsFromFirestore() {
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
                 String username = documentSnapshot.getString("name");
+                String profileImageUrl = documentSnapshot.getString("profileImageUrl");
                 if (username != null && !username.isEmpty()) {
                     textView.setText(username);
                 } else {
                     textView.setText("Unknown User");
                 }
+                // Fetch and display profile photo
+                if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
+                    Glide.with(this)
+                            .load(profileImageUrl)
+                            .placeholder(R.drawable.ic_profile)
+                            .error(R.drawable.ic_profile)
+                            .into(userProfilePhoto);
+                } else {
+                    userProfilePhoto.setImageResource(R.drawable.ic_profile);
+                }
             } else {
                 textView.setText("User Not Found");
+                userProfilePhoto.setImageResource(R.drawable.ic_profile);
             }
         }).addOnFailureListener(e -> {
             Toast.makeText(MainActivity.this, "Failed to fetch user data: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            userProfilePhoto.setImageResource(R.drawable.ic_profile);
         });
 
         // Set up RecyclerView for pets

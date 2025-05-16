@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -115,10 +116,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
     private void loadUserData() {
         if (user == null) return;
-        // Email from Firebase Auth
         editEmail.setText(user.getEmail());
 
-        // Username and other fields from Firestore
         DocumentReference docRef = db.collection("users").document(user.getUid());
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists()) {
@@ -126,12 +125,20 @@ public class EditUserProfileActivity extends AppCompatActivity {
                 editPhone.setText(documentSnapshot.getString("phone"));
                 editAddress.setText(documentSnapshot.getString("address"));
 
-                // Load profile image if stored (example: store image URL in "profileImageUrl")
                 String imgUrl = documentSnapshot.getString("profileImageUrl");
+                Log.d("PROFILE_IMG", "profileImageUrl from Firestore: " + imgUrl);
                 if (imgUrl != null && !imgUrl.isEmpty()) {
-                    Glide.with(this).load(imgUrl).placeholder(R.drawable.ic_profile).into(profileImage);
+                    Glide.with(this)
+                            .load(imgUrl)
+                            .placeholder(R.drawable.ic_profile)
+                            .error(R.drawable.ic_profile)
+                            .into(profileImage);
+                } else {
+                    profileImage.setImageResource(R.drawable.ic_profile);
                 }
             }
+        }).addOnFailureListener(e -> {
+            Toast.makeText(this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         });
     }
 
@@ -174,6 +181,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
             Glide.with(this)
                     .load(imageUri)
                     .placeholder(R.drawable.ic_profile)
+                    .error(R.drawable.ic_profile)
                     .into(profileImage);
             // You can upload the imageUri to Firebase Storage here and update Firestore with the URL
         }
