@@ -1,44 +1,26 @@
 {
   "project_info": {
-    "project_number": "160632957908",
-    "project_id": "tail-wagging",
-    "storage_bucket": "tail-wagging.firebasestorage.app"
+    "project_number": "1009270451034",
+    "project_id": "tail-wagging-c24fa",
+    "storage_bucket": "tail-wagging-c24fa.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:160632957908:android:b56a5928e99c382bde0441",
+        "mobilesdk_app_id": "1:1009270451034:android:70dbfdd537d50cd517e163",
         "android_client_info": {
           "package_name": "com.example.tailwagging"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "160632957908-82n675uglpaa3pkrspmr6n78v9gtmlso.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.tailwagging",
-            "certificate_hash": "516bdd061dff66e2b55dd3303f5aec548c1dc0b7"
-          }
-        },
-        {
-          "client_id": "160632957908-aulcqbu7ago0of50sm5f8aug5ap37jo7.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC6w4JsZSBYDSuZGrSChUorGPAW5yOBAMk"
+          "current_key": "AIzaSyBfJWO0ZNzNbpM1wNTUVYx45Q00NRF0bJg"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "160632957908-aulcqbu7ago0of50sm5f8aug5ap37jo7.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -311,7 +311,7 @@ public class AddEditPet extends AppCompatActivity {
                             petLayout.setPadding(12, 8, 12, 8);
 
                             CircleImageView img = new CircleImageView(AddEditPet.this);
-                            LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(54,54);
+                            LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(250,250);
                             imgParams.setMarginStart(12);
                             img.setLayoutParams(imgParams);
                             img.setBackgroundResource(R.drawable.bg_circle_accent);

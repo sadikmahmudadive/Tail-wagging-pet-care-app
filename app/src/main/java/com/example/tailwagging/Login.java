@@ -29,8 +29,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-
-// Firestore import removed
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -47,12 +45,7 @@ public class Login extends AppCompatActivity {
     EditText textEmail, textPassword;
     Button btnLogin, btnGoogle, btnFacebook;
     FirebaseAuth authLogin;
-    // Firestore removed
-    // FirebaseFirestore firestore;
     GoogleSignInClient googleSignInClient;
-    // CallbackManager mCallbackManager; // Facebook removed
-
-    // Add for Realtime Database
     DatabaseReference dbRef;
 
     @Override
@@ -88,10 +81,9 @@ public class Login extends AppCompatActivity {
         btnGoogle = findViewById(R.id.btn_google);
 
         authLogin = FirebaseAuth.getInstance();
-        // firestore = FirebaseFirestore.getInstance();
 
-        // Realtime Database reference
-        dbRef = FirebaseDatabase.getInstance().getReference();
+        // Use your custom Firebase Realtime Database URL
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-c24fa-default-rtdb.firebaseio.com/").getReference();
 
         // Google Sign-In Setup
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

@@ -13,22 +13,16 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-// Firestore import removed
-//import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-
-// Realtime Database import
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -44,10 +38,7 @@ public class Registration extends AppCompatActivity {
     ImageView profilePic;
 
     FirebaseAuth auth;
-    // Firestore removed
-    // FirebaseFirestore firestore;
     StorageReference storageReference;
-    // Realtime Database reference
     DatabaseReference dbRef;
 
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -80,9 +71,9 @@ public class Registration extends AppCompatActivity {
         btnSignup = findViewById(R.id.btn_SignupR);
 
         auth = FirebaseAuth.getInstance();
-        // firestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
-        dbRef = FirebaseDatabase.getInstance().getReference();
+        // Use your custom Firebase Realtime Database URL
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-c24fa-default-rtdb.firebaseio.com/").getReference();
 
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
