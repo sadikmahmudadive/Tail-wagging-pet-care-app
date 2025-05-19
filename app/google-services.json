@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "1009270451034",
-    "project_id": "tail-wagging-c24fa",
-    "storage_bucket": "tail-wagging-c24fa.firebasestorage.app"
+    "project_number": "849611779485",
+    "project_id": "tail-wagging-d03de",
+    "storage_bucket": "tail-wagging-d03de.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1009270451034:android:70dbfdd537d50cd517e163",
+        "mobilesdk_app_id": "1:849611779485:android:2c3bc9ba660c1a0063d374",
         "android_client_info": {
           "package_name": "com.example.tailwagging"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBfJWO0ZNzNbpM1wNTUVYx45Q00NRF0bJg"
+          "current_key": "AIzaSyB6h140AXRy-jf2juyuN7sa6X4PqkYx62I"
         }
       ],
       "services": {
