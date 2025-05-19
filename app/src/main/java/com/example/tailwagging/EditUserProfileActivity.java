@@ -20,8 +20,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class EditUserProfileActivity extends AppCompatActivity {
 
@@ -33,7 +41,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private FirebaseFirestore db;
+    private DatabaseReference dbRef;
+    private StorageReference storageReference;
 
     private boolean isEditable = false;
     private static final int PICK_IMAGE = 1;
@@ -68,7 +77,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
+        dbRef = FirebaseDatabase.getInstance().getReference();
+        storageReference = FirebaseStorage.getInstance().getReference();
 
         // Back button
         backButton.setOnClickListener(v -> finish());
@@ -118,28 +128,34 @@ public class EditUserProfileActivity extends AppCompatActivity {
         if (user == null) return;
         editEmail.setText(user.getEmail());
 
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.get().addOnSuccessListener(documentSnapshot -> {
-            if (documentSnapshot.exists()) {
-                editUsername.setText(documentSnapshot.getString("name"));
-                editPhone.setText(documentSnapshot.getString("phone"));
-                editAddress.setText(documentSnapshot.getString("address"));
+        dbRef.child("users").child(user.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            editUsername.setText(snapshot.child("name").getValue(String.class));
+                            editPhone.setText(snapshot.child("phone").getValue(String.class));
+                            editAddress.setText(snapshot.child("address").getValue(String.class));
 
-                String imgUrl = documentSnapshot.getString("profileImageUrl");
-                Log.d("PROFILE_IMG", "profileImageUrl from Firestore: " + imgUrl);
-                if (imgUrl != null && !imgUrl.isEmpty()) {
-                    Glide.with(this)
-                            .load(imgUrl)
-                            .placeholder(R.drawable.ic_profile)
-                            .error(R.drawable.ic_profile)
-                            .into(profileImage);
-                } else {
-                    profileImage.setImageResource(R.drawable.ic_profile);
-                }
-            }
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        });
+                            String imgUrl = snapshot.child("profileImageUrl").getValue(String.class);
+                            Log.d("PROFILE_IMG", "profileImageUrl from RTDB: " + imgUrl);
+                            if (imgUrl != null && !imgUrl.isEmpty()) {
+                                Glide.with(EditUserProfileActivity.this)
+                                        .load(imgUrl)
+                                        .placeholder(R.drawable.ic_profile)
+                                        .error(R.drawable.ic_profile)
+                                        .into(profileImage);
+                            } else {
+                                profileImage.setImageResource(R.drawable.ic_profile);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError error) {
+                        Toast.makeText(EditUserProfileActivity.this, "Failed to load profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void saveProfileData() {
@@ -149,17 +165,29 @@ public class EditUserProfileActivity extends AppCompatActivity {
         String address = editAddress.getText().toString().trim();
         String password = editPassword.getText().toString().trim();
 
-        // Update Firestore
-        DocumentReference docRef = db.collection("users").document(user.getUid());
-        docRef.update(
-                "name", username,
-                "phone", phone,
-                "address", address
-        ).addOnSuccessListener(aVoid -> {
-            Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
-        }).addOnFailureListener(e -> {
-            Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        });
+        // Build user data map for updating
+        Map<String, Object> updateData = new HashMap<>();
+        updateData.put("name", username);
+        updateData.put("phone", phone);
+        updateData.put("address", address);
+
+        // If imageUri is set, upload and update profileImageUrl
+        if (imageUri != null) {
+            StorageReference imgRef = storageReference.child("users").child(user.getUid()).child("profile.jpg");
+            imgRef.putFile(imageUri)
+                    .addOnSuccessListener(taskSnapshot -> imgRef.getDownloadUrl().addOnSuccessListener(uri -> {
+                        updateData.put("profileImageUrl", uri.toString());
+                        // Update in Realtime Database after image upload
+                        dbRef.child("users").child(user.getUid()).updateChildren(updateData)
+                                .addOnSuccessListener(aVoid -> Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show())
+                                .addOnFailureListener(e -> Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    }))
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        } else {
+            dbRef.child("users").child(user.getUid()).updateChildren(updateData)
+                    .addOnSuccessListener(aVoid -> Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show())
+                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        }
 
         // Optionally update password if changed (Firebase Authentication)
         if (!password.isEmpty()) {
@@ -167,9 +195,6 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     .addOnSuccessListener(aVoid -> Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(this, "Failed to update password: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         }
-
-        // Optionally upload the profile image if changed (left for implementation)
-        // You'd typically upload to Firebase Storage and update the profileImageUrl in Firestore
     }
 
     @Override
@@ -183,7 +208,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     .placeholder(R.drawable.ic_profile)
                     .error(R.drawable.ic_profile)
                     .into(profileImage);
-            // You can upload the imageUri to Firebase Storage here and update Firestore with the URL
+            // Image will be uploaded on save
         }
     }
 }

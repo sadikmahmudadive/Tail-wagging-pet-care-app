@@ -16,8 +16,12 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+// Realtime Database import
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Profile extends AppCompatActivity {
 
@@ -26,7 +30,7 @@ public class Profile extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private FirebaseFirestore db;
+    private DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,7 @@ public class Profile extends AppCompatActivity {
         // Initialize Firebase
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        db = FirebaseFirestore.getInstance();
+        dbRef = FirebaseDatabase.getInstance().getReference();
 
         // Reference views
         profileImage = findViewById(R.id.profileImage);
@@ -57,32 +61,38 @@ public class Profile extends AppCompatActivity {
             // Set email
             userEmail.setText(user.getEmail());
 
-            // Fetch phone and profile image URL from Firestore
-            DocumentReference docRef = db.collection("users").document(user.getUid());
-            docRef.get().addOnSuccessListener(documentSnapshot -> {
-                if (documentSnapshot.exists()) {
-                    String phone = documentSnapshot.getString("phone");
-                    String profileImageUrl = documentSnapshot.getString("profileImageUrl");
+            // Fetch phone and profile image URL from Realtime Database
+            dbRef.child("users").child(user.getUid())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                String phone = dataSnapshot.child("phone").getValue(String.class);
+                                String photoUrl = dataSnapshot.child("photoUrl").getValue(String.class); // <-- changed to photoUrl
 
-                    if (phone != null && !phone.isEmpty()) {
-                        userPhoneNumber.setText(phone);
-                    } else {
-                        userPhoneNumber.setText("No phone number");
-                    }
+                                if (phone != null && !phone.isEmpty()) {
+                                    userPhoneNumber.setText(phone);
+                                } else {
+                                    userPhoneNumber.setText("No phone number");
+                                }
 
-                    if (profileImageUrl != null && !profileImageUrl.isEmpty()) {
-                        Glide.with(this)
-                                .load(profileImageUrl)
-                                .placeholder(R.drawable.ic_profile)
-                                .error(R.drawable.ic_profile)
-                                .into(profileImage);
-                    } else {
-                        profileImage.setImageResource(R.drawable.ic_profile);
-                    }
-                }
-            }).addOnFailureListener(e -> {
-                Toast.makeText(this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            });
+                                if (photoUrl != null && !photoUrl.isEmpty()) {
+                                    Glide.with(Profile.this)
+                                            .load(photoUrl)
+                                            .placeholder(R.drawable.ic_profile)
+                                            .error(R.drawable.ic_profile)
+                                            .into(profileImage);
+                                } else {
+                                    profileImage.setImageResource(R.drawable.ic_profile);
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Toast.makeText(Profile.this, "Failed to load profile: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
         } else {
             userEmail.setText("No user");
             userPhoneNumber.setText("No phone number");

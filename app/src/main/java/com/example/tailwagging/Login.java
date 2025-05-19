@@ -19,7 +19,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.facebook.CallbackManager;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -30,7 +29,10 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.firestore.FirebaseFirestore;
+
+// Firestore import removed
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.security.MessageDigest;
 import java.util.HashMap;
@@ -45,9 +47,13 @@ public class Login extends AppCompatActivity {
     EditText textEmail, textPassword;
     Button btnLogin, btnGoogle, btnFacebook;
     FirebaseAuth authLogin;
-    FirebaseFirestore firestore;
+    // Firestore removed
+    // FirebaseFirestore firestore;
     GoogleSignInClient googleSignInClient;
-    CallbackManager mCallbackManager;
+    // CallbackManager mCallbackManager; // Facebook removed
+
+    // Add for Realtime Database
+    DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,7 +74,7 @@ public class Login extends AppCompatActivity {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 String keyHash = Base64.encodeToString(md.digest(), Base64.NO_WRAP);
-                Log.d("KeyHash:", keyHash); // This will print the correct key hash
+                Log.d("KeyHash:", keyHash);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -80,12 +86,14 @@ public class Login extends AppCompatActivity {
         textEmail = findViewById(R.id.text_email);
         textPassword = findViewById(R.id.text_password);
         btnGoogle = findViewById(R.id.btn_google);
-// btnFacebook is removed
 
         authLogin = FirebaseAuth.getInstance();
-        firestore = FirebaseFirestore.getInstance();
+        // firestore = FirebaseFirestore.getInstance();
 
-// Google Sign-In Setup
+        // Realtime Database reference
+        dbRef = FirebaseDatabase.getInstance().getReference();
+
+        // Google Sign-In Setup
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.client_id))
                 .requestEmail()
@@ -93,9 +101,6 @@ public class Login extends AppCompatActivity {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
-// Facebook SDK initialization and callback manager are removed
-
-// Redirect to MainActivity if user is already logged in
         if (authLogin.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
             finish();
@@ -105,8 +110,6 @@ public class Login extends AppCompatActivity {
             startActivity(new Intent(Login.this, Registration.class));
             finish();
         });
-
-// Facebook login logic is removed
 
         btnLogin.setOnClickListener(v -> {
             String email = textEmail.getText().toString().trim();
@@ -167,8 +170,6 @@ public class Login extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // mCallbackManager.onActivityResult(requestCode, resultCode, data); // Facebook callback removed
-
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
@@ -189,13 +190,13 @@ public class Login extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = authLogin.getCurrentUser();
                         if (user != null) {
-                            // Save user data to Firestore
+                            // Save user data to Realtime Database
                             Map<String, Object> userData = new HashMap<>();
                             userData.put("name", user.getDisplayName());
                             userData.put("email", user.getEmail());
-                            userData.put("photoUrl", user.getPhotoUrl().toString()); // Save photo URL
-                            firestore.collection("users").document(user.getUid())
-                                    .set(userData)
+                            userData.put("photoUrl", user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "default_url");
+
+                            dbRef.child("users").child(user.getUid()).setValue(userData)
                                     .addOnSuccessListener(aVoid -> {
                                         startActivity(new Intent(Login.this, MainActivity.class));
                                         finish();

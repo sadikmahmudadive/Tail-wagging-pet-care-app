@@ -20,18 +20,17 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.bumptech.glide.Glide;
-import com.facebook.CallbackManager;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
+// Firestore import removed
+//import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+// Realtime Database import
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,8 +44,11 @@ public class Registration extends AppCompatActivity {
     ImageView profilePic;
 
     FirebaseAuth auth;
-    FirebaseFirestore firestore;
+    // Firestore removed
+    // FirebaseFirestore firestore;
     StorageReference storageReference;
+    // Realtime Database reference
+    DatabaseReference dbRef;
 
     private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
@@ -78,8 +80,9 @@ public class Registration extends AppCompatActivity {
         btnSignup = findViewById(R.id.btn_SignupR);
 
         auth = FirebaseAuth.getInstance();
-        firestore = FirebaseFirestore.getInstance();
+        // firestore = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
+        dbRef = FirebaseDatabase.getInstance().getReference();
 
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -111,37 +114,28 @@ public class Registration extends AppCompatActivity {
             }
 
             auth.createUserWithEmailAndPassword(email, password)
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                FirebaseUser user = auth.getCurrentUser();
-                                if (user != null) {
-                                    String userId = user.getUid();
-                                    Map<String, Object> userData = new HashMap<>();
-                                    userData.put("name", name);
-                                    userData.put("email", email);
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = auth.getCurrentUser();
+                            if (user != null) {
+                                String userId = user.getUid();
+                                Map<String, Object> userData = new HashMap<>();
+                                userData.put("name", name);
+                                userData.put("email", email);
 
-                                    firestore.collection("users").document(userId)
-                                            .set(userData)
-                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    Toast.makeText(Registration.this, "User data added successfully", Toast.LENGTH_SHORT).show();
-                                                    startActivity(new Intent(Registration.this, Login.class));
-                                                    finish();
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    Toast.makeText(Registration.this, "Error adding document: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                }
-                            } else {
-                                Toast.makeText(Registration.this, "User not Created", Toast.LENGTH_SHORT).show();
+                                dbRef.child("users").child(userId)
+                                        .setValue(userData)
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(Registration.this, "User data added successfully", Toast.LENGTH_SHORT).show();
+                                            startActivity(new Intent(Registration.this, Login.class));
+                                            finish();
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            Toast.makeText(Registration.this, "Error adding data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                        });
                             }
+                        } else {
+                            Toast.makeText(Registration.this, "User not Created", Toast.LENGTH_SHORT).show();
                         }
                     });
         });
