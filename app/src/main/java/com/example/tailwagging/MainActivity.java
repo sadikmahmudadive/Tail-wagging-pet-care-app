@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         // Use your custom Firebase Realtime Database URL
-        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-c24fa-default-rtdb.firebaseio.com/").getReference();
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         logoutButton = findViewById(R.id.buttonLogout);
         textView = findViewById(R.id.userName);

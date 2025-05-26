@@ -73,7 +73,7 @@ public class Registration extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference();
         // Use your custom Firebase Realtime Database URL
-        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-c24fa-default-rtdb.firebaseio.com/").getReference();
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         if (auth.getCurrentUser() != null) {
             startActivity(new Intent(getApplicationContext(), MainActivity.class));

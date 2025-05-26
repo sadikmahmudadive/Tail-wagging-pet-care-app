@@ -83,7 +83,7 @@ public class Login extends AppCompatActivity {
         authLogin = FirebaseAuth.getInstance();
 
         // Use your custom Firebase Realtime Database URL
-        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-c24fa-default-rtdb.firebaseio.com/").getReference();
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         // Google Sign-In Setup
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

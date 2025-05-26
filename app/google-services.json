@@ -12,7 +12,12 @@
           "package_name": "com.example.tailwagging"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "849611779485-lio20ffads3jjfkppr7fhncs5v17ojue.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB6h140AXRy-jf2juyuN7sa6X4PqkYx62I"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "849611779485-lio20ffads3jjfkppr7fhncs5v17ojue.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
