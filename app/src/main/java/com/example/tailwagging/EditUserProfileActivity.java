@@ -50,7 +50,6 @@ public class EditUserProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Set dialog theme before super.onCreate
         setTheme(R.style.MyCustomDialogTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user_profile);
@@ -165,27 +164,35 @@ public class EditUserProfileActivity extends AppCompatActivity {
         String address = editAddress.getText().toString().trim();
         String password = editPassword.getText().toString().trim();
 
-        // Build user data map for updating
         Map<String, Object> updateData = new HashMap<>();
         updateData.put("name", username);
         updateData.put("phone", phone);
         updateData.put("address", address);
 
-        // If imageUri is set, upload and update profileImageUrl
         if (imageUri != null) {
             StorageReference imgRef = storageReference.child("users").child(user.getUid()).child("profile.jpg");
             imgRef.putFile(imageUri)
                     .addOnSuccessListener(taskSnapshot -> imgRef.getDownloadUrl().addOnSuccessListener(uri -> {
                         updateData.put("profileImageUrl", uri.toString());
-                        // Update in Realtime Database after image upload
                         dbRef.child("users").child(user.getUid()).updateChildren(updateData)
-                                .addOnSuccessListener(aVoid -> Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show())
+                                .addOnSuccessListener(aVoid -> {
+                                    Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+                                    loadUserData();
+                                    setEditable(false);
+                                    editPassword.setText("");
+                                    imageUri = null;
+                                })
                                 .addOnFailureListener(e -> Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                     }))
                     .addOnFailureListener(e -> Toast.makeText(this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         } else {
             dbRef.child("users").child(user.getUid()).updateChildren(updateData)
-                    .addOnSuccessListener(aVoid -> Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show())
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+                        loadUserData();
+                        setEditable(false);
+                        editPassword.setText("");
+                    })
                     .addOnFailureListener(e -> Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show());
         }
 

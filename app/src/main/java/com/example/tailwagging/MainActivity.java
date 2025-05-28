@@ -28,6 +28,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
@@ -36,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     TextView textView;
     ImageView userProfilePhoto;
 
-    // Realtime Database reference with custom URL
     private DatabaseReference dbRef;
 
     @Override
@@ -52,44 +54,21 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        // Use your custom Firebase Realtime Database URL
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         logoutButton = findViewById(R.id.buttonLogout);
         textView = findViewById(R.id.userName);
         userProfilePhoto = findViewById(R.id.userProfilePhoto);
 
-        // --- NAVIGATION BAR:
-        // CALENDAR ---
         LinearLayout navCalendar = findViewById(R.id.navCalendar);
-        navCalendar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchCalendarActivity();
-            }
-        });
+        navCalendar.setOnClickListener(v -> launchCalendarActivity());
 
-        // --- NAVIGATION BAR:
-        // ADD PET ---
         LinearLayout navAddPet = findViewById(R.id.navAddPet);
-        navAddPet.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchAddEditPetActivity();
-            }
-        });
+        navAddPet.setOnClickListener(v -> launchAddEditPetActivity());
 
-        // --- NAVIGATION BAR:
-        // PROFILE ---
         LinearLayout navProfile = findViewById(R.id.navProfile);
-        navProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchProfileActivity();
-            }
-        });
+        navProfile.setOnClickListener(v -> launchProfileActivity());
 
-        // Logout functionality with confirmation
         logoutButton.setOnClickListener(v -> {
             new AlertDialog.Builder(MainActivity.this)
                     .setTitle("Logout")
@@ -103,7 +82,6 @@ public class MainActivity extends AppCompatActivity {
                     .show();
         });
 
-        // Check if user is logged in
         if (user == null) {
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
             textView.setText("Guest");
@@ -111,8 +89,8 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // Fetch and display user data
         fetchAndDisplayUserData();
+        fetchAndShowRegisteredPets();
     }
 
     private void launchCalendarActivity() {
@@ -131,14 +109,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchAndDisplayUserData() {
-        // Get user data from Firebase Authentication
         String displayName = user.getDisplayName();
 
-        // If display name is available, set it in the TextView
         if (displayName != null && !displayName.isEmpty()) {
             textView.setText(displayName);
-
-            // Also try to display photoUrl from Auth if available
             if (user.getPhotoUrl() != null) {
                 Glide.with(this)
                         .load(user.getPhotoUrl().toString())
@@ -146,11 +120,9 @@ public class MainActivity extends AppCompatActivity {
                         .error(R.drawable.ic_profile)
                         .into(userProfilePhoto);
             } else {
-                // fallback to database
                 fetchUserFieldsFromRealtimeDatabase();
             }
         } else {
-            // Fetch display name and profile photo from Realtime Database if not available in Firebase Auth
             fetchUserFieldsFromRealtimeDatabase();
         }
     }
@@ -168,7 +140,6 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 textView.setText("Unknown User");
                             }
-                            // Fetch and display profile photo
                             if (photoUrl != null && !photoUrl.isEmpty()) {
                                 Glide.with(MainActivity.this)
                                         .load(photoUrl)
@@ -190,16 +161,34 @@ public class MainActivity extends AppCompatActivity {
                         userProfilePhoto.setImageResource(R.drawable.ic_profile);
                     }
                 });
+    }
 
-        // Set up RecyclerView for pets
+    private void fetchAndShowRegisteredPets() {
         RecyclerView recyclerViewPets = findViewById(R.id.recyclerViewPets);
         recyclerViewPets.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-
-        //spinner
         FrameLayout petsProgressOverlay = findViewById(R.id.petsProgressOverlay);
-        // Show while loading:
         petsProgressOverlay.setVisibility(View.VISIBLE);
-        // Hide when done loading:
-        petsProgressOverlay.setVisibility(View.GONE);
+
+        dbRef.child("pets")
+                .orderByChild("user_id").equalTo(user.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        petsProgressOverlay.setVisibility(View.GONE);
+                        List<Pet> petList = new ArrayList<>();
+                        for (DataSnapshot petSnap : dataSnapshot.getChildren()) {
+                            Pet pet = petSnap.getValue(Pet.class);
+                            if (pet != null) petList.add(pet);
+                        }
+                        PetAdapter adapter = new PetAdapter(MainActivity.this, petList);
+                        recyclerViewPets.setAdapter(adapter);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        petsProgressOverlay.setVisibility(View.GONE);
+                        Toast.makeText(MainActivity.this, "Failed to load pets: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }

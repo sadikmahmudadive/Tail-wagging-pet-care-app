@@ -23,7 +23,6 @@ import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-// Realtime Database import
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +45,7 @@ public class Profile extends AppCompatActivity {
 
     private boolean cloudinaryInitialized = false;
 
+    // Launcher for picking image
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -55,6 +55,14 @@ public class Profile extends AppCompatActivity {
                         uploadProfileImageToCloudinary(imageUri);
                     }
                 }
+            }
+    );
+
+    // Launcher for editing About Me
+    private final ActivityResultLauncher<Intent> aboutMeLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(), result -> {
+                // Always reload data after returning from editing
+                reloadUserData();
             }
     );
 
@@ -92,57 +100,58 @@ public class Profile extends AppCompatActivity {
             cloudinaryInitialized = true;
         }
 
-        // Set data
-        if (user != null) {
-            // Set email
-            userEmail.setText(user.getEmail());
-
-            // Fetch phone and profile image URL from Realtime Database
-            dbRef.child("users").child(user.getUid())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            if (dataSnapshot.exists()) {
-                                String phone = dataSnapshot.child("phone").getValue(String.class);
-                                String photoUrl = dataSnapshot.child("photoUrl").getValue(String.class);
-
-                                if (phone != null && !phone.isEmpty()) {
-                                    userPhoneNumber.setText(phone);
-                                } else {
-                                    userPhoneNumber.setText("No phone number");
-                                }
-
-                                if (photoUrl != null && !photoUrl.isEmpty()) {
-                                    Glide.with(Profile.this)
-                                            .load(photoUrl)
-                                            .placeholder(R.drawable.ic_profile)
-                                            .error(R.drawable.ic_profile)
-                                            .into(profileImage);
-                                } else {
-                                    profileImage.setImageResource(R.drawable.ic_profile);
-                                }
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Toast.makeText(Profile.this, "Failed to load profile: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-        } else {
-            userEmail.setText("No user");
-            userPhoneNumber.setText("No phone number");
-            profileImage.setImageResource(R.drawable.ic_profile);
-        }
+        // Set initial user data
+        reloadUserData();
 
         profileImage.setOnClickListener(v -> openImagePicker());
 
         optionAboutMe.setOnClickListener(v -> {
-            // Launch EditUserProfileActivity as a pop-up dialog style
+            // Launch EditUserProfileActivity and refresh on return
             Intent intent = new Intent(Profile.this, EditUserProfileActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            aboutMeLauncher.launch(intent);
         });
+    }
+
+    private void reloadUserData() {
+        if (user == null) {
+            userEmail.setText("No user");
+            userPhoneNumber.setText("No phone number");
+            profileImage.setImageResource(R.drawable.ic_profile);
+            return;
+        }
+        userEmail.setText(user.getEmail());
+        dbRef.child("users").child(user.getUid())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.exists()) {
+                            String phone = dataSnapshot.child("phone").getValue(String.class);
+                            String photoUrl = dataSnapshot.child("photoUrl").getValue(String.class);
+
+                            if (phone != null && !phone.isEmpty()) {
+                                userPhoneNumber.setText(phone);
+                            } else {
+                                userPhoneNumber.setText("No phone number");
+                            }
+
+                            if (photoUrl != null && !photoUrl.isEmpty()) {
+                                Glide.with(Profile.this)
+                                        .load(photoUrl)
+                                        .placeholder(R.drawable.ic_profile)
+                                        .error(R.drawable.ic_profile)
+                                        .into(profileImage);
+                            } else {
+                                profileImage.setImageResource(R.drawable.ic_profile);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(Profile.this, "Failed to load profile: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     private void openImagePicker() {
@@ -205,6 +214,8 @@ public class Profile extends AppCompatActivity {
                             .error(R.drawable.ic_profile)
                             .into(profileImage);
                     Toast.makeText(Profile.this, "Profile image updated!", Toast.LENGTH_SHORT).show();
+                    // Refresh all user data (in case other profile data changed as well)
+                    reloadUserData();
                 })
                 .addOnFailureListener(e -> {
                     progressDialog.dismiss();
