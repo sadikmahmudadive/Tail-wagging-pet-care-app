@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-
 import java.util.List;
 
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
@@ -34,9 +33,11 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
         Pet pet = petList.get(position);
         holder.petName.setText(pet.getName());
-        // You can display species, breed, etc. as needed
-        if (pet.getPhotoUrl() != null && !pet.getPhotoUrl().isEmpty()) {
-            Glide.with(context).load(pet.getPhotoUrl())
+
+        String imageUrl = pet.getImageUrl(); // Use imageUrl as per Firebase
+        if (imageUrl != null && !imageUrl.isEmpty()) {
+            Glide.with(context)
+                    .load(imageUrl)
                     .placeholder(R.drawable.ic_pet_placeholder)
                     .error(R.drawable.ic_pet_placeholder)
                     .into(holder.petImage);
@@ -57,7 +58,6 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             super(itemView);
             petImage = itemView.findViewById(R.id.petImage);
             petName = itemView.findViewById(R.id.petName);
-            // Add more fields if your item layout has them
         }
     }
 }

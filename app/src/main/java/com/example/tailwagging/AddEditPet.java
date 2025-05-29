@@ -60,8 +60,6 @@ public class AddEditPet extends AppCompatActivity {
     private LinearLayout layoutAddedPets;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    private boolean cloudinaryInitialized = false;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,16 +121,6 @@ public class AddEditPet extends AppCompatActivity {
             showPets();
             swipeRefreshLayout.setRefreshing(false);
         });
-
-        // Initialize Cloudinary once
-        if (!cloudinaryInitialized) {
-            Map<String, String> config = new HashMap<>();
-            config.put("cloud_name", "dhm0edatk");
-            config.put("api_key", "879315316647413");
-            config.put("api_secret", "BgrjuKuPR_UqGZf2Gb5RHKDmF_0");
-            MediaManager.init(this, config);
-            cloudinaryInitialized = true;
-        }
 
         showPets();
     }

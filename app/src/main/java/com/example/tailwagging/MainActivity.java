@@ -18,6 +18,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView userProfilePhoto;
 
     private DatabaseReference dbRef;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,13 +63,19 @@ public class MainActivity extends AppCompatActivity {
         userProfilePhoto = findViewById(R.id.userProfilePhoto);
 
         LinearLayout navCalendar = findViewById(R.id.navCalendar);
-        navCalendar.setOnClickListener(v -> launchCalendarActivity());
+        if (navCalendar != null) {
+            navCalendar.setOnClickListener(v -> launchCalendarActivity());
+        }
 
         LinearLayout navAddPet = findViewById(R.id.navAddPet);
-        navAddPet.setOnClickListener(v -> launchAddEditPetActivity());
+        if (navAddPet != null) {
+            navAddPet.setOnClickListener(v -> launchAddEditPetActivity());
+        }
 
         LinearLayout navProfile = findViewById(R.id.navProfile);
-        navProfile.setOnClickListener(v -> launchProfileActivity());
+        if (navProfile != null) {
+            navProfile.setOnClickListener(v -> launchProfileActivity());
+        }
 
         logoutButton.setOnClickListener(v -> {
             new AlertDialog.Builder(MainActivity.this)
@@ -90,6 +98,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         fetchAndDisplayUserData();
+
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            fetchAndShowRegisteredPets();
+        });
+
         fetchAndShowRegisteredPets();
     }
 
@@ -167,14 +181,15 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView recyclerViewPets = findViewById(R.id.recyclerViewPets);
         recyclerViewPets.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         FrameLayout petsProgressOverlay = findViewById(R.id.petsProgressOverlay);
-        petsProgressOverlay.setVisibility(View.VISIBLE);
+        if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.VISIBLE);
 
         dbRef.child("pets")
-                .orderByChild("user_id").equalTo(user.getUid())
+                .orderByChild("ownerID").equalTo(user.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        petsProgressOverlay.setVisibility(View.GONE);
+                        if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.GONE);
+                        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                         List<Pet> petList = new ArrayList<>();
                         for (DataSnapshot petSnap : dataSnapshot.getChildren()) {
                             Pet pet = petSnap.getValue(Pet.class);
@@ -186,7 +201,8 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        petsProgressOverlay.setVisibility(View.GONE);
+                        if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.GONE);
+                        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(MainActivity.this, "Failed to load pets: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });

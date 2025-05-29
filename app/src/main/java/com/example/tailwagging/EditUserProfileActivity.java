@@ -1,6 +1,7 @@
 package com.example.tailwagging;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.cloudinary.android.MediaManager;
+import com.cloudinary.android.callback.ErrorInfo;
+import com.cloudinary.android.callback.UploadCallback;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -25,8 +29,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +44,6 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private DatabaseReference dbRef;
-    private StorageReference storageReference;
 
     private boolean isEditable = false;
     private static final int PICK_IMAGE = 1;
@@ -77,7 +78,6 @@ public class EditUserProfileActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference();
-        storageReference = FirebaseStorage.getInstance().getReference();
 
         // Back button
         backButton.setOnClickListener(v -> finish());
@@ -136,8 +136,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
                             editPhone.setText(snapshot.child("phone").getValue(String.class));
                             editAddress.setText(snapshot.child("address").getValue(String.class));
 
-                            String imgUrl = snapshot.child("profileImageUrl").getValue(String.class);
-                            Log.d("PROFILE_IMG", "profileImageUrl from RTDB: " + imgUrl);
+                            // Use 'photoUrl' for consistency
+                            String imgUrl = snapshot.child("photoUrl").getValue(String.class);
                             if (imgUrl != null && !imgUrl.isEmpty()) {
                                 Glide.with(EditUserProfileActivity.this)
                                         .load(imgUrl)
@@ -170,34 +170,61 @@ public class EditUserProfileActivity extends AppCompatActivity {
         updateData.put("address", address);
 
         if (imageUri != null) {
-            StorageReference imgRef = storageReference.child("users").child(user.getUid()).child("profile.jpg");
-            imgRef.putFile(imageUri)
-                    .addOnSuccessListener(taskSnapshot -> imgRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        updateData.put("profileImageUrl", uri.toString());
-                        dbRef.child("users").child(user.getUid()).updateChildren(updateData)
-                                .addOnSuccessListener(aVoid -> {
-                                    Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
-                                    loadUserData();
-                                    setEditable(false);
-                                    editPassword.setText("");
-                                    imageUri = null;
-                                })
-                                .addOnFailureListener(e -> Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                    }))
-                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to upload image: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            uploadProfileImageToCloudinary(imageUri, updateData, password);
         } else {
-            dbRef.child("users").child(user.getUid()).updateChildren(updateData)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
-                        loadUserData();
-                        setEditable(false);
-                        editPassword.setText("");
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            updateProfile(updateData, password);
         }
+    }
+
+    private void uploadProfileImageToCloudinary(Uri imageUri, Map<String, Object> updateData, String password) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Uploading image...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        MediaManager.get().upload(imageUri)
+                .unsigned("tail_wagging")
+                .option("folder", "profile_pics/")
+                .callback(new UploadCallback() {
+                    @Override
+                    public void onStart(String requestId) {}
+
+                    @Override
+                    public void onProgress(String requestId, long bytes, long totalBytes) {}
+
+                    @Override
+                    public void onSuccess(String requestId, Map resultData) {
+                        String imageUrl = (String) resultData.get("secure_url");
+                        updateData.put("photoUrl", imageUrl);
+                        progressDialog.dismiss();
+                        updateProfile(updateData, password);
+                    }
+
+                    @Override
+                    public void onError(String requestId, ErrorInfo error) {
+                        progressDialog.dismiss();
+                        Toast.makeText(EditUserProfileActivity.this, "Image upload failed: " + error.getDescription(), Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onReschedule(String requestId, ErrorInfo error) {}
+                })
+                .dispatch();
+    }
+
+    private void updateProfile(Map<String, Object> updateData, String password) {
+        dbRef.child("users").child(user.getUid()).updateChildren(updateData)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(this, "Profile updated", Toast.LENGTH_SHORT).show();
+                    loadUserData();
+                    setEditable(false);
+                    editPassword.setText("");
+                    imageUri = null;
+                })
+                .addOnFailureListener(e -> Toast.makeText(this, "Failed to update: " + e.getMessage(), Toast.LENGTH_SHORT).show());
 
         // Optionally update password if changed (Firebase Authentication)
-        if (!password.isEmpty()) {
+        if (password != null && !password.isEmpty()) {
             user.updatePassword(password)
                     .addOnSuccessListener(aVoid -> Toast.makeText(this, "Password updated", Toast.LENGTH_SHORT).show())
                     .addOnFailureListener(e -> Toast.makeText(this, "Failed to update password: " + e.getMessage(), Toast.LENGTH_SHORT).show());

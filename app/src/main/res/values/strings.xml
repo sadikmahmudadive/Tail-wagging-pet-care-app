@@ -5,4 +5,5 @@
     <string name="back"><![CDATA[<-]]></string>
     <string name="forward"><![CDATA[->]]></string>
     <string name="more_options">More options</string>
+    <string name="pet_image">Pet Image</string>
 </resources>

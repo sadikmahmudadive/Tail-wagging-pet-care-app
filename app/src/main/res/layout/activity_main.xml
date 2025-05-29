@@ -65,291 +65,297 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Main Scrollable Content -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scrollableContent"
+    <!-- SWIPE REFRESH LAYOUT: Wraps only the scrollable content! -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="76dp"
+        android:layout_marginBottom="80dp"
         android:layout_marginTop="90dp"
-        android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
-            android:id="@+id/scrollableInnerLayout"
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollableContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="16dp">
+            android:fillViewport="true">
 
-            <!-- My Pets Headline with Paw Icon -->
             <LinearLayout
-                android:id="@+id/layoutMyPetsHeader"
-                android:layout_width="wrap_content"
+                android:id="@+id/scrollableInnerLayout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="24dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:paddingBottom="16dp">
 
-                <ImageView
-                    android:id="@+id/imageViewPaw"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_paw"
-                    android:contentDescription="@string/paw_icon" />
-
-                <TextView
-                    android:id="@+id/textViewMyPets"
+                <!-- My Pets Headline with Paw Icon -->
+                <LinearLayout
+                    android:id="@+id/layoutMyPetsHeader"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="My Pets"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:textColor="@color/dark_blue"
-                    android:layout_marginStart="8dp"
-                    android:fontFamily="@font/fredoka_bold"/>
-            </LinearLayout>
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="24dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-            <!-- RecyclerView for Registered Pets -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerViewPets"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:orientation="horizontal"
-                tools:listitem="@layout/item_pet_horizontal" />
+                    <ImageView
+                        android:id="@+id/imageViewPaw"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_paw"
+                        android:contentDescription="@string/paw_icon" />
 
-            <!-- Custom ProgressBar overlay for RecyclerView -->
-            <FrameLayout
-                android:id="@+id/petsProgressOverlay"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="-120dp"
-                android:background="@android:color/transparent"
-                android:visibility="gone"
-                android:elevation="2dp">
+                    <TextView
+                        android:id="@+id/textViewMyPets"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My Pets"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
+                        android:textColor="@color/dark_blue"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="@font/fredoka_bold"/>
+                </LinearLayout>
 
-                <ProgressBar
-                    android:id="@+id/progressBarPets"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    style="@style/Widget.AppCompat.ProgressBar"
-                    android:indeterminate="true"
-                    android:indeterminateTint="@color/orange"
-                    android:visibility="visible"/>
-            </FrameLayout>
+                <!-- RecyclerView for Registered Pets -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewPets"
+                    android:layout_width="match_parent"
+                    android:layout_height="170dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:clipToPadding="false"
+                    android:overScrollMode="never"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:orientation="horizontal"
+                    tools:listitem="@layout/item_pet_horizontal" />
 
-            <!-- Pet Location & Pet Status Cards -->
-            <LinearLayout
-                android:id="@+id/pet_dashboard_cards"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                <!-- Custom ProgressBar overlay for RecyclerView -->
+                <FrameLayout
+                    android:id="@+id/petsProgressOverlay"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="-120dp"
+                    android:background="@android:color/transparent"
+                    android:visibility="gone"
+                    android:elevation="2dp">
 
-                <!-- Pet Location Card -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardPetLocation"
-                    android:layout_width="0dp"
-                    android:layout_height="370dp"
-                    android:layout_marginEnd="8dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/white"
-                    app:cardCornerRadius="30dp"
-                    app:cardElevation="2dp">
+                    <ProgressBar
+                        android:id="@+id/progressBarPets"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:layout_gravity="center"
+                        style="@style/Widget.AppCompat.ProgressBar"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/orange"
+                        android:visibility="visible"/>
+                </FrameLayout>
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/white"
-                        android:orientation="vertical"
-                        android:padding="18dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
-                                android:contentDescription="Location Icon"
-                                android:src="@drawable/ic_location_pin" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:fontFamily="@font/fredoka_bold"
-                                android:text="Pet Location"
-                                android:textColor="@color/black"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <ImageView
-                            android:id="@+id/imageMap"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_weight="1"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/sample_map" />
-
-                        <Button
-                            android:id="@+id/btnTrackPets"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="@font/fredoka_bold"
-                            android:paddingTop="8dp"
-                            android:paddingBottom="8dp"
-                            android:text="Track Pets"
-                            android:textColor="@color/black"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <!-- Pet Status Card -->
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardPetStatus"
-                    android:layout_width="0dp"
-                    android:layout_height="370dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_weight="1"
-                    android:background="@android:color/white"
-                    app:cardCornerRadius="30dp"
-                    app:cardElevation="2dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@color/white"
-                        android:orientation="vertical"
-                        android:padding="18dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="28dp"
-                                android:layout_height="28dp"
-                                android:contentDescription="Status Icon"
-                                android:src="@drawable/ic_status" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:fontFamily="@font/fredoka_bold"
-                                android:text="Pet Status"
-                                android:textColor="@color/black"
-                                android:textSize="20sp"
-                                android:textStyle="bold" />
-                        </LinearLayout>
-
-                        <!-- RecyclerView for Pets' Statuses -->
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerViewPetStatus"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_marginTop="12dp"
-                            android:layout_marginBottom="12dp"
-                            android:layout_weight="1"
-                            android:overScrollMode="never"
-                            tools:listitem="@layout/item_pet_status"/>
-
-                        <Button
-                            android:id="@+id/btnCheckPets"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
-                            android:fontFamily="@font/fredoka_bold"
-                            android:paddingTop="8dp"
-                            android:paddingBottom="8dp"
-                            android:text="Check Pets"
-                            android:textColor="@color/black"
-                            android:textSize="12sp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardPetCalendar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="8dp"
-                app:cardCornerRadius="30dp"
-                app:cardElevation="2dp"
-                android:background="@android:color/white">
-
+                <!-- Pet Location & Pet Status Cards -->
                 <LinearLayout
+                    android:id="@+id/pet_dashboard_cards"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@color/white"
-                    android:padding="18dp">
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:padding="0dp">
+
+                    <!-- Pet Location Card -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardPetLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="370dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/white"
+                        app:cardCornerRadius="30dp"
+                        app:cardElevation="2dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/white"
+                            android:orientation="vertical"
+                            android:padding="18dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:contentDescription="Location Icon"
+                                    android:src="@drawable/ic_location_pin" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:fontFamily="@font/fredoka_bold"
+                                    android:text="Pet Location"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/imageMap"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginBottom="12dp"
+                                android:layout_weight="1"
+                                android:scaleType="centerCrop"
+                                android:src="@drawable/sample_map" />
+
+                            <Button
+                                android:id="@+id/btnTrackPets"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="@font/fredoka_bold"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:text="Track Pets"
+                                android:textColor="@color/black"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <!-- Pet Status Card -->
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardPetStatus"
+                        android:layout_width="0dp"
+                        android:layout_height="370dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:background="@android:color/white"
+                        app:cardCornerRadius="30dp"
+                        app:cardElevation="2dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/white"
+                            android:orientation="vertical"
+                            android:padding="18dp">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="28dp"
+                                    android:layout_height="28dp"
+                                    android:contentDescription="Status Icon"
+                                    android:src="@drawable/ic_status" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:fontFamily="@font/fredoka_bold"
+                                    android:text="Pet Status"
+                                    android:textColor="@color/black"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <!-- RecyclerView for Pets' Statuses -->
+                            <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recyclerViewPetStatus"
+                                android:layout_width="match_parent"
+                                android:layout_height="0dp"
+                                android:layout_marginTop="12dp"
+                                android:layout_marginBottom="12dp"
+                                android:layout_weight="1"
+                                android:overScrollMode="never"
+                                tools:listitem="@layout/item_pet_status"/>
+
+                            <Button
+                                android:id="@+id/btnCheckPets"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:background="@android:color/transparent"
+                                android:fontFamily="@font/fredoka_bold"
+                                android:paddingTop="8dp"
+                                android:paddingBottom="8dp"
+                                android:text="Check Pets"
+                                android:textColor="@color/black"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </LinearLayout>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardPetCalendar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardCornerRadius="30dp"
+                    app:cardElevation="2dp"
+                    android:background="@android:color/white">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
+                        android:orientation="vertical"
+                        android:background="@color/white"
+                        android:padding="18dp">
 
-                        <ImageView
-                            android:layout_width="26dp"
-                            android:layout_height="26dp"
-                            android:src="@drawable/ic_calendar"
-                            android:contentDescription="Calendar Icon"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Pet Events and Reminders"
-                            android:textStyle="bold"
-                            android:textSize="20sp"
-                            android:textColor="@color/dark_blue"
-                            android:layout_marginStart="8dp"
-                            android:fontFamily="@font/fredoka_bold"/>
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:src="@drawable/ic_calendar"
+                                android:contentDescription="Calendar Icon"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Pet Events and Reminders"
+                                android:textStyle="bold"
+                                android:textSize="20sp"
+                                android:textColor="@color/dark_blue"
+                                android:layout_marginStart="8dp"
+                                android:fontFamily="@font/fredoka_bold"/>
+                        </LinearLayout>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/recyclerViewPetEvents"
+                            android:layout_width="match_parent"
+                            android:layout_height="180dp"
+                            android:layout_margin="16dp"
+                            android:clipToPadding="false"
+                            android:paddingBottom="8dp"/>
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewPetEvents"
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:layout_margin="16dp"
-                        android:clipToPadding="false"
-                        android:paddingBottom="8dp"/>
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                <!-- Place for more features/cards -->
+                <!-- Add more views here for additional features, they will be scrollable. -->
 
-            <!-- Place for more features/cards -->
-            <!-- Add more views here for additional features, they will be scrollable. -->
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- Navigation Bar: Statically Positioned at Bottom -->
     <include

@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.tailwagging" />
-                  <option name="mobileSdkAppId" value="1:160632957908:android:b56a5928e99c382bde0441" />
-                  <option name="projectId" value="tail-wagging" />
-                  <option name="projectNumber" value="160632957908" />
+                  <option name="mobileSdkAppId" value="1:849611779485:android:2c3bc9ba660c1a0063d374" />
+                  <option name="projectId" value="tail-wagging-d03de" />
+                  <option name="projectNumber" value="849611779485" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
