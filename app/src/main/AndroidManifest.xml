@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -19,12 +20,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TailWagging"
-        tools:targetApi="31"
-        android:name=".App">
+        tools:targetApi="31">
+        <activity
+            android:name=".PetDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MyPetsActivity"
+            android:exported="false" />
         <activity
             android:name=".EditUserProfileActivity"
-            android:theme="@style/Theme.AppCompat.Dialog"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat.Dialog" />
         <activity
             android:name=".Profile"
             android:exported="false" />

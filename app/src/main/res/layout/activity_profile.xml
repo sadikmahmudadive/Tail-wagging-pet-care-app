@@ -215,42 +215,6 @@
 
             <!-- Option Item 2 -->
             <LinearLayout
-                android:id="@+id/optionMyPets"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:paddingStart="18dp"
-                android:paddingEnd="18dp">
-
-                <ImageView
-                    android:layout_width="26dp"
-                    android:layout_height="26dp"
-                    android:src="@drawable/ic_pets"
-                    android:contentDescription="My Pets"
-                    app:tint="@color/dark_blue" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="My Pets"
-                    android:textSize="17sp"
-                    android:textColor="@color/dark_blue"
-                    android:fontFamily="@font/fredoka"
-                    android:layout_marginStart="14dp"/>
-                <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:src="@drawable/ic_arrow_right"
-                    android:contentDescription="Go"
-                    app:tint="@color/dark_blue" />
-            </LinearLayout>
-
-            <!-- Option Item 3 -->
-            <LinearLayout
                 android:id="@+id/optionAddDevice"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
@@ -285,7 +249,7 @@
                     android:contentDescription="Go"/>
             </LinearLayout>
 
-            <!-- Option Item 4 -->
+            <!-- Option Item 3 -->
             <LinearLayout
                 android:id="@+id/optionFavoriteVet"
                 android:layout_width="match_parent"
