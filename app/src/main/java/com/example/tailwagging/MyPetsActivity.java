@@ -2,18 +2,17 @@ package com.example.tailwagging;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,51 +26,54 @@ import java.util.List;
 
 public class MyPetsActivity extends AppCompatActivity implements PetAdapter.OnPetListener {
 
+    private static final String TAG = "MyPetsActivity";
+
     private RecyclerView recyclerViewPets;
     private PetAdapter petAdapter;
     private List<Pet> petList;
-    private LinearLayout layoutNoPets; // Changed from TextView to LinearLayout
-    private FloatingActionButton fabAddPet;
-    private ImageButton buttonBack;
-    // private TextView topBarTitle; // If you need to change the title dynamically
+    private LinearLayout layoutNoPets;
+    private AppCompatButton buttonBack;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private FirebaseAuth mAuth;
     private FirebaseUser currentUser;
     private DatabaseReference petsRef;
+    private ValueEventListener petsListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // EdgeToEdge.enable(this); // Usually not needed with CoordinatorLayout managing fitsSystemWindows
         setContentView(R.layout.activity_my_pets);
 
-        // Initialize views from the new layout
+        Log.d(TAG, "onCreate called");
+
         buttonBack = findViewById(R.id.buttonBack);
-        // topBarTitle = findViewById(R.id.topBarTitle); // Uncomment if you need to access it
-
         recyclerViewPets = findViewById(R.id.recyclerViewPets);
-        layoutNoPets = findViewById(R.id.layoutNoPets); // Reference to the LinearLayout
-        fabAddPet = findViewById(R.id.fabAddPet);
+        layoutNoPets = findViewById(R.id.layoutNoPets);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
 
-        // Setup RecyclerView
         recyclerViewPets.setLayoutManager(new LinearLayoutManager(this));
         petList = new ArrayList<>();
-        // Use the PetAdapter constructor that takes the OnPetListener
-        petAdapter = new PetAdapter(this, petList, this);
+        petAdapter = new PetAdapter(this, new ArrayList<>(petList), this); // Defensive copy
         recyclerViewPets.setAdapter(petAdapter);
 
-        // Firebase instances
         mAuth = FirebaseAuth.getInstance();
         currentUser = mAuth.getCurrentUser();
-        petsRef = FirebaseDatabase.getInstance().getReference("pets");
+        petsRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference("pets");
 
-        // Set Click Listeners
-        buttonBack.setOnClickListener(v -> onBackPressed()); // Or finish();
+        if (buttonBack != null) {
+            buttonBack.setOnClickListener(v -> {
+                Log.d(TAG, "Back button clicked");
+                finish();
+            });
+        }
 
-        fabAddPet.setOnClickListener(v -> {
-            Intent intent = new Intent(MyPetsActivity.this, AddEditPet.class);
-            startActivity(intent);
-        });
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                Log.d(TAG, "Swipe-to-refresh triggered");
+                loadPets();
+            });
+        }
 
         loadPets();
     }
@@ -79,60 +81,101 @@ public class MyPetsActivity extends AppCompatActivity implements PetAdapter.OnPe
     @Override
     protected void onResume() {
         super.onResume();
-        loadPets(); // Refresh list when activity resumes
+        Log.d(TAG, "onResume called");
     }
 
     private void loadPets() {
+        Log.d(TAG, "loadPets called");
         if (currentUser == null) {
+            Log.w(TAG, "User not logged in");
             Toast.makeText(this, "User not logged in.", Toast.LENGTH_SHORT).show();
-            layoutNoPets.setVisibility(View.VISIBLE);
-            recyclerViewPets.setVisibility(View.GONE);
+            showNoPetsLayout();
+            setRefreshing(false);
             return;
         }
 
-        // Consider adding a ProgressBar while loading
-        petsRef.orderByChild("ownerID").equalTo(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+        Log.d(TAG, "Current user UID: " + currentUser.getUid());
+
+        // Remove previous listener if present
+        if (petsListener != null) {
+            petsRef.removeEventListener(petsListener);
+            Log.d(TAG, "Previous petsListener removed");
+        }
+
+        petsListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                petList.clear(); // Clear previous pet data
+                Log.d(TAG, "onDataChange called, dataSnapshot.exists(): " + dataSnapshot.exists());
+                Log.d(TAG, "Children count: " + dataSnapshot.getChildrenCount());
+
+                List<Pet> loadedPets = new ArrayList<>();
+                int petCount = 0;
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         Pet pet = snapshot.getValue(Pet.class);
                         if (pet != null) {
-                            petList.add(pet);
+                            loadedPets.add(pet);
+                            Log.d(TAG, "Pet found: " + pet.getName() + ", ownerID: " + pet.getOwnerID() + ", petID: " + pet.getPetID());
+                            petCount++;
+                        } else {
+                            Log.d(TAG, "Null pet object for key: " + snapshot.getKey());
                         }
                     }
-                    petAdapter.updatePets(petList); // Use the adapter's update method
-
-                    if (petList.isEmpty()) {
-                        layoutNoPets.setVisibility(View.VISIBLE);
-                        recyclerViewPets.setVisibility(View.GONE);
-                    } else {
-                        layoutNoPets.setVisibility(View.GONE);
-                        recyclerViewPets.setVisibility(View.VISIBLE);
-                    }
-                } else {
-                    // No pets node exists for this user or at all for this query
-                    petAdapter.updatePets(new ArrayList<>()); // Ensure adapter is cleared
-                    layoutNoPets.setVisibility(View.VISIBLE);
-                    recyclerViewPets.setVisibility(View.GONE);
                 }
+                Log.d(TAG, "Total pets loaded: " + petCount);
+
+                // Update the petList & adapter (defensive copy)
+                petList.clear();
+                petList.addAll(loadedPets);
+                if (petAdapter != null) {
+                    petAdapter.updatePets(new ArrayList<>(petList));
+                    Log.d(TAG, "PetAdapter updated, petList.size(): " + petList.size());
+                }
+
+                // UI logic
+                if (petList.isEmpty()) {
+                    Log.d(TAG, "No pets found, showing no-pets layout");
+                    showNoPetsLayout();
+                } else {
+                    Log.d(TAG, "Pets found, showing recyclerViewPets");
+                    showPetsRecyclerView();
+                }
+                setRefreshing(false);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e(TAG, "onCancelled: " + databaseError.getMessage());
                 Toast.makeText(MyPetsActivity.this, "Failed to load pets: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
-                layoutNoPets.setVisibility(View.VISIBLE);
-                recyclerViewPets.setVisibility(View.GONE);
-                // Consider logging the error for debugging
+                showNoPetsLayout();
+                setRefreshing(false);
             }
-        });
+        };
+
+        Log.d(TAG, "Querying pets for ownerID: " + currentUser.getUid());
+        petsRef.orderByChild("ownerID").equalTo(currentUser.getUid()).addListenerForSingleValueEvent(petsListener);
+        setRefreshing(true);
+    }
+
+    private void showNoPetsLayout() {
+        if (layoutNoPets != null) layoutNoPets.setVisibility(View.VISIBLE);
+        if (recyclerViewPets != null) recyclerViewPets.setVisibility(View.GONE);
+    }
+
+    private void showPetsRecyclerView() {
+        if (layoutNoPets != null) layoutNoPets.setVisibility(View.GONE);
+        if (recyclerViewPets != null) recyclerViewPets.setVisibility(View.VISIBLE);
+    }
+
+    private void setRefreshing(boolean refreshing) {
+        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(refreshing);
     }
 
     @Override
     public void onPetLongClick(Pet pet) {
+        Log.d(TAG, "onPetLongClick: " + (pet != null ? pet.getName() : "null"));
         Intent intent = new Intent(this, PetDetailsActivity.class);
-        intent.putExtra("SELECTED_PET", pet); // Pet class must be Parcelable
+        intent.putExtra("SELECTED_PET", pet);
         startActivity(intent);
     }
 }

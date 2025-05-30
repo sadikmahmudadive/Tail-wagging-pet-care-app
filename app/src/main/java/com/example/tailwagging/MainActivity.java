@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference dbRef;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private PetAdapter petAdapterHorizontal; // Keep a reference if needed elsewhere, or make local
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +78,13 @@ public class MainActivity extends AppCompatActivity {
             navProfile.setOnClickListener(v -> launchProfileActivity());
         }
 
+        // New: Click listener for My Pets navigation (if you add a dedicated button for it)
+        Button navMyPets = findViewById(R.id.btnViewAllPets); // Assuming you add an ID navMyPets
+        if (navMyPets != null) {
+            navMyPets.setOnClickListener(v -> launchMyPetsActivity());
+        }
+
+
         logoutButton.setOnClickListener(v -> {
             new AlertDialog.Builder(MainActivity.this)
                     .setTitle("Logout")
@@ -94,15 +102,16 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
             textView.setText("Guest");
             userProfilePhoto.setImageResource(R.drawable.ic_profile);
+            // Potentially disable pet fetching or show an appropriate message
             return;
         }
 
         fetchAndDisplayUserData();
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
-        swipeRefreshLayout.setOnRefreshListener(() -> {
-            fetchAndShowRegisteredPets();
-        });
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setOnRefreshListener(this::fetchAndShowRegisteredPets);
+        }
 
         fetchAndShowRegisteredPets();
     }
@@ -122,7 +131,15 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // New method to launch MyPetsActivity
+    private void launchMyPetsActivity() {
+        Intent intent = new Intent(MainActivity.this, MyPetsActivity.class);
+        startActivity(intent);
+    }
+
     private void fetchAndDisplayUserData() {
+        if (user == null) return; // Should be checked before calling
+
         String displayName = user.getDisplayName();
 
         if (displayName != null && !displayName.isEmpty()) {
@@ -134,6 +151,7 @@ public class MainActivity extends AppCompatActivity {
                         .error(R.drawable.ic_profile)
                         .into(userProfilePhoto);
             } else {
+                // If no Firebase Auth photo, try Realtime DB
                 fetchUserFieldsFromRealtimeDatabase();
             }
         } else {
@@ -142,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchUserFieldsFromRealtimeDatabase() {
+        if (user == null) return; // Guard clause
+
         dbRef.child("users").child(user.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -152,7 +172,8 @@ public class MainActivity extends AppCompatActivity {
                             if (username != null && !username.isEmpty()) {
                                 textView.setText(username);
                             } else {
-                                textView.setText("Unknown User");
+                                // Fallback if name is also empty in DB
+                                textView.setText(user.getEmail() != null ? user.getEmail() : "Unknown User");
                             }
                             if (photoUrl != null && !photoUrl.isEmpty()) {
                                 Glide.with(MainActivity.this)
@@ -161,14 +182,13 @@ public class MainActivity extends AppCompatActivity {
                                         .error(R.drawable.ic_profile)
                                         .into(userProfilePhoto);
                             } else {
-                                userProfilePhoto.setImageResource(R.drawable.ic_profile);
+                                userProfilePhoto.setImageResource(R.drawable.ic_profile); // Default if no photoUrl in DB
                             }
                         } else {
-                            textView.setText("User Not Found");
+                            textView.setText(user.getEmail() != null ? user.getEmail() : "User Data Not Found");
                             userProfilePhoto.setImageResource(R.drawable.ic_profile);
                         }
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Toast.makeText(MainActivity.this, "Failed to fetch user data: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();
@@ -179,9 +199,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchAndShowRegisteredPets() {
         RecyclerView recyclerViewPets = findViewById(R.id.recyclerViewPets);
+        if (recyclerViewPets == null) return; // Guard if view is not found
+
         recyclerViewPets.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         FrameLayout petsProgressOverlay = findViewById(R.id.petsProgressOverlay);
         if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.VISIBLE);
+
+        if (user == null) { // Check if user is null before making DB call
+            if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.GONE);
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+            // Optionally show a message that user needs to be logged in to see pets
+            return;
+        }
 
         dbRef.child("pets")
                 .orderByChild("ownerID").equalTo(user.getUid())
@@ -190,13 +219,31 @@ public class MainActivity extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.GONE);
                         if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+
                         List<Pet> petList = new ArrayList<>();
                         for (DataSnapshot petSnap : dataSnapshot.getChildren()) {
                             Pet pet = petSnap.getValue(Pet.class);
                             if (pet != null) petList.add(pet);
                         }
-                        PetAdapter adapter = new PetAdapter(MainActivity.this, petList);
-                        recyclerViewPets.setAdapter(adapter);
+                        // Create adapter and set the simple click listener
+                        petAdapterHorizontal = new PetAdapter(MainActivity.this, petList);
+                        petAdapterHorizontal.setOnPetSimpleClickListener(clickedPet -> {
+                            // When a pet card is clicked, launch MyPetsActivity
+                            launchMyPetsActivity();
+                        });
+                        recyclerViewPets.setAdapter(petAdapterHorizontal);
+
+                        // Handle empty state for pets
+                        TextView noPetsTextView = findViewById(R.id.noPetsTextView); // Assuming you have a TextView with this ID
+                        if (noPetsTextView != null) {
+                            if (petList.isEmpty()) {
+                                noPetsTextView.setVisibility(View.VISIBLE);
+                                recyclerViewPets.setVisibility(View.GONE);
+                            } else {
+                                noPetsTextView.setVisibility(View.GONE);
+                                recyclerViewPets.setVisibility(View.VISIBLE);
+                            }
+                        }
                     }
 
                     @Override

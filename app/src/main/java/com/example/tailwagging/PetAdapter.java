@@ -1,6 +1,7 @@
 package com.example.tailwagging;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,33 +13,38 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView; // For item_pet_card
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     private List<Pet> petList;
     private Context context;
-    private OnPetListener onPetListener; // For long click functionality
-    private boolean isMyPetsVersion = false; // Flag to determine which layout and logic to use
+    private OnPetListener onPetLongClickListener;
+    private OnPetSimpleClickListener onPetSimpleClickListener;
+    private boolean isMyPetsVersion = false;
 
-    // --- Interface for click/long-click handling ---
     public interface OnPetListener {
         void onPetLongClick(Pet pet);
-        // void onPetClick(Pet pet); // Add if you need regular click too
     }
 
-    // --- Original Constructor (for item_pet_horizontal.xml) ---
+    public interface OnPetSimpleClickListener {
+        void onPetCardClicked(Pet pet);
+    }
+
     public PetAdapter(Context context, List<Pet> petList) {
         this.context = context;
         this.petList = petList;
-        this.isMyPetsVersion = false; // Uses original layout and ViewHolder logic
+        this.isMyPetsVersion = false;
     }
 
-    // --- New Constructor (for item_pet_card.xml and long click) ---
-    public PetAdapter(Context context, List<Pet> petList, OnPetListener onPetListener) {
+    public PetAdapter(Context context, List<Pet> petList, OnPetListener onPetLongClickListener) {
         this.context = context;
         this.petList = petList;
-        this.onPetListener = onPetListener;
-        this.isMyPetsVersion = true; // Uses new layout and ViewHolder logic
+        this.onPetLongClickListener = onPetLongClickListener;
+        this.isMyPetsVersion = true;
+    }
+
+    public void setOnPetSimpleClickListener(OnPetSimpleClickListener listener) {
+        this.onPetSimpleClickListener = listener;
     }
 
     @NonNull
@@ -46,10 +52,8 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     public PetViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         if (isMyPetsVersion) {
-            // Inflate for MyPetsActivity (item_pet_card.xml)
             view = LayoutInflater.from(context).inflate(R.layout.item_pet_card, parent, false);
         } else {
-            // Inflate for original usage (item_pet_horizontal.xml)
             view = LayoutInflater.from(context).inflate(R.layout.item_pet_horizontal, parent, false);
         }
         return new PetViewHolder(view, isMyPetsVersion);
@@ -58,78 +62,71 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull PetViewHolder holder, int position) {
         Pet pet = petList.get(position);
-
-        // Common data binding
         holder.petName.setText(pet.getName());
         String imageUrl = pet.getImageUrl();
 
         if (isMyPetsVersion) {
-            // --- Logic for MyPetsActivity (item_pet_card.xml) ---
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 Glide.with(context)
                         .load(imageUrl)
-                        .placeholder(R.drawable.ic_profile) // Placeholder for CircleImageView
-                        .error(R.drawable.ic_cancel)      // Error placeholder
-                        .into(holder.petImageCircle); // Use CircleImageView
+                        .placeholder(R.drawable.ic_profile)
+                        .error(R.drawable.ic_cancel)
+                        .into(holder.petImageCircle);
             } else {
                 holder.petImageCircle.setImageResource(R.drawable.ic_profile);
             }
 
             holder.itemView.setOnLongClickListener(v -> {
-                if (onPetListener != null) {
-                    onPetListener.onPetLongClick(pet);
-                    return true; // Consume the long click
+                if (onPetLongClickListener != null) {
+                    onPetLongClickListener.onPetLongClick(pet);
+                    return true;
                 }
                 return false;
             });
         } else {
-            // --- Logic for original usage (item_pet_horizontal.xml) ---
             if (imageUrl != null && !imageUrl.isEmpty()) {
                 Glide.with(context)
                         .load(imageUrl)
-                        .placeholder(R.drawable.ic_pet_placeholder) // Original placeholder
-                        .error(R.drawable.ic_pet_placeholder)     // Original error placeholder
-                        .into(holder.petImageSquare); // Use regular ImageView
+                        .placeholder(R.drawable.ic_pet_placeholder)
+                        .error(R.drawable.ic_pet_placeholder)
+                        .into(holder.petImageSquare);
             } else {
                 holder.petImageSquare.setImageResource(R.drawable.ic_pet_placeholder);
+            }
+            if (onPetSimpleClickListener != null) {
+                holder.itemView.setOnClickListener(v -> onPetSimpleClickListener.onPetCardClicked(pet));
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        return petList.size();
+        return petList == null ? 0 : petList.size();
     }
 
     public void updatePets(List<Pet> newPetList) {
+        Log.d("PetAdapter", "updatePets called. newPetList size: " + (newPetList != null ? newPetList.size() : 0));
         this.petList.clear();
         if (newPetList != null) {
             this.petList.addAll(newPetList);
         }
+        Log.d("PetAdapter", "petList size after update: " + this.petList.size());
         notifyDataSetChanged();
     }
 
-    // --- ViewHolder ---
-    // Updated to handle both layouts by checking the isMyPetsVersion flag
     public static class PetViewHolder extends RecyclerView.ViewHolder {
-        // Fields for item_pet_horizontal.xml (original)
         ImageView petImageSquare;
-        TextView petName; // This TextView can be shared if IDs are the same or handled carefully
-
-        // Fields for item_pet_card.xml (new)
+        TextView petName;
         CircleImageView petImageCircle;
-        // TextView petNameCard; // If item_pet_card has a different ID for name
 
         public PetViewHolder(@NonNull View itemView, boolean isMyPetsHolder) {
             super(itemView);
             if (isMyPetsHolder) {
-                // Initialize views for item_pet_card.xml
                 petImageCircle = itemView.findViewById(R.id.imageViewPetCard);
-                petName = itemView.findViewById(R.id.textViewPetNameCard); // Assuming this is the ID in item_pet_card
+                petName = itemView.findViewById(R.id.textViewPetNameCard);
             } else {
-                // Initialize views for item_pet_horizontal.xml
-                petImageSquare = itemView.findViewById(R.id.petImage); // ID from item_pet_horizontal
-                petName = itemView.findViewById(R.id.petName);       // ID from item_pet_horizontal
+                petImageSquare = itemView.findViewById(R.id.petImage);
+                petName = itemView.findViewById(R.id.petName);
             }
         }
     }

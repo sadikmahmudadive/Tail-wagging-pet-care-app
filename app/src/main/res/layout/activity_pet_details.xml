@@ -1,10 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PetDetailsActivity">
+    android:background="@drawable/dialog_background_rounded"
+    tools:context=".PetDetailsActivity"
+    android:paddingBottom="16dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <ImageButton
+            android:id="@+id/buttonClosePetDetails"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_close"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/grey_dark"
+            android:layout_gravity="end"
+            android:layout_marginBottom="8dp"
+            android:contentDescription="Close Details" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/imageViewPetDetail"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/ic_pet_placeholder"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/orange" />
+
+        <TextView
+            android:id="@+id/textViewPetNameDetail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Fluffy McFlufferson"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/dark_blue"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="16dp"/>
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="6"
+            android:useDefaultMargins="true">
+
+            <TextView style="@style/PetDetailLabel" android:text="Breed:" />
+            <TextView android:id="@+id/textViewPetBreedDetail" style="@style/PetDetailValue" tools:text="Golden Retriever"/>
+
+            <TextView style="@style/PetDetailLabel" android:text="Age:" />
+            <TextView android:id="@+id/textViewPetAgeDetail" style="@style/PetDetailValue" tools:text="3 years"/>
+
+            <TextView style="@style/PetDetailLabel" android:text="Gender:" />
+            <TextView android:id="@+id/textViewPetGenderDetail" style="@style/PetDetailValue" tools:text="Male"/>
+
+            <TextView style="@style/PetDetailLabel" android:text="Birthday:" />
+            <TextView android:id="@+id/textViewPetDobDetail" style="@style/PetDetailValue" tools:text="2021-05-15"/>
+
+            <TextView style="@style/PetDetailLabel" android:text="Color:" />
+            <TextView android:id="@+id/textViewPetColorDetail" style="@style/PetDetailValue" tools:text="Golden"/>
+
+            <TextView style="@style/PetDetailLabel" android:text="Height:" />
+            <TextView android:id="@+id/textViewPetHeightDetail" style="@style/PetDetailValue" tools:text="60 cm"/>
+
+            <TextView style="@style/PetDetailLabel" android:text="Weight:" />
+            <TextView android:id="@+id/textViewPetWeightDetail" style="@style/PetDetailValue" tools:text="30 kg"/>
+
+            <TextView style="@style/PetDetailLabel" android:text="Sound:" />
+            <TextView android:id="@+id/textViewPetSoundDetail" style="@style/PetDetailValue" tools:text="Barks happily"/>
+
+        </GridLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/light_gray"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Vaccination Details"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/dark_blue"
+            android:layout_marginBottom="6dp"/>
+        <TextView
+            android:id="@+id/textViewVaccinationDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="All shots up to date. Next rabies due 2026-03-01."
+            android:textSize="15sp"
+            android:textColor="@color/green"
+            android:lineSpacingMultiplier="1.2"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Medication Schedule"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/dark_blue"
+            android:layout_marginBottom="6dp"/>
+        <TextView
+            android:id="@+id/textViewMedicationDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Heartworm pill: 1st of every month. Flea treatment: 15th of every month."
+            android:textSize="15sp"
+            android:textColor="@color/dark_gray"
+            android:lineSpacingMultiplier="1.2"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Delete Button -->
+        <Button
+            android:id="@+id/buttonDeletePet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Delete Pet"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/red"
+            android:drawableStart="@drawable/ic_delete"
+            android:drawablePadding="8dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="4dp"
+            android:padding="12dp"
+            android:fontFamily="@font/fredoka_bold"/>
+
+    </LinearLayout>
+</ScrollView>

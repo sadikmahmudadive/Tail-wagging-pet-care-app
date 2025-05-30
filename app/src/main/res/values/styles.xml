@@ -41,4 +41,42 @@
         <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
         <item name="android:windowExitAnimation">@android:anim/fade_out</item>
     </style>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="PetDetailLabel" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/grey_dark</item>
+        <item name="android:layout_columnWeight">0</item> <!-- Labels don't expand -->
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="PetDetailValue" parent="Widget.AppCompat.TextView">
+        <item name="android:layout_width">0dp</item> <!-- Will take remaining space -->
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="android:layout_columnWeight">1</item> <!-- Values expand -->
+        <item name="android:layout_gravity">fill_horizontal</item>
+        <item name="android:layout_marginStart">8dp</item>
+    </style>
+
+    <!-- You might need a specific Dialog theme for the activity if not already set -->
+    <style name="AppTheme.Dialog.Floating" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowMinWidthMajor">90%</item>
+        <item name="android:windowMinWidthMinor">90%</item>
+        <item name="android:windowBackground">@android:color/transparent</item> <!-- Important for custom background -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+    </style>
 </resources>

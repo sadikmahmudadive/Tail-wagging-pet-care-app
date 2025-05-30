@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@drawable/background_dashboard"
     tools:context=".MyPetsActivity">
 
@@ -27,14 +28,12 @@
             android:layout_height="56dp"
             android:background="@android:color/white">
 
-            <ImageButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/buttonBack"
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:layout_marginStart="12dp"
-                android:src="@drawable/ic_arrow_back"
                 android:background="@drawable/logout_button"
-                app:tint="?attr/colorControlNormal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -44,84 +43,80 @@
                 android:id="@+id/topBarTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
                 android:text="My Pets"
+                android:textColor="@color/dark_blue"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/dark_blue"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toEndOf="@id/buttonBack"
-                app:layout_constraintEnd_toStartOf="@id/buttonLogout"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="8dp"/>
+                app:layout_constraintStart_toEndOf="@+id/buttonBack"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewPets"
+    <!-- Main content below the top bar -->
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingBottom="80dp"
-        android:clipToPadding="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_pet_card"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-    <!-- Using appbar_scrolling_view_behavior assumes topBar could be part of an AppBarLayout.
-         If not, you might need to set marginTop on RecyclerView to be below topBar.
-         For simplicity, if topBar is not in an AppBarLayout, you can remove app:layout_behavior
-         and set android:layout_marginTop="YOUR_TOP_BAR_HEIGHT_PLUS_MARGINS"
-         e.g. android:layout_marginTop="88dp" (approx height of CardView + its margins) -->
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
-    <!-- "No Pets" Message Layout -->
-    <LinearLayout
-        android:id="@+id/layoutNoPets"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:layout_gravity="center"
-        android:padding="16dp"
-        android:visibility="gone"> <!-- Set to visible when no pets -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_paw_print_sad"
-            app:tint="@color/grey_medium"
-            android:layout_marginBottom="8dp"
-            android:contentDescription="No pets icon"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewPets"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="16dp"
+                android:paddingTop="8dp"
+                android:clipToPadding="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_pet_card" />
 
-        <TextView
-            android:id="@+id/textViewNoPets"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="No pets added yet."
-            android:textSize="18sp"
-            android:textColor="@color/grey_dark"
-            android:gravity="center"/>
+            <!-- "No Pets" Message Layout -->
+            <LinearLayout
+                android:id="@+id/layoutNoPets"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:layout_gravity="center"
+                android:padding="16dp"
+                android:visibility="gone">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Tap the '+' button to add your furry friend!"
-            android:textSize="14sp"
-            android:textColor="@color/grey_medium"
-            android:layout_marginTop="4dp"
-            android:gravity="center"/>
-    </LinearLayout>
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:src="@drawable/ic_paw_print_sad"
+                    app:tint="@color/grey_medium"
+                    android:layout_marginBottom="8dp"
+                    android:contentDescription="No pets icon"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddPet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="24dp"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/magenta"
-        android:contentDescription="Add Pet"
-        app:elevation="6dp"/>
+                <TextView
+                    android:id="@+id/textViewNoPets"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No pets added yet."
+                    android:textSize="18sp"
+                    android:textColor="@color/grey_dark"
+                    android:gravity="center"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="You can add pets from the main screen."
+                    android:textSize="14sp"
+                    android:textColor="@color/grey_medium"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"/>
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</LinearLayout>

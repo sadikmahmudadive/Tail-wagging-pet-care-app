@@ -90,10 +90,11 @@
                 <!-- My Pets Headline with Paw Icon -->
                 <LinearLayout
                     android:id="@+id/layoutMyPetsHeader"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -131,6 +132,24 @@
                     android:orientation="horizontal"
                     tools:listitem="@layout/item_pet_horizontal" />
 
+                <!-- Button to View All Pets -->
+                <Button
+                    android:id="@+id/btnViewAllPets"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="24dp"
+                    android:fontFamily="@font/fredoka"
+                    android:text="View All Pets"
+                    android:textAllCaps="false"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="14sp"
+                    app:icon="@drawable/ic_arrow_right"
+                    app:iconGravity="end"
+                    app:iconTint="@color/dark_blue"/>
+
                 <!-- Custom ProgressBar overlay for RecyclerView -->
                 <FrameLayout
                     android:id="@+id/petsProgressOverlay"
@@ -138,7 +157,7 @@
                     android:layout_height="120dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="16dp"
-                    android:layout_marginTop="-120dp"
+                    android:layout_marginTop="-160dp"
                     android:background="@android:color/transparent"
                     android:visibility="gone"
                     android:elevation="2dp">
@@ -154,13 +173,30 @@
                         android:visibility="visible"/>
                 </FrameLayout>
 
+                <!-- TextView for "No pets registered" message -->
+                <TextView
+                    android:id="@+id/noPetsTextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="No pets registered yet. Add one!"
+                    android:textSize="16sp"
+                    android:textColor="@color/grey_dark"
+                    android:fontFamily="@font/fredoka"
+                    android:gravity="center"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:padding="8dp"
+                    android:visibility="gone" />
+
+
                 <!-- Pet Location & Pet Status Cards -->
                 <LinearLayout
                     android:id="@+id/pet_dashboard_cards"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="24dp"
                     android:layout_marginEnd="16dp"
                     android:gravity="center"
                     android:orientation="horizontal"
@@ -358,6 +394,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- Navigation Bar: Statically Positioned at Bottom -->
+    <!-- Make sure your layout_navigation_bar.xml contains a view with android:id="@+id/navMyPets" -->
     <include
         layout="@layout/layout_navigation_bar"
         android:layout_width="match_parent"
