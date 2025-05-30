@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="#F4F4F4"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="0dp"
+    android:gravity="center_horizontal"
+    android:clipToPadding="false"
+    android:layout_gravity="center"
+    tools:context=".FindPetTypeActivity">
+
+    <TextView
+        android:id="@+id/textTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Find Pet Type"
+        android:textColor="@color/dark_blue"
+        android:textSize="20sp"
+        android:fontFamily="@font/fredoka_bold"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        android:layout_gravity="start" />
+
+    <ImageView
+        android:id="@+id/imageViewPet"
+        android:layout_width="match_parent"
+        android:layout_height="220dp"
+        android:layout_margin="16dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/rounded_image_card_bg"
+        android:contentDescription="Pet Image" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/rounded_white_card_bg"
+        android:orientation="vertical"
+        android:layout_margin="16dp"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:src="@drawable/ic_paw"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginRight="8dp"
+                app:tint="@color/dark_blue" />
+
+            <TextView
+                android:id="@+id/textPetTypeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find Pet Species"
+                android:textColor="@color/dark_blue"
+                android:fontFamily="@font/fredoka_bold"
+                android:textSize="19sp"/>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnFindPetType"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:text="Find Pet Species"
+            android:textAllCaps="false"
+            android:textColor="#fff"
+            android:background="@drawable/button_yellow_rounded"
+            android:textSize="17sp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"/>
+
+        <TextView
+            android:id="@+id/textResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#B92828"
+            android:textStyle="bold"
+            android:textSize="17sp"
+            android:gravity="start"
+            android:layout_marginTop="10dp"/>
+    </LinearLayout>
+</LinearLayout>

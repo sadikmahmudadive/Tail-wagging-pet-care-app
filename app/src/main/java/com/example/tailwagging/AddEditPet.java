@@ -46,6 +46,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class AddEditPet extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 101;
+    private static final int REQUEST_FIND_PET_TYPE = 201;
+
     private CircleImageView petImageInput;
     private EditText etPetName, etBreedName, etPetAge, etPetDob, etPetColor, etPetSound, etPetHeight, etPetWeight;
     private AutoCompleteTextView etPetGender;
@@ -108,8 +110,15 @@ public class AddEditPet extends AppCompatActivity {
             finish();
         });
 
+        // When a user selects a photo, pass it automatically to FindPetTypeActivity
         btnFindBreedType.setOnClickListener(v -> {
-            Toast.makeText(this, "Find Breed feature coming soon!", Toast.LENGTH_SHORT).show();
+            if (imageUri == null) {
+                Toast.makeText(this, "Please select a pet photo first.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            Intent intent = new Intent(this, FindPetTypeActivity.class);
+            intent.putExtra("PET_IMAGE_URI", imageUri.toString());
+            startActivityForResult(intent, REQUEST_FIND_PET_TYPE);
         });
 
         btnUploadPhoto.setOnClickListener(v -> openImagePicker());
@@ -136,6 +145,19 @@ public class AddEditPet extends AppCompatActivity {
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             imageUri = data.getData();
             Glide.with(this).load(imageUri).into(petImageInput);
+
+            // Automatically launch FindPetTypeActivity after photo selection
+            Intent intent = new Intent(this, FindPetTypeActivity.class);
+            intent.putExtra("PET_IMAGE_URI", imageUri.toString());
+            startActivityForResult(intent, REQUEST_FIND_PET_TYPE);
+        }
+        // Handle result from FindPetTypeActivity
+        if (requestCode == REQUEST_FIND_PET_TYPE && resultCode == RESULT_OK && data != null) {
+            String predictedSpecies = data.getStringExtra("PREDICTED_SPECIES");
+            if (predictedSpecies != null && !predictedSpecies.isEmpty()) {
+                etBreedName.setText(predictedSpecies);
+                Toast.makeText(this, "Predicted species: " + predictedSpecies, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 

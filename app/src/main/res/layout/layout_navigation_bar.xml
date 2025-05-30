@@ -36,18 +36,11 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_profile"
                 android:contentDescription="Home"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fredoka_bold"
-                android:text="PROFILE"
-                android:textColor="@color/dark_blue"
-                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- Discover -->
@@ -61,18 +54,11 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_calendar"
                 android:contentDescription="Calendar"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fredoka_bold"
-                android:text="CALENDAR"
-                android:textColor="@color/dark_blue"
-                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- Explore -->
@@ -86,18 +72,11 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:src="@drawable/ic_add_pet"
                 android:contentDescription="Explore"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fredoka_bold"
-                android:text="ADD PET"
-                android:textColor="@color/dark_blue"
-                android:textSize="11sp" />
         </LinearLayout>
 
         <!-- Manage -->
@@ -135,17 +114,12 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_vet"
                 android:contentDescription="Vet"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fredoka_bold"
-                android:text="PROFILE"
-                android:textColor="@color/dark_blue"
-                android:textSize="11sp" />
+
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

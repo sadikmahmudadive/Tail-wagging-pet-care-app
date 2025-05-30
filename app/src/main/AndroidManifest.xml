@@ -22,6 +22,10 @@
         android:theme="@style/Theme.TailWagging"
         tools:targetApi="31">
         <activity
+            android:name=".FindPetTypeActivity"
+            android:theme="@style/FloatingDialogActivity"
+            android:exported="false" />
+        <activity
             android:name=".PetDetailsActivity"
             android:exported="false" />
         <activity
