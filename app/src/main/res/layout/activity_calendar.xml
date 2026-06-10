@@ -33,7 +33,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/fredoka_bold"
-        android:text="@string/pet_health_title"
+        android:text="@string/events_reminders_title"
         android:textColor="@color/white"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="@+id/btnBack"
@@ -107,7 +107,10 @@
                         android:layout_marginTop="16dp"
                         android:clipToPadding="false"
                         android:overScrollMode="never"
-                        android:nestedScrollingEnabled="false" />
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:orientation="horizontal"
+                        tools:listitem="@layout/month_picker_item" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -171,8 +174,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"
                 android:paddingHorizontal="16dp"
-                android:nestedScrollingEnabled="false" />
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="horizontal"
+                tools:listitem="@layout/item_today_event" />
 
             <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
                 android:id="@+id/btnAddEvent"
@@ -180,7 +186,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="24dp"
-                android:text="Add Event"
+                android:text="@string/add_event"
                 app:icon="@drawable/ic_add"
                 android:textColor="@color/white"
                 app:iconTint="@color/white"

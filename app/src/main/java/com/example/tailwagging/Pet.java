@@ -15,6 +15,7 @@ public class Pet implements Parcelable { // Implements Parcelable
     private String ownerID;
     private String sound;
     private String weight;
+    private String description;
     // New fields from the "My Pets" feature
     private String age;
     private String vaccinationDetails;
@@ -25,7 +26,7 @@ public class Pet implements Parcelable { // Implements Parcelable
     }
 
     // Constructor including all fields (optional, but good for completeness)
-    public Pet(String petID, String ownerID, String name, String breed, String gender, String age, String dob, String color, String sound, String height, String weight, String imageUrl, String vaccinationDetails, String medicationTime) {
+    public Pet(String petID, String ownerID, String name, String breed, String gender, String age, String dob, String color, String sound, String height, String weight, String imageUrl, String vaccinationDetails, String medicationTime, String description) {
         this.petID = petID;
         this.ownerID = ownerID;
         this.name = name;
@@ -40,6 +41,7 @@ public class Pet implements Parcelable { // Implements Parcelable
         this.imageUrl = imageUrl;
         this.vaccinationDetails = vaccinationDetails; // New
         this.medicationTime = medicationTime;     // New
+        this.description = description;
     }
 
 
@@ -55,6 +57,7 @@ public class Pet implements Parcelable { // Implements Parcelable
     public String getOwnerID() { return ownerID; }
     public String getSound() { return sound; }
     public String getWeight() { return weight; }
+    public String getDescription() { return description; }
 
     // Getters for new fields
     public String getAge() { return age; }
@@ -76,6 +79,7 @@ public class Pet implements Parcelable { // Implements Parcelable
     public void setAge(String age) { this.age = age; }
     public void setVaccinationDetails(String vaccinationDetails) { this.vaccinationDetails = vaccinationDetails; }
     public void setMedicationTime(String medicationTime) { this.medicationTime = medicationTime; }
+    public void setDescription(String description) { this.description = description; }
 
 
     // --- Parcelable Implementation ---
@@ -94,6 +98,7 @@ public class Pet implements Parcelable { // Implements Parcelable
         age = in.readString(); // New
         vaccinationDetails = in.readString(); // New
         medicationTime = in.readString(); // New
+        description = in.readString();
     }
 
     public static final Creator<Pet> CREATOR = new Creator<Pet>() {
@@ -129,5 +134,6 @@ public class Pet implements Parcelable { // Implements Parcelable
         dest.writeString(age); // New
         dest.writeString(vaccinationDetails); // New
         dest.writeString(medicationTime); // New
+        dest.writeString(description);
     }
 }

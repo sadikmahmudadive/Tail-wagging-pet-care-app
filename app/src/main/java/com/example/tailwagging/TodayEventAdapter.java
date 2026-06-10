@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.time.format.DateTimeFormatter;
@@ -54,6 +55,10 @@ public class TodayEventAdapter extends RecyclerView.Adapter<TodayEventAdapter.To
             holder.ivPetIcon.setVisibility(View.GONE);
         }
 
+        holder.itemView.setOnClickListener(v -> {
+            showEventDetailsDialog(event);
+        });
+
         holder.itemView.setOnLongClickListener(v -> {
             new AlertDialog.Builder(context)
                     .setTitle("Delete Event")
@@ -69,6 +74,59 @@ public class TodayEventAdapter extends RecyclerView.Adapter<TodayEventAdapter.To
                     .show();
             return true;
         });
+    }
+
+    private void showEventDetailsDialog(Event event) {
+        View dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_add_event, null);
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                .setView(dialogView)
+                .create();
+
+        TextView tvTitle = dialogView.findViewById(R.id.etEventTitle); // It's an EditText in layout
+        tvTitle.setFocusable(false);
+        tvTitle.setClickable(false);
+        tvTitle.setText(event.title);
+
+        TextView tvNote = dialogView.findViewById(R.id.etNote); // It's an EditText in layout
+        tvNote.setFocusable(false);
+        tvNote.setClickable(false);
+        tvNote.setText(event.note);
+
+        TextView tvFromTime = dialogView.findViewById(R.id.tvFromTime);
+        tvFromTime.setText(event.fromTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+
+        TextView tvToTime = dialogView.findViewById(R.id.tvToTime);
+        tvToTime.setText(event.toTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+
+        // Hide elements not needed for view mode
+        dialogView.findViewById(R.id.categoryLayout).setVisibility(View.GONE);
+        // Also hide the HorizontalScrollView container of categoryLayout
+        if (dialogView.findViewById(R.id.categoryLayout).getParent() instanceof View) {
+            ((View) dialogView.findViewById(R.id.categoryLayout).getParent()).setVisibility(View.GONE);
+        }
+        dialogView.findViewById(R.id.spinnerPetSelector).setVisibility(View.GONE);
+        dialogView.findViewById(R.id.btnSaveEvent).setVisibility(View.GONE);
+        
+        com.google.android.material.materialswitch.MaterialSwitch switchReminder = dialogView.findViewById(R.id.switchReminder);
+        switchReminder.setChecked(event.isReminderEnabled);
+        switchReminder.setEnabled(false); // Read-only in details view
+        
+        // Show pet name if exists
+        if (event.petName != null) {
+            TextView labelPet = new TextView(context);
+            labelPet.setText(String.format("Pet: %s", event.petName));
+            labelPet.setPadding(0, 20, 0, 0);
+            labelPet.setTextColor(ContextCompat.getColor(context, R.color.black));
+            labelPet.setTypeface(null, android.graphics.Typeface.BOLD);
+            
+            // The parent of HorizontalScrollView is the main LinearLayout
+            ViewGroup mainContainer = (ViewGroup) dialogView.findViewById(R.id.categoryLayout).getParent().getParent();
+            // Find index of HorizontalScrollView and insert label before it
+            int index = mainContainer.indexOfChild((View) dialogView.findViewById(R.id.categoryLayout).getParent());
+            mainContainer.addView(labelPet, index);
+        }
+
+        dialog.show();
     }
 
     @Override

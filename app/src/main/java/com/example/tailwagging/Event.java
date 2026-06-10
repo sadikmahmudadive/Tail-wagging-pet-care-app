@@ -14,8 +14,9 @@ public class Event implements Serializable {
     public LocalDate date;
     public LocalTime fromTime;
     public LocalTime toTime;
+    public boolean isReminderEnabled;
 
-    public Event(int id, String title, String category, String note, String petName, String petId, LocalDate date, LocalTime fromTime, LocalTime toTime) {
+    public Event(int id, String title, String category, String note, String petName, String petId, LocalDate date, LocalTime fromTime, LocalTime toTime, boolean isReminderEnabled) {
         this.id = id;
         this.title = title;
         this.category = category;
@@ -25,5 +26,6 @@ public class Event implements Serializable {
         this.date = date;
         this.fromTime = fromTime;
         this.toTime = toTime;
+        this.isReminderEnabled = isReminderEnabled;
     }
 }

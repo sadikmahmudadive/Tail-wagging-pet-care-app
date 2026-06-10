@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference dbRef;
     private SwipeRefreshLayout swipeRefreshLayout;
     private PetAdapter petAdapterHorizontal; // Keep a reference if needed elsewhere, or make local
+    private TodayEventAdapter todayEventAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +90,17 @@ public class MainActivity extends AppCompatActivity {
             navMyPets.setOnClickListener(v -> launchMyPetsActivity());
         }
 
+        // Add event card click listener
+        View cardPetCalendar = findViewById(R.id.cardPetCalendar);
+        if (cardPetCalendar != null) {
+            cardPetCalendar.setOnClickListener(v -> launchCalendarActivity());
+        }
+
+        View btnViewAllEvents = findViewById(R.id.btnViewAllEvents);
+        if (btnViewAllEvents != null) {
+            btnViewAllEvents.setOnClickListener(v -> launchCalendarActivity());
+        }
+
 
         logoutButton.setOnClickListener(v -> {
             new AlertDialog.Builder(MainActivity.this)
@@ -115,10 +127,42 @@ public class MainActivity extends AppCompatActivity {
 
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         if (swipeRefreshLayout != null) {
-            swipeRefreshLayout.setOnRefreshListener(this::fetchAndShowRegisteredPets);
+            swipeRefreshLayout.setOnRefreshListener(() -> {
+                fetchAndShowRegisteredPets();
+                showUpcomingEvents();
+            });
         }
 
         fetchAndShowRegisteredPets();
+        showUpcomingEvents();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        showUpcomingEvents();
+    }
+
+    private void showUpcomingEvents() {
+        RecyclerView recyclerViewPetEvents = findViewById(R.id.recyclerViewPetEvents);
+        if (recyclerViewPetEvents == null) return;
+
+        recyclerViewPetEvents.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        
+        // Get events for today
+        java.time.LocalDate today = java.time.LocalDate.now();
+        List<Event> events = EventStore.getInstance(this).getEventsForDate(today);
+        
+        // Sort by time
+        events.sort(java.util.Comparator.comparing(e -> e.fromTime));
+
+        todayEventAdapter = new TodayEventAdapter(this, events, () -> {
+            // Callback when event deleted from here (if applicable)
+            showUpcomingEvents();
+        });
+        recyclerViewPetEvents.setAdapter(todayEventAdapter);
+
+        // Handle empty state for events if needed (optional since card has text)
     }
 
     private void launchCalendarActivity() {

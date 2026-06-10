@@ -9,6 +9,8 @@ import java.util.Calendar;
 
 public class AlarmHelper {
     public static void setEventAlarm(Context context, Event event) {
+        if (!event.isReminderEnabled) return;
+
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, EventAlarmReceiver.class);
         intent.putExtra("title", event.title);

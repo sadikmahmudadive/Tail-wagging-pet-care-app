@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -37,8 +38,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -49,7 +53,7 @@ public class AddEditPet extends AppCompatActivity {
     private static final int REQUEST_FIND_PET_TYPE = 201;
 
     private CircleImageView petImageInput;
-    private EditText etPetName, etBreedName, etPetAge, etPetDob, etPetColor, etPetSound, etPetHeight, etPetWeight;
+    private EditText etPetName, etBreedName, etPetAge, etPetDob, etPetColor, etPetSound, etPetHeight, etPetWeight, etPetDescription;
     private AutoCompleteTextView etPetGender;
     private ImageView backBtn;
     private Button btnFindBreedType;
@@ -61,6 +65,7 @@ public class AddEditPet extends AppCompatActivity {
     private DatabaseReference dbRef;
     private LinearLayout layoutAddedPets;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private Pet petToEdit;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +92,7 @@ public class AddEditPet extends AppCompatActivity {
         etPetSound = findViewById(R.id.etPetSound);
         etPetHeight = findViewById(R.id.etPetHeight);
         etPetWeight = findViewById(R.id.etPetWeight);
+        etPetDescription = findViewById(R.id.etPetDescription);
         btnUploadPhoto = findViewById(R.id.btnUploadPhoto);
         btnAddPet = findViewById(R.id.btnAddPet);
         layoutAddedPets = findViewById(R.id.layoutAddedPets);
@@ -103,27 +109,37 @@ public class AddEditPet extends AppCompatActivity {
 
         etPetDob.setOnClickListener(v -> showDatePickerDialog());
 
+        // Check if editing
+        petToEdit = getIntent().getParcelableExtra("EDIT_PET");
+        if (petToEdit != null) {
+            populateFieldsForEdit();
+            if (btnAddPet instanceof Button) {
+                ((Button) btnAddPet).setText("Update Pet");
+            }
+        }
+
         backBtn.setOnClickListener(v -> {
-            Intent intent = new Intent(AddEditPet.this, MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
             finish();
         });
 
         // When a user selects a photo, pass it automatically to FindPetTypeActivity
         btnFindBreedType.setOnClickListener(v -> {
-            if (imageUri == null) {
+            if (imageUri == null && (petToEdit == null || petToEdit.getImageUrl() == null)) {
                 Toast.makeText(this, "Please select a pet photo first.", Toast.LENGTH_SHORT).show();
                 return;
             }
             Intent intent = new Intent(this, FindPetTypeActivity.class);
-            intent.putExtra("PET_IMAGE_URI", imageUri.toString());
+            if (imageUri != null) {
+                intent.putExtra("PET_IMAGE_URI", imageUri.toString());
+            } else if (petToEdit != null) {
+                intent.putExtra("PET_IMAGE_URL", petToEdit.getImageUrl());
+            }
             startActivityForResult(intent, REQUEST_FIND_PET_TYPE);
         });
 
         btnUploadPhoto.setOnClickListener(v -> openImagePicker());
         petImageInput.setOnClickListener(v -> openImagePicker());
-        btnAddPet.setOnClickListener(v -> validateAndUploadPet());
+        btnAddPet.setOnClickListener(v -> validateAndProcessPet());
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             clearForm();
@@ -170,7 +186,7 @@ public class AddEditPet extends AppCompatActivity {
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 this,
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    String dob = String.format("%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
+                    String dob = String.format(Locale.getDefault(), "%04d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay);
                     etPetDob.setText(dob);
                     setPetAgeFromDob(selectedYear, selectedMonth, selectedDay);
                 },
@@ -191,20 +207,33 @@ public class AddEditPet extends AppCompatActivity {
         etPetAge.setText(age >= 0 ? String.valueOf(age) : "");
     }
 
-    private void validateAndUploadPet() {
+    private void populateFieldsForEdit() {
+        etPetName.setText(petToEdit.getName());
+        etBreedName.setText(petToEdit.getBreed());
+        etPetGender.setText(petToEdit.getGender());
+        etPetAge.setText(petToEdit.getAge());
+        etPetDob.setText(petToEdit.getDob());
+        etPetColor.setText(petToEdit.getColor());
+        etPetSound.setText(petToEdit.getSound());
+        etPetHeight.setText(petToEdit.getHeight());
+        etPetWeight.setText(petToEdit.getWeight());
+        etPetDescription.setText(petToEdit.getDescription());
+        if (petToEdit.getImageUrl() != null && !petToEdit.getImageUrl().isEmpty()) {
+            Glide.with(this).load(petToEdit.getImageUrl()).placeholder(R.drawable.ic_profile).into(petImageInput);
+        }
+    }
+
+    private void validateAndProcessPet() {
         String name = etPetName.getText().toString().trim();
         if (name.isEmpty()) { etPetName.setError("Name required"); etPetName.requestFocus(); return; }
-        if (imageUri == null) { Toast.makeText(this, "Please select pet photo", Toast.LENGTH_SHORT).show(); return; }
-
-        try (InputStream is = getContentResolver().openInputStream(imageUri)) {
-            is.read();
-        } catch (Exception e) {
-            Toast.makeText(this, "Cannot access selected image.", Toast.LENGTH_SHORT).show();
-            return;
+        
+        if (imageUri == null && (petToEdit == null || petToEdit.getImageUrl() == null)) { 
+            Toast.makeText(this, "Please select pet photo", Toast.LENGTH_SHORT).show(); 
+            return; 
         }
 
         ProgressDialog progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Uploading...");
+        progressDialog.setMessage(petToEdit == null ? "Adding Pet..." : "Updating Pet...");
         progressDialog.setCancelable(false);
         progressDialog.show();
 
@@ -215,65 +244,86 @@ public class AddEditPet extends AppCompatActivity {
             return;
         }
 
-        // Upload image to Cloudinary
-        MediaManager.get().upload(imageUri)
-                .unsigned("tail_wagging") // Use unsigned preset, preferred for client side
-                .option("folder", "pets/")
-                .callback(new UploadCallback() {
-                    @Override
-                    public void onStart(String requestId) {}
+        if (imageUri != null) {
+            // Upload new image to Cloudinary
+            MediaManager.get().upload(imageUri)
+                    .unsigned("tail_wagging")
+                    .option("folder", "pets/")
+                    .callback(new UploadCallback() {
+                        @Override
+                        public void onStart(String requestId) {}
 
-                    @Override
-                    public void onProgress(String requestId, long bytes, long totalBytes) {}
+                        @Override
+                        public void onProgress(String requestId, long bytes, long totalBytes) {}
 
-                    @Override
-                    public void onSuccess(String requestId, Map resultData) {
-                        String imageUrl = (String) resultData.get("secure_url");
-                        savePetDetails(imageUrl, progressDialog, uid);
-                    }
+                        @Override
+                        public void onSuccess(String requestId, Map resultData) {
+                            String imageUrl = (String) resultData.get("secure_url");
+                            saveOrUpdatePetDetails(imageUrl, progressDialog, uid);
+                        }
 
-                    @Override
-                    public void onError(String requestId, ErrorInfo error) {
-                        progressDialog.dismiss();
-                        Toast.makeText(AddEditPet.this, "Image upload failed: " + error.getDescription(), Toast.LENGTH_LONG).show();
-                    }
+                        @Override
+                        public void onError(String requestId, ErrorInfo error) {
+                            progressDialog.dismiss();
+                            Toast.makeText(AddEditPet.this, "Image upload failed: " + error.getDescription(), Toast.LENGTH_LONG).show();
+                        }
 
-                    @Override
-                    public void onReschedule(String requestId, ErrorInfo error) {}
-                })
-                .dispatch();
+                        @Override
+                        public void onReschedule(String requestId, ErrorInfo error) {}
+                    })
+                    .dispatch();
+        } else {
+            // Use existing image URL
+            saveOrUpdatePetDetails(petToEdit.getImageUrl(), progressDialog, uid);
+        }
     }
 
-    private void savePetDetails(String imageUrl, ProgressDialog progressDialog, String uid) {
+    private void saveOrUpdatePetDetails(String imageUrl, ProgressDialog progressDialog, String uid) {
         DatabaseReference petsRef = dbRef.child("pets");
-        String petId = petsRef.push().getKey();
+        String petId;
+        
+        if (petToEdit != null) {
+            petId = petToEdit.getPetID();
+        } else {
+            petId = petsRef.push().getKey();
+        }
+
         if (petId == null) {
             progressDialog.dismiss();
-            Toast.makeText(this, "Failed to generate pet ID.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Failed to generate/retrieve pet ID.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        Map<String, Object> pet = new HashMap<>();
-        pet.put("petID", petId);
-        pet.put("ownerID", uid);
-        pet.put("name", etPetName.getText().toString().trim());
-        pet.put("breed", etBreedName.getText().toString().trim());
-        pet.put("gender", etPetGender.getText().toString().trim());
-        pet.put("age", etPetAge.getText().toString().trim());
-        pet.put("dob", etPetDob.getText().toString().trim());
-        pet.put("color", etPetColor.getText().toString().trim());
-        pet.put("sound", etPetSound.getText().toString().trim());
-        pet.put("height", etPetHeight.getText().toString().trim());
-        pet.put("weight", etPetWeight.getText().toString().trim());
-        pet.put("imageUrl", imageUrl);
+        Map<String, Object> petMap = new HashMap<>();
+        petMap.put("petID", petId);
+        petMap.put("ownerID", uid);
+        petMap.put("name", etPetName.getText().toString().trim());
+        petMap.put("breed", etBreedName.getText().toString().trim());
+        petMap.put("gender", etPetGender.getText().toString().trim());
+        petMap.put("age", etPetAge.getText().toString().trim());
+        petMap.put("dob", etPetDob.getText().toString().trim());
+        petMap.put("color", etPetColor.getText().toString().trim());
+        petMap.put("sound", etPetSound.getText().toString().trim());
+        petMap.put("height", etPetHeight.getText().toString().trim());
+        petMap.put("weight", etPetWeight.getText().toString().trim());
+        petMap.put("description", etPetDescription.getText().toString().trim());
+        petMap.put("imageUrl", imageUrl);
 
         petsRef.child(petId)
-                .setValue(pet)
+                .setValue(petMap)
                 .addOnSuccessListener(aVoid -> {
+                    // Automatically add birthday to local events
+                    addBirthdayToEvents(petId, etPetName.getText().toString(), etPetDob.getText().toString());
+
                     progressDialog.dismiss();
-                    Toast.makeText(this, "Pet added!", Toast.LENGTH_SHORT).show();
-                    clearForm();
-                    showPets(); // Refresh pets list
+                    String msg = (petToEdit == null) ? "Pet added!" : "Pet updated!";
+                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+                    if (petToEdit != null) {
+                        finish(); // Go back to details if editing
+                    } else {
+                        clearForm();
+                        showPets(); // Refresh list if adding
+                    }
                 })
                 .addOnFailureListener(e -> {
                     progressDialog.dismiss();
@@ -281,9 +331,48 @@ public class AddEditPet extends AppCompatActivity {
                 });
     }
 
+    private void addBirthdayToEvents(String petId, String petName, String dob) {
+        if (TextUtils.isEmpty(dob)) return;
+        
+        try {
+            String[] parts = dob.split("-");
+            if (parts.length == 3) {
+                int month = Integer.parseInt(parts[1]);
+                int day = Integer.parseInt(parts[2]);
+                int currentYear = LocalDate.now().getYear();
+                
+                // Create event for current year
+                LocalDate bdayDate = LocalDate.of(currentYear, month, day);
+                
+                int eventId = ("birthday_" + petId).hashCode();
+                Event bdayEvent = new Event(
+                        eventId,
+                        petName + "'s Birthday",
+                        "Birthday",
+                        "Happy Birthday to " + petName + "!",
+                        petName,
+                        petId,
+                        bdayDate,
+                        LocalTime.MIDNIGHT,
+                        LocalTime.MAX,
+                        true
+                );
+                
+                EventStore eventStore = EventStore.getInstance(this);
+                // Remove old one if exists (e.g. if dob changed)
+                eventStore.removeEvent(eventId);
+                eventStore.addEvent(bdayEvent);
+                AlarmHelper.setEventAlarm(this, bdayEvent);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     private void clearForm() {
         etPetName.setText(""); etBreedName.setText(""); etPetGender.setText(""); etPetAge.setText("");
-        etPetDob.setText(""); etPetColor.setText(""); etPetSound.setText(""); etPetHeight.setText(""); etPetWeight.setText("");
+        etPetDob.setText(""); etPetColor.setText(""); etPetSound.setText(""); etPetHeight.setText(""); 
+        etPetWeight.setText(""); etPetDescription.setText("");
         petImageInput.setImageResource(R.drawable.ic_profile);
         imageUri = null;
     }

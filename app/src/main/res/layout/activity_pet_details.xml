@@ -437,4 +437,17 @@
         app:tint="@android:color/white"
         android:contentDescription="@string/back" />
 
+    <ImageButton
+        android:id="@+id/buttonEditPet"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        android:elevation="10dp"
+        android:src="@drawable/ic_edit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@android:color/white"
+        android:contentDescription="Edit Pet" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

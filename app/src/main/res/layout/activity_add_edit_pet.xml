@@ -284,6 +284,21 @@
                         android:textSize="15sp"/>
                 </LinearLayout>
 
+                <!-- Pet Description -->
+                <EditText
+                    android:id="@+id/etPetDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:background="@drawable/bg_edittext_rounded"
+                    android:hint="Pet Description (e.g. Gifted by my mother)"
+                    android:padding="16dp"
+                    android:gravity="top"
+                    android:textColor="@color/mat_black"
+                    android:textColorHint="@color/mat_black"
+                    android:fontFamily="@font/fredoka"
+                    android:textSize="15sp"
+                    android:layout_marginBottom="8dp"/>
+
                 <!-- Upload Photo Button -->
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnUploadPhoto"

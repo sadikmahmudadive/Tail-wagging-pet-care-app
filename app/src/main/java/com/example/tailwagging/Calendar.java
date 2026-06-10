@@ -17,6 +17,11 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.graphics.Color;
+import android.os.Build;
+import android.Manifest;
+import android.content.pm.PackageManager;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -96,9 +101,14 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         btnBack.setOnClickListener(v -> finish());
         btnAddEvent.setOnClickListener(v -> showAddEventDialog(String.valueOf(selectedDay), null, null));
 
-        if (preSelectedCategory != null) {
-            // Auto-open add event dialog if redirected from a specific health action
-            showAddEventDialog(String.valueOf(selectedDay), preSelectedPetId, preSelectedCategory);
+        requestNotificationPermission();
+    }
+
+    private void requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
         }
     }
 
@@ -115,6 +125,13 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                             Pet pet = petSnap.getValue(Pet.class);
                             if (pet != null) userPets.add(pet);
                         }
+                        syncPetBirthdays();
+                        setMonthView();
+                        updateTodayEvents();
+
+                        if (preSelectedCategory != null) {
+                            showAddEventDialog(String.valueOf(selectedDay), preSelectedPetId, preSelectedCategory);
+                        }
                     }
 
                     @Override
@@ -122,6 +139,54 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                         Toast.makeText(Calendar.this, "Failed to load pets", Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void syncPetBirthdays() {
+        EventStore eventStore = EventStore.getInstance(this);
+        List<Event> allEvents = eventStore.getAllEvents();
+        
+        // Remove existing birthday events to avoid duplicates/stale data
+        for (Event e : allEvents) {
+            if ("Birthday".equalsIgnoreCase(e.category)) {
+                eventStore.deleteEvent(e);
+                AlarmHelper.cancelEventAlarm(this, e.id);
+            }
+        }
+
+        // Add current year birthdays for all pets
+        for (Pet pet : userPets) {
+            if (pet.getDob() != null && !pet.getDob().isEmpty()) {
+                try {
+                    String[] parts = pet.getDob().split("-");
+                    if (parts.length == 3) {
+                        int month = Integer.parseInt(parts[1]);
+                        int day = Integer.parseInt(parts[2]);
+                        
+                        // Create event for the current year
+                        LocalDate bdayDate = LocalDate.of(selectedYear, month, day);
+                        
+                        int eventId = ("birthday_" + pet.getPetID()).hashCode();
+                        Event bdayEvent = new Event(
+                                eventId,
+                                pet.getName() + "'s Birthday",
+                                "Birthday",
+                                "Happy Birthday to " + pet.getName() + "!",
+                                pet.getName(),
+                                pet.getPetID(),
+                                bdayDate,
+                                LocalTime.MIDNIGHT,
+                                LocalTime.MAX,
+                                true
+                        );
+                        
+                        eventStore.addEvent(bdayEvent);
+                        AlarmHelper.setEventAlarm(this, bdayEvent);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void initWidgets() {
@@ -234,12 +299,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
             selectedDay = Integer.parseInt(dayCell.dayText);
             selectedDate = LocalDate.of(selectedYear, selectedDate.getMonthValue(), selectedDay);
             setMonthView();
-            showAddEventDialog(dayCell.dayText, null, null);
-
-            // If user taps on today, update the events
-            if (selectedDate.equals(LocalDate.now())) {
-                updateTodayEvents();
-            }
+            updateTodayEvents();
         }
     }
 
@@ -312,7 +372,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
     }
 
     private void updateTodayEvents() {
-        todayEventAdapter.setEvents(getTodayEvents(LocalDate.now()));
+        todayEventAdapter.setEvents(getTodayEvents(selectedDate));
     }
 
     private List<Event> getTodayEvents(LocalDate date) {
@@ -338,6 +398,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         Button btnSaveEvent = dialogView.findViewById(R.id.btnSaveEvent);
         LinearLayout categoryLayout = dialogView.findViewById(R.id.categoryLayout);
         Spinner spinnerPetSelector = dialogView.findViewById(R.id.spinnerPetSelector);
+        com.google.android.material.materialswitch.MaterialSwitch switchReminder = dialogView.findViewById(R.id.switchReminder);
 
         // Populate Spinner
         List<String> petNames = new ArrayList<>();
@@ -421,6 +482,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
 
             // Generate unique event id
             int eventId = (int) (System.currentTimeMillis() & 0xFFFFFFF);
+            boolean isReminderEnabled = switchReminder.isChecked();
 
             Event event = new Event(
                     eventId,
@@ -431,7 +493,8 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                     petId,
                     selectedDate,
                     fromTime,
-                    toTime
+                    toTime,
+                    isReminderEnabled
             );
             EventStore.getInstance(this).addEvent(event);
 

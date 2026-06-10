@@ -33,7 +33,8 @@
     <string name="pet_image_desc">Pet image</string>
     <string name="gender_icon_desc">Gender icon</string>
 
-    <!-- Pet Health -->
+    <!-- Events & Reminders -->
+    <string name="events_reminders_title">Events &amp; Reminders</string>
     <string name="pet_health_title">Pet Health</string>
     <string name="wellness_tab">Wellness</string>
     <string name="medical_records_tab">Medical Records</string>

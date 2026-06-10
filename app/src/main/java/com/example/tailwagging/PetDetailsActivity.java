@@ -10,14 +10,18 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,7 +37,7 @@ public class PetDetailsActivity extends AppCompatActivity {
             textViewPetDescriptionDetail, textViewVaccinationDetail, textViewMedicationDetail,
             labelAbout, labelStatus;
     private CardView cardGender;
-    private ImageButton buttonClosePetDetails;
+    private ImageButton buttonClosePetDetails, buttonEditPet;
     private Button buttonDeletePet;
 
     private Pet selectedPet;
@@ -59,6 +63,7 @@ public class PetDetailsActivity extends AppCompatActivity {
         labelStatus = findViewById(R.id.labelStatus);
         cardGender = findViewById(R.id.cardGender);
         buttonClosePetDetails = findViewById(R.id.buttonClosePetDetails);
+        buttonEditPet = findViewById(R.id.buttonEditPet);
         buttonDeletePet = findViewById(R.id.buttonDeletePet);
 
         // Status Section Buttons
@@ -77,10 +82,17 @@ public class PetDetailsActivity extends AppCompatActivity {
         }
 
         buttonClosePetDetails.setOnClickListener(v -> finish());
+        buttonEditPet.setOnClickListener(v -> launchEditPetActivity());
 
         buttonDeletePet.setOnClickListener(v -> {
             showDeleteConfirmationDialog();
         });
+    }
+
+    private void launchEditPetActivity() {
+        Intent intent = new Intent(PetDetailsActivity.this, AddEditPet.class);
+        intent.putExtra("EDIT_PET", selectedPet);
+        startActivity(intent);
     }
 
     private void showDeleteConfirmationDialog() {
@@ -110,12 +122,49 @@ public class PetDetailsActivity extends AppCompatActivity {
 
         petRef.removeValue()
                 .addOnSuccessListener(unused -> {
+                    // Remove associated birthday events
+                    EventStore.getInstance(PetDetailsActivity.this).removeEventsByPetId(selectedPet.getPetID());
+
                     Toast.makeText(PetDetailsActivity.this, "Pet deleted successfully.", Toast.LENGTH_SHORT).show();
                     finish();
                 })
                 .addOnFailureListener(e -> {
                     Toast.makeText(PetDetailsActivity.this, "Failed to delete pet: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (selectedPet != null && selectedPet.getPetID() != null) {
+            refreshPetData();
+        }
+    }
+
+    private void refreshPetData() {
+        DatabaseReference petRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/")
+                .getReference("pets")
+                .child(selectedPet.getPetID());
+
+        petRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    selectedPet = dataSnapshot.getValue(Pet.class);
+                    if (selectedPet != null) {
+                        populatePetDetails(selectedPet);
+                    }
+                } else {
+                    // Pet might have been deleted from another screen
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(PetDetailsActivity.this, "Failed to refresh data", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void populatePetDetails(Pet pet) {
@@ -137,8 +186,8 @@ public class PetDetailsActivity extends AppCompatActivity {
         setTextOrDefault(textViewPetHeightDetail, pet.getHeight(), "N/A");
         setTextOrDefault(textViewPetWeightDetail, pet.getWeight(), "N/A");
         
-        // Use vaccination details as a temporary description if available
-        setTextOrDefault(textViewPetDescriptionDetail, pet.getVaccinationDetails(), "No description provided.");
+        // Use dedicated description field
+        setTextOrDefault(textViewPetDescriptionDetail, pet.getDescription(), "No description provided.");
         
         setTextOrDefault(textViewVaccinationDetail, "Last Vaccinated (2mon Ago)", "N/A");
         setTextOrDefault(textViewMedicationDetail, "Last Fed (1h Ago)", "N/A");
