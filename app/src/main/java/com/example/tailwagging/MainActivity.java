@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
             navCalendar.setOnClickListener(v -> launchCalendarActivity());
         }
 
-        LinearLayout navAddPet = findViewById(R.id.navAddPet);
+        View navAddPet = findViewById(R.id.navAddPet);
         if (navAddPet != null) {
             navAddPet.setOnClickListener(v -> launchAddEditPetActivity());
         }
@@ -76,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
         LinearLayout navProfile = findViewById(R.id.navProfile);
         if (navProfile != null) {
             navProfile.setOnClickListener(v -> launchProfileActivity());
+        }
+
+        LinearLayout navVet = findViewById(R.id.navVet);
+        if (navVet != null) {
+            navVet.setOnClickListener(v -> launchPetHealthActivity());
         }
 
         // New: Click listener for My Pets navigation (if you add a dedicated button for it)
@@ -128,6 +133,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void launchProfileActivity() {
         Intent intent = new Intent(MainActivity.this, Profile.class);
+        startActivity(intent);
+    }
+
+    private void launchPetHealthActivity() {
+        Intent intent = new Intent(MainActivity.this, PetHealthActivity.class);
         startActivity(intent);
     }
 

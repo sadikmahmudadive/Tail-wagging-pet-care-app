@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "849611779485-05khsm7dbr8rq7f0r47neotb9vcd9oh2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.tailwagging",
+            "certificate_hash": "6023237f0e0c8fbc8ba551f3b13f8a7efbfa37fc"
+          }
+        },
+        {
           "client_id": "849611779485-lio20ffads3jjfkppr7fhncs5v17ojue.apps.googleusercontent.com",
           "client_type": 3
         }

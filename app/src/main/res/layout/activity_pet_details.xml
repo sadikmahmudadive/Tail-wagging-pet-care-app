@@ -1,142 +1,440 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/dialog_background_rounded"
-    tools:context=".PetDetailsActivity"
-    android:paddingBottom="16dp">
+    android:background="@color/white">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <ImageButton
-            android:id="@+id/buttonClosePetDetails"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:src="@drawable/ic_close"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            app:tint="@color/grey_dark"
-            android:layout_gravity="end"
-            android:layout_marginBottom="8dp"
-            android:contentDescription="Close Details" />
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/imageViewPetDetail"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="12dp"
-            android:src="@drawable/ic_pet_placeholder"
-            app:civ_border_width="2dp"
-            app:civ_border_color="@color/orange" />
-
-        <TextView
-            android:id="@+id/textViewPetNameDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Fluffy McFlufferson"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@color/dark_blue"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="16dp"/>
-
-        <GridLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="2"
-            android:rowCount="6"
-            android:useDefaultMargins="true">
+            android:paddingBottom="40dp">
 
-            <TextView style="@style/PetDetailLabel" android:text="Breed:" />
-            <TextView android:id="@+id/textViewPetBreedDetail" style="@style/PetDetailValue" tools:text="Golden Retriever"/>
+            <ImageView
+                android:id="@+id/imageViewPetDetail"
+                android:layout_width="match_parent"
+                android:layout_height="350dp"
+                android:contentDescription="@string/pet_image_desc"
+                android:scaleType="centerCrop"
+                android:src="@drawable/pet1"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_editor_absoluteX="0dp" />
 
-            <TextView style="@style/PetDetailLabel" android:text="Age:" />
-            <TextView android:id="@+id/textViewPetAgeDetail" style="@style/PetDetailValue" tools:text="3 years"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:background="@drawable/bg_curve_white_top"
+                app:layout_constraintBottom_toBottomOf="@+id/imageViewPetDetail" />
 
-            <TextView style="@style/PetDetailLabel" android:text="Gender:" />
-            <TextView android:id="@+id/textViewPetGenderDetail" style="@style/PetDetailValue" tools:text="Male"/>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPetInfo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="-60dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="0dp"
+                app:layout_constraintTop_toBottomOf="@+id/imageViewPetDetail">
 
-            <TextView style="@style/PetDetailLabel" android:text="Birthday:" />
-            <TextView android:id="@+id/textViewPetDobDetail" style="@style/PetDetailValue" tools:text="2021-05-15"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp">
 
-            <TextView style="@style/PetDetailLabel" android:text="Color:" />
-            <TextView android:id="@+id/textViewPetColorDetail" style="@style/PetDetailValue" tools:text="Golden"/>
+                    <TextView
+                        android:id="@+id/textViewPetNameDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredoka_bold"
+                        tools:text="Bella"
+                        android:textColor="@color/black"
+                        android:textSize="28sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView style="@style/PetDetailLabel" android:text="Height:" />
-            <TextView android:id="@+id/textViewPetHeightDetail" style="@style/PetDetailValue" tools:text="60 cm"/>
+                    <TextView
+                        android:id="@+id/textViewPetBreedDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/fredoka"
+                        tools:text="Border Collie"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="18sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textViewPetNameDetail" />
 
-            <TextView style="@style/PetDetailLabel" android:text="Weight:" />
-            <TextView android:id="@+id/textViewPetWeightDetail" style="@style/PetDetailValue" tools:text="30 kg"/>
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardGender"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        app:cardBackgroundColor="@color/gender_female_bg"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
-            <TextView style="@style/PetDetailLabel" android:text="Sound:" />
-            <TextView android:id="@+id/textViewPetSoundDetail" style="@style/PetDetailValue" tools:text="Barks happily"/>
+                        <ImageView
+                            android:id="@+id/imageViewGenderDetail"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_female"
+                            app:tint="@color/white"
+                            android:contentDescription="@string/gender_icon_desc" />
+                    </com.google.android.material.card.MaterialCardView>
 
-        </GridLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/light_gray"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"/>
+            <ImageView
+                android:id="@+id/iconAbout"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:src="@drawable/ic_paw"
+                app:tint="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardPetInfo" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Vaccination Details"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/dark_blue"
-            android:layout_marginBottom="6dp"/>
-        <TextView
-            android:id="@+id/textViewVaccinationDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="All shots up to date. Next rabies due 2026-03-01."
-            android:textSize="15sp"
-            android:textColor="@color/green"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginBottom="16dp"/>
+            <TextView
+                android:id="@+id/labelAbout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/fredoka_bold"
+                android:text="@string/about_label"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/iconAbout"
+                app:layout_constraintStart_toEndOf="@+id/iconAbout"
+                app:layout_constraintTop_toTopOf="@+id/iconAbout" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Medication Schedule"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/dark_blue"
-            android:layout_marginBottom="6dp"/>
-        <TextView
-            android:id="@+id/textViewMedicationDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:text="Heartworm pill: 1st of every month. Flea treatment: 15th of every month."
-            android:textSize="15sp"
-            android:textColor="@color/dark_gray"
-            android:lineSpacingMultiplier="1.2"
-            android:layout_marginBottom="16dp"/>
+            <LinearLayout
+                android:id="@+id/layoutAttributes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@+id/labelAbout">
 
-        <!-- Delete Button -->
-        <Button
-            android:id="@+id/buttonDeletePet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Delete Pet"
-            android:textAllCaps="false"
-            android:textColor="@android:color/white"
-            android:backgroundTint="@color/red"
-            android:drawableStart="@drawable/ic_delete"
-            android:drawablePadding="8dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginBottom="4dp"
-            android:padding="12dp"
-            android:fontFamily="@font/fredoka_bold"/>
+                <LinearLayout style="@style/PetAttributeContainer">
+                    <TextView style="@style/PetAttributeLabel" android:text="@string/age_label" />
+                    <TextView android:id="@+id/textViewPetAgeDetail" style="@style/PetAttributeValue" tools:text="1y 4m 11d" />
+                </LinearLayout>
 
-    </LinearLayout>
-</ScrollView>
+                <LinearLayout style="@style/PetAttributeContainer">
+                    <TextView style="@style/PetAttributeLabel" android:text="@string/weight_label" />
+                    <TextView android:id="@+id/textViewPetWeightDetail" style="@style/PetAttributeValue" tools:text="7.5 kg" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/PetAttributeContainer">
+                    <TextView style="@style/PetAttributeLabel" android:text="@string/height_label" />
+                    <TextView android:id="@+id/textViewPetHeightDetail" style="@style/PetAttributeValue" tools:text="54 cm" />
+                </LinearLayout>
+
+                <LinearLayout style="@style/PetAttributeContainer">
+                    <TextView style="@style/PetAttributeLabel" android:text="@string/color_label" />
+                    <TextView android:id="@+id/textViewPetColorDetail" style="@style/PetAttributeValue" tools:text="Black" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textViewPetDescriptionDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/fredoka"
+                tools:text="My first dog which was gifted by my mother for my 20th birthday."
+                android:textColor="@color/grey_dark"
+                android:textSize="15sp"
+                app:layout_constraintTop_toBottomOf="@+id/layoutAttributes" />
+
+            <ImageView
+                android:id="@+id/iconStatus"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="32dp"
+                android:src="@drawable/ic_status"
+                app:tint="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textViewPetDescriptionDetail" />
+
+            <TextView
+                android:id="@+id/labelStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/fredoka_bold"
+                android:text="@string/status_label"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/iconStatus"
+                app:layout_constraintStart_toEndOf="@+id/iconStatus"
+                app:layout_constraintTop_toTopOf="@+id/iconStatus" />
+
+            <!-- Health Status -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutStatusHealth"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                app:layout_constraintTop_toBottomOf="@+id/labelStatus">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardHealthIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardBackgroundColor="@color/status_health_bg"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_favorite_vet"
+                        app:tint="@color/status_red_btn" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/labelHealth"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="@string/health_label"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@+id/cardHealthIcon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewHealthStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    android:text="@string/abnormal_status"
+                    android:textColor="@color/grey_dark"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/labelHealth"
+                    app:layout_constraintTop_toBottomOf="@+id/labelHealth" />
+
+                <TextView
+                    android:id="@+id/textViewVaccinationDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    tools:text="Last Vaccinated (2mon Ago)"
+                    android:textColor="@color/green"
+                    android:textSize="11sp"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonContactVet"
+                    app:layout_constraintStart_toStartOf="@+id/labelHealth"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewHealthStatus" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonContactVet"
+                    style="@style/StatusButton"
+                    android:text="@string/contact_vet"
+                    app:icon="@drawable/ic_chevron_right"
+                    app:iconGravity="end"
+                    app:iconSize="14dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Food Status -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutStatusFood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/layoutStatusHealth">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardFoodIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardBackgroundColor="@color/status_food_bg"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_pets"
+                        app:tint="@color/status_green_btn"
+                        android:contentDescription="@string/food_label" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/labelFood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="@string/food_label"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@+id/cardFoodIcon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewFoodStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    android:text="@string/hungry_status"
+                    android:textColor="@color/grey_dark"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/labelFood"
+                    app:layout_constraintTop_toBottomOf="@+id/labelFood" />
+
+                <TextView
+                    android:id="@+id/textViewMedicationDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    tools:text="Last Fed (1h Ago)"
+                    android:textColor="@color/green"
+                    android:textSize="11sp"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonCheckFood"
+                    app:layout_constraintStart_toStartOf="@+id/labelFood"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewFoodStatus" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonCheckFood"
+                    style="@style/StatusButton"
+                    android:text="@string/check_food"
+                    android:backgroundTint="@color/status_green_btn"
+                    app:icon="@drawable/ic_chevron_right"
+                    app:iconGravity="end"
+                    app:iconSize="14dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- Mood Status -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/layoutStatusMood"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="20dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/layoutStatusFood">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardMoodIcon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    app:cardBackgroundColor="@color/status_mood_bg"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="0dp"
+                    app:strokeWidth="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_status"
+                        app:tint="#FB8C00"
+                        android:contentDescription="@string/mood_label" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <TextView
+                    android:id="@+id/labelMood"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="@string/mood_label"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    app:layout_constraintStart_toEndOf="@+id/cardMoodIcon"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/textViewMoodStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    android:text="@string/abnormal_status"
+                    android:textColor="@color/grey_dark"
+                    android:textSize="12sp"
+                    app:layout_constraintStart_toStartOf="@+id/labelMood"
+                    app:layout_constraintTop_toBottomOf="@+id/labelMood" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/buttonWhistle"
+                    style="@style/StatusButton"
+                    android:text="@string/whistle"
+                    app:icon="@drawable/ic_chevron_right"
+                    app:iconGravity="end"
+                    app:iconSize="14dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <Button
+                android:id="@+id/buttonDeletePet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="32dp"
+                android:backgroundTint="@color/red"
+                android:fontFamily="@font/fredoka_bold"
+                android:padding="12dp"
+                android:text="@string/delete_pet_profile"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                app:cornerRadius="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/layoutStatusMood" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <ImageButton
+        android:id="@+id/buttonClosePetDetails"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_margin="16dp"
+        android:background="@android:color/transparent"
+        android:elevation="10dp"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@android:color/white"
+        android:contentDescription="@string/back" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

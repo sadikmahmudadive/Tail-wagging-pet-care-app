@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.activity)
     implementation(libs.constraintlayout)
     implementation(libs.play.services.maps)
+    implementation(libs.circleimageview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -62,8 +63,6 @@ dependencies {
 
 // Annotation processor for Glide
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
-
-    implementation ("de.hdodenhof:circleimageview:3.1.0")
 
     implementation("com.cloudinary:cloudinary-android:2.3.1")
 

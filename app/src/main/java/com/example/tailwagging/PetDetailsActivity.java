@@ -1,33 +1,38 @@
 package com.example.tailwagging;
 
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class PetDetailsActivity extends AppCompatActivity {
 
-    private CircleImageView imageViewPetDetail;
+    private ImageView imageViewPetDetail, imageViewGenderDetail;
     private TextView textViewPetNameDetail, textViewPetBreedDetail, textViewPetAgeDetail,
-            textViewPetGenderDetail, textViewPetDobDetail, textViewPetColorDetail,
-            textViewPetHeightDetail, textViewPetWeightDetail, textViewPetSoundDetail,
-            textViewVaccinationDetail, textViewMedicationDetail;
+            textViewPetColorDetail, textViewPetHeightDetail, textViewPetWeightDetail,
+            textViewPetDescriptionDetail, textViewVaccinationDetail, textViewMedicationDetail,
+            labelAbout, labelStatus;
+    private CardView cardGender;
     private ImageButton buttonClosePetDetails;
     private Button buttonDeletePet;
 
@@ -38,32 +43,28 @@ public class PetDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_details);
 
-        // --- Apply Dialog/Floating Window Style ---
-        WindowManager.LayoutParams params = getWindow().getAttributes();
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        int screenWidth = displayMetrics.widthPixels;
-        params.width = (int) (screenWidth * 0.90);
-        params.gravity = Gravity.CENTER;
-        params.dimAmount = 0.6f;
-        getWindow().setAttributes(params);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
         // Initialize Views
         imageViewPetDetail = findViewById(R.id.imageViewPetDetail);
+        imageViewGenderDetail = findViewById(R.id.imageViewGenderDetail);
         textViewPetNameDetail = findViewById(R.id.textViewPetNameDetail);
         textViewPetBreedDetail = findViewById(R.id.textViewPetBreedDetail);
         textViewPetAgeDetail = findViewById(R.id.textViewPetAgeDetail);
-        textViewPetGenderDetail = findViewById(R.id.textViewPetGenderDetail);
-        textViewPetDobDetail = findViewById(R.id.textViewPetDobDetail);
         textViewPetColorDetail = findViewById(R.id.textViewPetColorDetail);
         textViewPetHeightDetail = findViewById(R.id.textViewPetHeightDetail);
         textViewPetWeightDetail = findViewById(R.id.textViewPetWeightDetail);
-        textViewPetSoundDetail = findViewById(R.id.textViewPetSoundDetail);
+        textViewPetDescriptionDetail = findViewById(R.id.textViewPetDescriptionDetail);
         textViewVaccinationDetail = findViewById(R.id.textViewVaccinationDetail);
         textViewMedicationDetail = findViewById(R.id.textViewMedicationDetail);
+        labelAbout = findViewById(R.id.labelAbout);
+        labelStatus = findViewById(R.id.labelStatus);
+        cardGender = findViewById(R.id.cardGender);
         buttonClosePetDetails = findViewById(R.id.buttonClosePetDetails);
         buttonDeletePet = findViewById(R.id.buttonDeletePet);
+
+        // Status Section Buttons
+        findViewById(R.id.buttonContactVet).setOnClickListener(v -> launchPetHealthActivity());
+        findViewById(R.id.buttonCheckFood).setOnClickListener(v -> launchPetHealthActivity());
+        findViewById(R.id.buttonWhistle).setOnClickListener(v -> launchPetHealthActivity());
 
         // Get Pet data from Intent
         selectedPet = getIntent().getParcelableExtra("SELECTED_PET");
@@ -91,6 +92,11 @@ public class PetDetailsActivity extends AppCompatActivity {
                 .show();
     }
 
+    private void launchPetHealthActivity() {
+        Intent intent = new Intent(PetDetailsActivity.this, PetHealthActivity.class);
+        startActivity(intent);
+    }
+
     private void deletePet() {
         if (selectedPet == null || selectedPet.getPetID() == null) {
             Toast.makeText(this, "Pet information is invalid.", Toast.LENGTH_SHORT).show();
@@ -113,16 +119,38 @@ public class PetDetailsActivity extends AppCompatActivity {
 
     private void populatePetDetails(Pet pet) {
         textViewPetNameDetail.setText(pet.getName());
+        labelAbout.setText(getString(R.string.about_pet_placeholder, pet.getName()));
+        labelStatus.setText(getString(R.string.status_pet_placeholder, pet.getName()));
+        
         setTextOrDefault(textViewPetBreedDetail, pet.getBreed(), "N/A");
-        setTextOrDefault(textViewPetAgeDetail, pet.getAge(), "N/A");
-        setTextOrDefault(textViewPetGenderDetail, pet.getGender(), "N/A");
-        setTextOrDefault(textViewPetDobDetail, pet.getDob(), "N/A");
+        
+        // Calculate age from DOB if available
+        String calculatedAge = calculateAgeFromDob(pet.getDob());
+        if (!TextUtils.isEmpty(calculatedAge)) {
+            textViewPetAgeDetail.setText(calculatedAge);
+        } else {
+            setTextOrDefault(textViewPetAgeDetail, pet.getAge(), "N/A");
+        }
+        
         setTextOrDefault(textViewPetColorDetail, pet.getColor(), "N/A");
         setTextOrDefault(textViewPetHeightDetail, pet.getHeight(), "N/A");
         setTextOrDefault(textViewPetWeightDetail, pet.getWeight(), "N/A");
-        setTextOrDefault(textViewPetSoundDetail, pet.getSound(), "N/A");
-        setTextOrDefault(textViewVaccinationDetail, pet.getVaccinationDetails(), "No vaccination details recorded.");
-        setTextOrDefault(textViewMedicationDetail, pet.getMedicationTime(), "No medication schedule recorded.");
+        
+        // Use vaccination details as a temporary description if available
+        setTextOrDefault(textViewPetDescriptionDetail, pet.getVaccinationDetails(), "No description provided.");
+        
+        setTextOrDefault(textViewVaccinationDetail, "Last Vaccinated (2mon Ago)", "N/A");
+        setTextOrDefault(textViewMedicationDetail, "Last Fed (1h Ago)", "N/A");
+
+        if (pet.getGender() != null) {
+            if (pet.getGender().equalsIgnoreCase("Female")) {
+                imageViewGenderDetail.setImageResource(R.drawable.ic_female);
+                cardGender.setCardBackgroundColor(ContextCompat.getColor(this, R.color.gender_female_bg));
+            } else {
+                imageViewGenderDetail.setImageResource(R.drawable.ic_male);
+                cardGender.setCardBackgroundColor(ContextCompat.getColor(this, R.color.gender_male_bg));
+            }
+        }
 
         if (pet.getImageUrl() != null && !pet.getImageUrl().isEmpty()) {
             Glide.with(this)
@@ -132,6 +160,54 @@ public class PetDetailsActivity extends AppCompatActivity {
                     .into(imageViewPetDetail);
         } else {
             imageViewPetDetail.setImageResource(R.drawable.ic_pet_placeholder);
+        }
+    }
+
+    private String calculateAgeFromDob(String dob) {
+        if (TextUtils.isEmpty(dob)) return null;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        try {
+            Date birthDate = sdf.parse(dob);
+            if (birthDate == null) return null;
+
+            Calendar birth = Calendar.getInstance();
+            birth.setTime(birthDate);
+            Calendar now = Calendar.getInstance();
+
+            int years = now.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+            int months = now.get(Calendar.MONTH) - birth.get(Calendar.MONTH);
+            int days = now.get(Calendar.DAY_OF_MONTH) - birth.get(Calendar.DAY_OF_MONTH);
+
+            if (days < 0) {
+                months--;
+                now.add(Calendar.MONTH, -1);
+                days += now.getActualMaximum(Calendar.DAY_OF_MONTH);
+            }
+
+            if (months < 0) {
+                years--;
+                months += 12;
+            }
+
+            StringBuilder ageBuilder = new StringBuilder();
+            if (years > 0) {
+                ageBuilder.append(years).append("y ");
+            }
+            if (months > 0) {
+                ageBuilder.append(months).append("m ");
+            }
+            if (days >= 0 && years == 0 && months == 0) {
+                ageBuilder.append(days).append("d");
+            } else if (days > 0) {
+                 ageBuilder.append(days).append("d");
+            }
+
+            return ageBuilder.toString().trim();
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
         }
     }
 

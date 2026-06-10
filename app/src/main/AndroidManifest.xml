@@ -26,6 +26,9 @@
             android:theme="@style/FloatingDialogActivity"
             android:exported="false" />
         <activity
+            android:name=".PetHealthActivity"
+            android:exported="false" />
+        <activity
             android:name=".PetDetailsActivity"
             android:exported="false" />
         <activity

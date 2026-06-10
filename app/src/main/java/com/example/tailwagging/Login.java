@@ -163,6 +163,7 @@ public class Login extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN) {
+            Log.d(TAG, "onActivityResult: resultCode = " + resultCode);
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -170,7 +171,14 @@ public class Login extends AppCompatActivity {
                     firebaseAuthWithGoogle(account);
                 }
             } catch (ApiException e) {
-                Toast.makeText(Login.this, "Google sign-in failed", Toast.LENGTH_SHORT).show();
+                Log.e(TAG, "Google sign-in failed: Status Code = " + e.getStatusCode(), e);
+                String errorMessage = "Google sign-in failed. Error Code: " + e.getStatusCode();
+                if (e.getStatusCode() == 10) {
+                    errorMessage += " (Developer Error - Check SHA-1)";
+                } else if (e.getStatusCode() == 12500) {
+                    errorMessage += " (Sign-In Failed)";
+                }
+                Toast.makeText(Login.this, errorMessage, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -194,10 +202,12 @@ public class Login extends AppCompatActivity {
                                         finish();
                                     })
                                     .addOnFailureListener(e -> {
+                                        Log.e(TAG, "Database Error: " + e.getMessage());
                                         Toast.makeText(Login.this, "Failed to save user data", Toast.LENGTH_SHORT).show();
                                     });
                         }
                     } else {
+                        Log.e(TAG, "Firebase Auth Error: " + Objects.requireNonNull(task.getException()).getMessage());
                         Toast.makeText(Login.this, "Google Sign-In Failed", Toast.LENGTH_SHORT).show();
                     }
                 });
