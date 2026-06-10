@@ -1,16 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:layout_margin="3dp">
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="56dp"
+    android:padding="2dp">
 
     <TextView
         android:id="@+id/tvDay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="14"
-        android:textSize="18sp"
-        android:textColor="#222222"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:fontFamily="@font/fredoka_bold"
         android:gravity="center"
-        android:fontFamily="sans-serif-medium"
-        android:background="@android:color/transparent"/>
-</FrameLayout>
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="14" />
+
+    <View
+        android:id="@+id/eventIndicator"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/bg_event_dot"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,11 +18,14 @@ public class PetHealthActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
     private ImageButton btnBack;
+    private Pet selectedPet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pet_health);
+
+        selectedPet = getIntent().getParcelableExtra("SELECTED_PET");
 
         tabLayout = findViewById(R.id.tabLayout);
         viewPager = findViewById(R.id.viewPager);
@@ -30,7 +33,7 @@ public class PetHealthActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> finish());
 
-        HealthPagerAdapter adapter = new HealthPagerAdapter(this);
+        HealthPagerAdapter adapter = new HealthPagerAdapter(this, selectedPet);
         viewPager.setAdapter(adapter);
 
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
@@ -43,18 +46,29 @@ public class PetHealthActivity extends AppCompatActivity {
     }
 
     private static class HealthPagerAdapter extends FragmentStateAdapter {
-        public HealthPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
+        private final Pet pet;
+
+        public HealthPagerAdapter(@NonNull FragmentActivity fragmentActivity, Pet pet) {
             super(fragmentActivity);
+            this.pet = pet;
         }
 
         @NonNull
         @Override
         public Fragment createFragment(int position) {
+            Fragment fragment;
             if (position == 0) {
-                return new WellnessFragment();
+                fragment = new WellnessFragment();
             } else {
-                return new MedicalRecordsFragment();
+                fragment = new MedicalRecordsFragment();
             }
+
+            if (pet != null) {
+                Bundle args = new Bundle();
+                args.putParcelable("SELECTED_PET", pet);
+                fragment.setArguments(args);
+            }
+            return fragment;
         }
 
         @Override

@@ -42,7 +42,18 @@
     <string name="appointments_label">Appointments</string>
     <string name="past_vaccinations_label">Past vaccinations</string>
     <string name="past_treatments_label">Past Treatments</string>
+    <string name="cough_label">Cough</string>
     <string name="see_all">See all</string>
     <string name="appointment_prompt">When you schedule an appointment, you\'ll see it here. Let\'s set your first appointment.</string>
     <string name="start_label">Start</string>
+    <string name="events_label">Events</string>
+    <string name="view_all">View All</string>
+    <string name="add_event">Add Event</string>
+    <string name="sun_initial">S</string>
+    <string name="mon_initial">M</string>
+    <string name="tue_initial">T</string>
+    <string name="wed_initial">W</string>
+    <string name="thu_initial">T</string>
+    <string name="fri_initial">F</string>
+    <string name="sat_initial">S</string>
 </resources>

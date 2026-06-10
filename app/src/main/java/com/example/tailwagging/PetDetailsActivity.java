@@ -94,6 +94,7 @@ public class PetDetailsActivity extends AppCompatActivity {
 
     private void launchPetHealthActivity() {
         Intent intent = new Intent(PetDetailsActivity.this, PetHealthActivity.class);
+        intent.putExtra("SELECTED_PET", selectedPet);
         startActivity(intent);
     }
 

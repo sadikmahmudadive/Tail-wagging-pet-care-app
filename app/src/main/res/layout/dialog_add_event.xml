@@ -1,150 +1,176 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:background="@android:color/white"
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="20dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Event"
-        android:textColor="#222222"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="12dp"/>
-
-    <EditText
-        android:id="@+id/etEventTitle"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="Title"
-        android:background="@drawable/bg_rounded_gray"
-        android:textColor="#222222"
-        android:textColorHint="#B0B0B0"
-        android:padding="12dp"
-        android:textSize="16sp"
-        android:layout_marginBottom="10dp"/>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select time"
-        android:textColor="#222222"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="10dp"/>
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="@drawable/bg_rounded_gray"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp"
-        android:padding="10dp">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredoka_bold"
+            android:text="Add Event"
+            android:textColor="@color/black"
+            android:textSize="22sp" />
+
+        <EditText
+            android:id="@+id/etEventTitle"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_rounded_gray"
+            android:fontFamily="@font/fredoka"
+            android:hint="Title (e.g., Vaccination, Vet visit)"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/fredoka_bold"
+            android:text="Select Pet"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/spinnerPetSelector"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_rounded_gray"
+            android:paddingHorizontal="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/fredoka_bold"
+            android:text="Select Time"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center">
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_rounded_gray"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
 
-            <TextView
-                android:text="From"
-                android:textColor="#999999"
-                android:textSize="12sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/tvFromTime"
-                android:text="12:00"
-                android:textColor="#222222"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    android:text="From"
+                    android:textColor="@color/grey_medium"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvFromTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="12:00"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/ic_arrow_right"
+                app:tint="@color/grey_medium" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    android:text="To"
+                    android:textColor="@color/grey_medium"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/tvToTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="14:00"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+            </LinearLayout>
         </LinearLayout>
 
         <TextView
-            android:text=">"
-            android:textSize="24sp"
-            android:textColor="#999999"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:gravity="center"/>
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/fredoka_bold"
+            android:text="Category"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent"
-            android:gravity="center">
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fillViewport="true"
+            android:scrollbars="none">
 
-            <TextView
-                android:text="To"
-                android:textColor="#999999"
-                android:textSize="12sp"
+            <LinearLayout
+                android:id="@+id/categoryLayout"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/tvToTime"
-                android:text="14:00"
-                android:textColor="#222222"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <EditText
+            android:id="@+id/etNote"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_rounded_gray"
+            android:fontFamily="@font/fredoka"
+            android:gravity="top"
+            android:hint="Notes..."
+            android:padding="16dp"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSaveEvent"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/md_theme_light_primary"
+            android:fontFamily="@font/fredoka_bold"
+            android:text="Save Event"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:cornerRadius="16dp" />
+
     </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Category"
-        android:textColor="#222222"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:fillViewport="true"
-        android:scrollbars="none">
-
-        <LinearLayout
-            android:id="@+id/categoryLayout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"/>
-    </HorizontalScrollView>
-
-    <EditText
-        android:id="@+id/etNote"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:hint="Note"
-        android:background="@drawable/bg_rounded_gray"
-        android:textColor="#222222"
-        android:textColorHint="#B0B0B0"
-        android:padding="12dp"
-        android:textSize="16sp"
-        android:layout_marginBottom="18dp"/>
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnSaveEvent"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:text="Save"
-        android:textAllCaps="false"
-        android:textSize="18sp"
-        android:textColor="#fff"
-        android:background="@drawable/bg_save_btn"
-        android:fontFamily="sans-serif-medium"/>
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

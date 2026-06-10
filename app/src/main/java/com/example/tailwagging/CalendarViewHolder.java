@@ -8,11 +8,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class CalendarViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     public final TextView dayOfMonth;
+    public final View eventIndicator;
     private final CalendarAdapter.OnItemListener onItemListener;
 
     public CalendarViewHolder(@NonNull View itemView, CalendarAdapter.OnItemListener onItemListener) {
         super(itemView);
         dayOfMonth = itemView.findViewById(R.id.tvDay);
+        eventIndicator = itemView.findViewById(R.id.eventIndicator);
         this.onItemListener = onItemListener;
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this); // Set long click listener

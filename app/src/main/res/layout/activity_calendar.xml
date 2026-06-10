@@ -1,160 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:background="@drawable/background"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/background_dashboard">
 
-    <!-- Header Section (stays fixed) -->
+    <!-- Header -->
+    <View
+        android:id="@+id/headerBackground"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:background="@color/md_theme_light_primary"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Everything else scrolls -->
-    <ScrollView
+    <ImageButton
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
+        android:src="@drawable/ic_arrow_back"
+        android:contentDescription="@string/back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <TextView
+        android:id="@+id/tvCalendarTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/fredoka_bold"
+        android:text="@string/pet_health_title"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/btnBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btnBack" />
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/headerBackground"
+        android:layout_marginTop="-40dp">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="32dp">
 
-            <!-- Month/Year Picker Row -->
+            <!-- Calendar Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                app:cardCornerRadius="24dp"
+                app:cardElevation="8dp"
+                app:strokeWidth="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/monthYearTV"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:textColor="@color/black"
+                            android:textSize="20sp"
+                            tools:text="March 2025" />
+
+                        <TextView
+                            android:id="@+id/tvYearPicker"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_year_chip"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="4dp"
+                            android:textColor="@color/md_theme_light_primary"
+                            android:textSize="16sp"
+                            tools:text="2025" />
+
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/monthPickerRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never"
+                        android:nestedScrollingEnabled="false" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal">
+
+                        <TextView style="@style/CalendarWeekDayModern" android:text="S" />
+                        <TextView style="@style/CalendarWeekDayModern" android:text="M" />
+                        <TextView style="@style/CalendarWeekDayModern" android:text="T" />
+                        <TextView style="@style/CalendarWeekDayModern" android:text="W" />
+                        <TextView style="@style/CalendarWeekDayModern" android:text="T" />
+                        <TextView style="@style/CalendarWeekDayModern" android:text="F" />
+                        <TextView style="@style/CalendarWeekDayModern" android:text="S" />
+                    </LinearLayout>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/calendarRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:overScrollMode="never"
+                        android:nestedScrollingEnabled="false"
+                        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                        app:spanCount="7"
+                        tools:listitem="@layout/calendar_day_cell" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Today's Events -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
                 android:gravity="center_vertical"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp"
-                android:background="@android:color/transparent"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="2dp">
+                android:orientation="horizontal">
 
                 <TextView
-                    android:id="@+id/tvYearPicker"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="Events"
+                    android:textColor="@color/black"
+                    android:textSize="20sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEvents"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="2025"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
-                    android:drawableRight="@drawable/ic_arrow_down"
-                    android:drawablePadding="4dp"
-                    android:padding="10dp"
-                    android:background="@drawable/bg_year_chip"
-                    android:textColor="#4029B7"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginEnd="10dp"/>
+                    android:text="View All" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/monthPickerRecyclerView"
-                    android:layout_width="0dp"
-                    android:layout_height="48dp"
-                    android:layout_weight="1"
-                    android:paddingStart="6dp"
-                    android:paddingEnd="6dp"
-                    android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:scrollbars="none" />
             </LinearLayout>
-
-            <!-- Month + Year Label -->
-            <TextView
-                android:id="@+id/monthYearTV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="March 2025"
-                android:textSize="22sp"
-                android:textColor="#fffdfc"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="center"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="2dp" />
-
-            <!-- Days of week header -->
-            <LinearLayout
-                android:id="@+id/daysOfWeekLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp"
-                android:layout_marginBottom="2dp"
-                android:background="@android:color/transparent">
-
-                <TextView style="@style/CalendarWeekDay" android:text="Su"/>
-                <TextView style="@style/CalendarWeekDay" android:text="Mo"/>
-                <TextView style="@style/CalendarWeekDay" android:text="Tu"/>
-                <TextView style="@style/CalendarWeekDay" android:text="We"/>
-                <TextView style="@style/CalendarWeekDay" android:text="Th"/>
-                <TextView style="@style/CalendarWeekDay" android:text="Fr"/>
-                <TextView style="@style/CalendarWeekDay" android:text="Sa"/>
-            </LinearLayout>
-
-            <!-- Calendar grid in a square -->
-            <com.example.tailwagging.SquareFrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="350dp"
-                android:layout_gravity="center"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/bg_square_border">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/calendarRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="8dp"
-                    android:clipToPadding="false"
-                    android:overScrollMode="never"
-                    android:scrollbars="none"/>
-            </com.example.tailwagging.SquareFrameLayout>
-
-            <!-- Today's Events Section -->
-            <TextView
-                android:id="@+id/tvTodayEventsLabel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Today's Events"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:paddingStart="24dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="8dp"
-                android:textColor="#fffdfc"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/todayEventsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:background="@android:color/transparent"
-                android:paddingBottom="8dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:scrollbars="none"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="12dp"/>
+                android:paddingHorizontal="16dp"
+                android:nestedScrollingEnabled="false" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btnEvents"
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/btnAddEvent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="24dp"
-                android:layout_marginBottom="4dp"
-                android:backgroundTint="#8E7BEF"
-                android:text="View All Events"
-                android:textAllCaps="false"
-                android:textColor="#fff"
-                android:textStyle="bold" />
+                android:layout_gravity="center"
+                android:layout_marginTop="24dp"
+                android:text="Add Event"
+                app:icon="@drawable/ic_add"
+                android:textColor="@color/white"
+                app:iconTint="@color/white"
+                android:backgroundTint="@color/md_theme_light_primary"/>
+
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

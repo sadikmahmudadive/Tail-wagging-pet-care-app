@@ -107,7 +107,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:fontFamily="@font/fredoka_bold"
-                    android:text="Cough"
+                    android:text="@string/cough_label"
                     android:textColor="@color/black"
                     android:textSize="18sp" />
 

@@ -41,27 +41,19 @@ public class TodayEventAdapter extends RecyclerView.Adapter<TodayEventAdapter.To
     @Override
     public void onBindViewHolder(@NonNull TodayEventViewHolder holder, int position) {
         Event event = events.get(position);
-        holder.tvEventTime.setText(event.fromTime.format(DateTimeFormatter.ofPattern("HH:mm")) + "-" + event.toTime.format(DateTimeFormatter.ofPattern("HH:mm")));
+        holder.tvEventTime.setText(event.fromTime.format(DateTimeFormatter.ofPattern("HH:mm")) + " - " + event.toTime.format(DateTimeFormatter.ofPattern("HH:mm")));
         holder.tvEventTitle.setText(event.title);
         holder.tvEventCategory.setText(event.category);
-        holder.tvEventDescription.setText(event.note);
+        
+        if (event.petName != null) {
+            holder.tvPetName.setText(event.petName);
+            holder.tvPetName.setVisibility(View.VISIBLE);
+            holder.ivPetIcon.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvPetName.setVisibility(View.GONE);
+            holder.ivPetIcon.setVisibility(View.GONE);
+        }
 
-        holder.ivMore.setOnClickListener(v -> {
-            new AlertDialog.Builder(context)
-                    .setTitle("Delete Event")
-                    .setMessage("Are you sure you want to delete this event?")
-                    .setPositiveButton("Delete", (dialog, which) -> {
-                        EventStore.getInstance(context).removeEvent(event.id);
-                        AlarmHelper.cancelEventAlarm(context, event.id);
-                        events.remove(position);
-                        notifyItemRemoved(position);
-                        if (eventChangedListener != null) eventChangedListener.onEventDeleted();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
-        });
-
-        // Optional: support long-press-to-delete as well
         holder.itemView.setOnLongClickListener(v -> {
             new AlertDialog.Builder(context)
                     .setTitle("Delete Event")
@@ -90,16 +82,16 @@ public class TodayEventAdapter extends RecyclerView.Adapter<TodayEventAdapter.To
     }
 
     public static class TodayEventViewHolder extends RecyclerView.ViewHolder {
-        TextView tvEventTime, tvEventTitle, tvEventCategory, tvEventDescription;
-        ImageView ivMore;
+        TextView tvEventTime, tvEventTitle, tvEventCategory, tvPetName;
+        ImageView ivPetIcon;
 
         public TodayEventViewHolder(@NonNull View itemView) {
             super(itemView);
             tvEventTime = itemView.findViewById(R.id.tvEventTime);
             tvEventTitle = itemView.findViewById(R.id.tvEventTitle);
             tvEventCategory = itemView.findViewById(R.id.tvEventCategory);
-            tvEventDescription = itemView.findViewById(R.id.tvEventDescription);
-            ivMore = itemView.findViewById(R.id.ivMore);
+            tvPetName = itemView.findViewById(R.id.tvPetName);
+            ivPetIcon = itemView.findViewById(R.id.ivPetIcon);
         }
     }
 }
