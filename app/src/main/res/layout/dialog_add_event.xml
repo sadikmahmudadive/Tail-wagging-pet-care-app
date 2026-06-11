@@ -12,6 +12,7 @@
         android:padding="24dp">
 
         <TextView
+            android:id="@+id/tvAddEventHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/fredoka_bold"
@@ -166,10 +167,10 @@
             android:layout_marginTop="16dp"
             android:fontFamily="@font/fredoka_bold"
             android:text="Set Notification Reminder"
-            android:textColor="@color/black"
+            android:textColor="@color/switch_text_selector"
             android:textSize="16sp"
             app:thumbTint="@color/white"
-            app:trackTint="@color/md_theme_light_primary"
+            app:trackTint="@color/switch_track_selector"
             android:checked="true" />
 
         <com.google.android.material.button.MaterialButton

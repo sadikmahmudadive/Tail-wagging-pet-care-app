@@ -4,6 +4,9 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.provider.Settings;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -12,6 +15,16 @@ public class AlarmHelper {
         if (!event.isReminderEnabled) return;
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (!alarmManager.canScheduleExactAlarms()) {
+                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                context.startActivity(intent);
+                Toast.makeText(context, "Please allow exact alarms for reminders", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+
         Intent intent = new Intent(context, EventAlarmReceiver.class);
         intent.putExtra("title", event.title);
         intent.putExtra("category", event.category);

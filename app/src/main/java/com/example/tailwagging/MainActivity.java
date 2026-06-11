@@ -84,10 +84,28 @@ public class MainActivity extends AppCompatActivity {
             navVet.setOnClickListener(v -> launchPetHealthActivity());
         }
 
+        LinearLayout navManage = findViewById(R.id.navManage);
+        if (navManage != null) {
+            navManage.setOnClickListener(v -> launchMyPetsActivity());
+        }
+
         // New: Click listener for My Pets navigation (if you add a dedicated button for it)
         Button navMyPets = findViewById(R.id.btnViewAllPets); // Assuming you add an ID navMyPets
         if (navMyPets != null) {
             navMyPets.setOnClickListener(v -> launchMyPetsActivity());
+        }
+
+        // Connect Track and Check buttons
+        Button btnTrackPets = findViewById(R.id.btnTrackPets);
+        if (btnTrackPets != null) {
+            btnTrackPets.setOnClickListener(v -> {
+                Toast.makeText(this, "Pet Location Tracking coming soon!", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        Button btnCheckPets = findViewById(R.id.btnCheckPets);
+        if (btnCheckPets != null) {
+            btnCheckPets.setOnClickListener(v -> launchPetHealthActivity());
         }
 
         // Add event card click listener
@@ -149,20 +167,16 @@ public class MainActivity extends AppCompatActivity {
 
         recyclerViewPetEvents.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         
-        // Get events for today
+        // Get all events from today onwards
         java.time.LocalDate today = java.time.LocalDate.now();
-        List<Event> events = EventStore.getInstance(this).getEventsForDate(today);
+        List<Event> events = EventStore.getInstance(this).getUpcomingEvents(today);
         
-        // Sort by time
-        events.sort(java.util.Comparator.comparing(e -> e.fromTime));
-
         todayEventAdapter = new TodayEventAdapter(this, events, () -> {
-            // Callback when event deleted from here (if applicable)
+            // Refresh if an event is deleted from the dashboard
             showUpcomingEvents();
         });
+        todayEventAdapter.setHorizontal(true);
         recyclerViewPetEvents.setAdapter(todayEventAdapter);
-
-        // Handle empty state for events if needed (optional since card has text)
     }
 
     private void launchCalendarActivity() {

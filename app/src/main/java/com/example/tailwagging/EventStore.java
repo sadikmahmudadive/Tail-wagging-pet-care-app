@@ -90,7 +90,7 @@ public class EventStore {
         }
     }
 
-    private void saveEvents() {
+    public void saveEvents() {
         String json = gson.toJson(events);
         prefs.edit().putString(EVENTS_KEY, json).apply();
     }
@@ -124,6 +124,22 @@ public class EventStore {
         if (removed) {
             saveEvents();
         }
+    }
+
+    public List<Event> getUpcomingEvents(LocalDate fromDate) {
+        List<Event> result = new ArrayList<>();
+        for (Event e : events) {
+            if (e.date != null && !e.date.isBefore(fromDate)) {
+                result.add(e);
+            }
+        }
+        // Sort by date, then by time
+        result.sort((e1, e2) -> {
+            int dateComp = e1.date.compareTo(e2.date);
+            if (dateComp != 0) return dateComp;
+            return e1.fromTime.compareTo(e2.fromTime);
+        });
+        return result;
     }
 
     public List<Event> getEventsForDate(LocalDate date) {

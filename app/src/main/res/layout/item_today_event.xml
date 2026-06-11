@@ -2,9 +2,9 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="280dp"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="16dp"
+    android:layout_marginHorizontal="8dp"
     android:layout_marginVertical="8dp"
     app:cardCornerRadius="20dp"
     app:cardElevation="4dp"
@@ -32,14 +32,30 @@
                 android:textSize="12sp"
                 tools:text="Vaccination" />
 
-            <TextView
-                android:id="@+id/tvEventTime"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/fredoka_bold"
-                android:textColor="@color/grey_medium"
-                android:textSize="12sp"
-                tools:text="14:00 - 15:00" />
+                android:gravity="end"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvEventDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/grey_dark"
+                    android:textSize="11sp"
+                    tools:text="Mar 14, 2025" />
+
+                <TextView
+                    android:id="@+id/tvEventTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    android:textColor="@color/grey_medium"
+                    android:textSize="11sp"
+                    tools:text="14:00 - 15:00" />
+            </LinearLayout>
 
         </LinearLayout>
 

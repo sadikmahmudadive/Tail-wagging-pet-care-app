@@ -29,6 +29,13 @@ public class EventsActivity extends AppCompatActivity implements TodayEventAdapt
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         List<Event> allEvents = EventStore.getInstance(this).getAllEvents();
+        // Sort by date, then time
+        allEvents.sort((e1, e2) -> {
+            int dateComp = e1.date.compareTo(e2.date);
+            if (dateComp != 0) return dateComp;
+            return e1.fromTime.compareTo(e2.fromTime);
+        });
+
         adapter = new TodayEventAdapter(this, allEvents, this);
         recyclerView.setAdapter(adapter);
     }

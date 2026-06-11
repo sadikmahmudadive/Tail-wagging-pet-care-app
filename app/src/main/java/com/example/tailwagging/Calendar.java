@@ -367,7 +367,8 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
     private void setUpTodayEventsSection() {
         todayEventsRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        todayEventAdapter = new TodayEventAdapter(this, getTodayEvents(LocalDate.now()), this);
+        todayEventAdapter = new TodayEventAdapter(this, getTodayEvents(selectedDate), this);
+        todayEventAdapter.setHorizontal(true);
         todayEventsRecyclerView.setAdapter(todayEventAdapter);
     }
 
