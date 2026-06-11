@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     FirebaseUser user;
     Button logoutButton;
-    TextView textView;
+    TextView textView, tvWelcomeMessage;
     ImageView userProfilePhoto;
 
     private DatabaseReference dbRef;
@@ -62,7 +62,11 @@ public class MainActivity extends AppCompatActivity {
 
         logoutButton = findViewById(R.id.buttonLogout);
         textView = findViewById(R.id.userName);
+        tvWelcomeMessage = findViewById(R.id.tvWelcomeMessage);
         userProfilePhoto = findViewById(R.id.userProfilePhoto);
+
+        setDynamicWelcomeMessage();
+        requestLocationPermission();
 
         LinearLayout navCalendar = findViewById(R.id.navCalendar);
         if (navCalendar != null) {
@@ -106,12 +110,6 @@ public class MainActivity extends AppCompatActivity {
         Button btnCheckPets = findViewById(R.id.btnCheckPets);
         if (btnCheckPets != null) {
             btnCheckPets.setOnClickListener(v -> launchPetHealthActivity());
-        }
-
-        // Add event card click listener
-        View cardPetCalendar = findViewById(R.id.cardPetCalendar);
-        if (cardPetCalendar != null) {
-            cardPetCalendar.setOnClickListener(v -> launchCalendarActivity());
         }
 
         View btnViewAllEvents = findViewById(R.id.btnViewAllEvents);
@@ -177,6 +175,31 @@ public class MainActivity extends AppCompatActivity {
         });
         todayEventAdapter.setHorizontal(true);
         recyclerViewPetEvents.setAdapter(todayEventAdapter);
+    }
+
+    private void setDynamicWelcomeMessage() {
+        if (tvWelcomeMessage == null) return;
+        
+        java.util.Calendar c = java.util.Calendar.getInstance();
+        int timeOfDay = c.get(java.util.Calendar.HOUR_OF_DAY);
+
+        if (timeOfDay >= 5 && timeOfDay < 12) {
+            tvWelcomeMessage.setText(R.string.good_morning);
+        } else if (timeOfDay >= 12 && timeOfDay < 17) {
+            tvWelcomeMessage.setText(R.string.good_afternoon);
+        } else if (timeOfDay >= 17 && timeOfDay < 21) {
+            tvWelcomeMessage.setText(R.string.good_evening);
+        } else {
+            tvWelcomeMessage.setText(R.string.good_night);
+        }
+    }
+
+    private void requestLocationPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                androidx.core.app.ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 102);
+            }
+        }
     }
 
     private void launchCalendarActivity() {

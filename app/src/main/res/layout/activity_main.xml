@@ -12,51 +12,69 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        app:elevation="0dp">
+        app:elevation="0dp"
+        app:liftOnScroll="true">
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             app:cardCornerRadius="24dp"
-            app:cardElevation="2dp"
-            app:strokeWidth="0dp">
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="#F2FFFFFF">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="12dp">
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/buttonLogout"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
-                    android:background="@drawable/logout_button"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                android:padding="16dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/userProfilePhoto"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/ic_username"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_profile"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
 
-                <TextView
-                    android:id="@+id/userName"
+                <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="12dp"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:text="Loading..."
-                    android:textColor="@color/md_theme_light_primary"
-                    android:textSize="18sp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="vertical"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/userProfilePhoto"
-                    app:layout_constraintStart_toEndOf="@+id/buttonLogout"
+                    app:layout_constraintEnd_toStartOf="@+id/buttonLogout"
+                    app:layout_constraintStart_toEndOf="@+id/userProfilePhoto"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <TextView
+                        android:id="@+id/tvWelcomeMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredoka"
+                        android:text="Good Morning,"
+                        android:textColor="@color/md_theme_light_outline"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/userName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="Loading..."
+                        android:textColor="@color/black"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/buttonLogout"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@drawable/logout_button"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -83,25 +101,24 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="16dp"
                     android:layout_marginHorizontal="24dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="24dp"
+                    <View
+                        android:layout_width="4dp"
                         android:layout_height="24dp"
-                        android:src="@drawable/ic_paw"
-                        app:tint="@color/md_theme_light_primary" />
+                        android:background="@color/md_theme_light_primary" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/fredoka_bold"
                         android:text="My Pets"
-                        android:textColor="@color/md_theme_light_onBackground"
+                        android:textColor="@color/black"
                         android:textSize="22sp" />
 
                     <com.google.android.material.button.MaterialButton
@@ -110,7 +127,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="See All"
-                        android:textColor="@color/md_theme_light_primary" />
+                        android:textColor="@color/md_theme_light_primary"
+                        android:fontFamily="@font/fredoka_bold" />
                 </LinearLayout>
 
                 <FrameLayout
@@ -120,17 +138,18 @@
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/recyclerViewPets"
                         android:layout_width="match_parent"
-                        android:layout_height="180dp"
+                        android:layout_height="wrap_content"
                         android:clipToPadding="false"
                         android:orientation="horizontal"
                         android:paddingHorizontal="16dp"
+                        android:paddingVertical="8dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         tools:listitem="@layout/item_pet_horizontal" />
 
                     <FrameLayout
                         android:id="@+id/petsProgressOverlay"
                         android:layout_width="match_parent"
-                        android:layout_height="180dp"
+                        android:layout_height="160dp"
                         android:background="#40FFFFFF"
                         android:visibility="gone">
 
@@ -165,36 +184,49 @@
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
-                        app:cardCornerRadius="24dp">
+                        app:cardBackgroundColor="@color/md_theme_light_primaryContainer"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="20dp">
 
                             <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
                                 android:src="@drawable/ic_location_pin"
                                 app:tint="@color/md_theme_light_primary" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
+                                android:layout_marginTop="12dp"
                                 android:fontFamily="@font/fredoka_bold"
-                                android:text="Pet Location"
-                                android:textColor="@color/md_theme_light_onSurface"
-                                android:textSize="16sp" />
+                                android:text="@string/pet_location_label"
+                                android:textColor="@color/md_theme_light_primary"
+                                android:textSize="17sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredoka"
+                                android:text="@string/track_pets_desc"
+                                android:textColor="@color/md_theme_light_outline"
+                                android:textSize="12sp" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnTrackPets"
-                                style="@style/Widget.Material3.Button.TextButton"
-                                android:layout_width="match_parent"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="Track" />
+                                android:layout_marginTop="12dp"
+                                android:text="Track"
+                                android:paddingHorizontal="16dp"
+                                app:cornerRadius="12dp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
@@ -204,96 +236,98 @@
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_margin="8dp"
-                        app:cardCornerRadius="24dp">
+                        app:cardBackgroundColor="@color/md_theme_light_tertiaryContainer"
+                        app:cardCornerRadius="24dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:padding="16dp">
+                            android:padding="20dp">
 
                             <ImageView
-                                android:layout_width="32dp"
-                                android:layout_height="32dp"
+                                android:layout_width="36dp"
+                                android:layout_height="36dp"
                                 android:src="@drawable/ic_status"
                                 app:tint="@color/md_theme_light_tertiary" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
+                                android:layout_marginTop="12dp"
                                 android:fontFamily="@font/fredoka_bold"
-                                android:text="Pet Status"
-                                android:textColor="@color/md_theme_light_onSurface"
-                                android:textSize="16sp" />
+                                android:text="@string/pet_health_title"
+                                android:textColor="@color/md_theme_light_tertiary"
+                                android:textSize="17sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredoka"
+                                android:text="@string/check_wellness_desc"
+                                android:textColor="@color/md_theme_light_outline"
+                                android:textSize="12sp" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btnCheckPets"
-                                style="@style/Widget.Material3.Button.TextButton"
-                                android:layout_width="match_parent"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:text="Check" />
+                                android:layout_marginTop="12dp"
+                                android:text="Check"
+                                android:paddingHorizontal="16dp"
+                                app:cornerRadius="12dp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
 
                 </GridLayout>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cardPetCalendar"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
                     android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="16dp"
-                    app:cardCornerRadius="24dp"
-                    app:cardBackgroundColor="@color/md_theme_light_surfaceVariant">
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="@color/md_theme_light_primary" />
+
+                    <TextView
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="16dp">
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="Upcoming Events"
+                        android:textColor="@color/black"
+                        android:textSize="22sp" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnViewAllEvents"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="See All"
+                        android:textColor="@color/md_theme_light_primary"
+                        android:fontFamily="@font/fredoka_bold" />
+                </LinearLayout>
 
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:src="@drawable/ic_calendar"
-                                app:tint="@color/md_theme_light_primary" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/fredoka_bold"
-                                android:text="Upcoming Events"
-                                android:textColor="@color/md_theme_light_onSurfaceVariant"
-                                android:textSize="18sp" />
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btnViewAllEvents"
-                                style="@style/Widget.Material3.Button.TextButton"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="See All"
-                                android:textColor="@color/md_theme_light_primary" />
-                        </LinearLayout>
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/recyclerViewPetEvents"
-                            android:layout_width="match_parent"
-                            android:layout_height="140dp"
-                            android:layout_marginTop="12dp"
-                            android:clipToPadding="false"
-                            android:paddingHorizontal="8dp" />
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewPetEvents"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="horizontal"
+                    tools:listitem="@layout/item_today_event" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

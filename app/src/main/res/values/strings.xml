@@ -33,6 +33,15 @@
     <string name="pet_image_desc">Pet image</string>
     <string name="gender_icon_desc">Gender icon</string>
 
+    <string name="good_morning">Good Morning,</string>
+    <string name="good_afternoon">Good Afternoon,</string>
+    <string name="good_evening">Good Evening,</string>
+    <string name="good_night">Good Night,</string>
+    <string name="hello">Hello,</string>
+    <string name="pet_location_label">Pet Location</string>
+    <string name="track_pets_desc">Track your pets</string>
+    <string name="check_wellness_desc">Check wellness</string>
+
     <!-- Events & Reminders -->
     <string name="events_reminders_title">Events &amp; Reminders</string>
     <string name="pet_health_title">Pet Health</string>
