@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class MedicalRecordsFragment extends Fragment {
 
     private Pet selectedPet;
     private RecyclerView rvPastVaccinations, rvPastAllergies, rvPastCough;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
@@ -36,15 +38,27 @@ public class MedicalRecordsFragment extends Fragment {
         rvPastVaccinations = view.findViewById(R.id.rvPastVaccinations);
         rvPastAllergies = view.findViewById(R.id.rvPastAllergies);
         rvPastCough = view.findViewById(R.id.rvPastCough);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshMedical);
 
         loadMedicalHistory();
 
         view.findViewById(R.id.btnSeeAllPastVaccinations).setOnClickListener(v -> openCalendarWithCategory("Vaccination"));
         view.findViewById(R.id.btnSeeAllTreatments).setOnClickListener(v -> openCalendarWithCategory("Medication"));
+
+        swipeRefreshLayout.setOnRefreshListener(this::loadMedicalHistory);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadMedicalHistory();
     }
 
     private void loadMedicalHistory() {
-        if (selectedPet == null) return;
+        if (selectedPet == null) {
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+            return;
+        }
 
         List<Event> allEvents = EventStore.getInstance(getContext()).getAllEvents();
         List<Event> pastVaccinations = new ArrayList<>();
@@ -56,7 +70,6 @@ public class MedicalRecordsFragment extends Fragment {
                 if ("Vaccination".equalsIgnoreCase(event.category)) {
                     pastVaccinations.add(event);
                 } else if ("Medication".equalsIgnoreCase(event.category)) {
-                    // Logic to separate Allergies and Cough if possible, otherwise group them
                     if (event.title != null && event.title.toLowerCase().contains("cough")) {
                         pastCough.add(event);
                     } else {
@@ -69,6 +82,8 @@ public class MedicalRecordsFragment extends Fragment {
         rvPastVaccinations.setAdapter(new HealthVaccinationAdapter(pastVaccinations));
         rvPastAllergies.setAdapter(new HealthAllergyAdapter(pastAllergies));
         rvPastCough.setAdapter(new HealthAllergyAdapter(pastCough));
+
+        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
     }
 
     private void openCalendarWithCategory(String category) {

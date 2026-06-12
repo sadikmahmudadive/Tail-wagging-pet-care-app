@@ -1,159 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshMedical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <!-- Past Vaccinations Section -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                style="@style/HealthSectionHeader"
-                android:text="@string/past_vaccinations_label" />
-
-            <TextView
-                android:id="@+id/btnSeeAllPastVaccinations"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                app:drawableEndCompat="@drawable/ic_chevron_right"
-                android:drawablePadding="4dp"
-                android:fontFamily="@font/fredoka"
-                android:text="@string/see_all"
-                android:textColor="@color/dark_blue"
-                android:textSize="14sp"
-                app:drawableTint="@color/dark_blue" />
-        </RelativeLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvPastVaccinations"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_health_vaccination" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <!-- Past Treatments Section -->
-        <TextView
-            style="@style/HealthSectionHeader"
-            android:layout_marginTop="24dp"
-            android:text="@string/past_treatments_label" />
-
-        <com.google.android.material.card.MaterialCardView
-            style="@style/HealthCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="0dp"
-            android:layout_marginTop="12dp">
-
-            <LinearLayout
+            <!-- Past Vaccinations Section -->
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <!-- Allergies Group -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:text="@string/allergies_label"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvPastAllergies"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toStartOf="@+id/btnNextAllergy"
-                        android:clipToPadding="false"
-                        android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_health_allergy" />
-
-                    <ImageButton
-                        android:id="@+id/btnNextAllergy"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="@color/black" />
-                </RelativeLayout>
-
-                <!-- Cough Group (Reusing Allergy layout for now as it looks similar) -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:text="@string/cough_label"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical">
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvPastCough"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_toStartOf="@+id/btnNextCough"
-                        android:clipToPadding="false"
-                        android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        tools:listitem="@layout/item_health_allergy" />
-
-                    <ImageButton
-                        android:id="@+id/btnNextCough"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_chevron_right"
-                        app:tint="@color/black" />
-                </RelativeLayout>
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:id="@+id/btnSeeAllTreatments"
+                    style="@style/HealthSectionHeader"
+                    android:text="@string/past_vaccinations_label" />
+
+                <TextView
+                    android:id="@+id/btnSeeAllPastVaccinations"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="16dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    app:drawableEndCompat="@drawable/ic_chevron_right"
                     android:drawablePadding="4dp"
                     android:fontFamily="@font/fredoka"
                     android:text="@string/see_all"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
-                    app:drawableBottomCompat="@drawable/ic_arrow_down"
                     app:drawableTint="@color/dark_blue" />
+            </RelativeLayout>
 
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPastVaccinations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_health_vaccination" />
 
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+            <!-- Past Treatments Section -->
+            <TextView
+                style="@style/HealthSectionHeader"
+                android:layout_marginTop="24dp"
+                android:text="@string/past_treatments_label" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/HealthCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Allergies Group -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="@string/allergies_label"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvPastAllergies"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toStartOf="@+id/btnNextAllergy"
+                            android:clipToPadding="false"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_health_allergy" />
+
+                        <ImageButton
+                            android:id="@+id/btnNextAllergy"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/black" />
+                    </RelativeLayout>
+
+                    <!-- Cough Group (Reusing Allergy layout for now as it looks similar) -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="@string/cough_label"
+                        android:textColor="@color/black"
+                        android:textSize="18sp" />
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_vertical">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvPastCough"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_toStartOf="@+id/btnNextCough"
+                            android:clipToPadding="false"
+                            android:orientation="horizontal"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:listitem="@layout/item_health_allergy" />
+
+                        <ImageButton
+                            android:id="@+id/btnNextCough"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="@color/black" />
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/btnSeeAllTreatments"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="16dp"
+                        android:drawablePadding="4dp"
+                        android:fontFamily="@font/fredoka"
+                        android:text="@string/see_all"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="14sp"
+                        app:drawableBottomCompat="@drawable/ic_arrow_down"
+                        app:drawableTint="@color/dark_blue" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

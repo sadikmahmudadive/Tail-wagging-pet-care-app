@@ -13,8 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -39,6 +41,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private ImageButton btnUploadPhoto;
     private Button btnSaveProfile;
     private EditText editEmail, editUsername, editPassword, editPhone, editAddress;
+    private EditText editQualification, editExperience;
+    private LinearLayout layoutVetFields;
     private ImageView backButton, menuButton;
 
     private FirebaseAuth mAuth;
@@ -46,6 +50,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private DatabaseReference dbRef;
 
     private boolean isEditable = false;
+    private String userRole = "Pet Owner";
     private static final int PICK_IMAGE = 1;
     private Uri imageUri = null;
 
@@ -72,12 +77,15 @@ public class EditUserProfileActivity extends AppCompatActivity {
         editPassword = findViewById(R.id.editPassword);
         editPhone = findViewById(R.id.editPhone);
         editAddress = findViewById(R.id.editAddress);
+        editQualification = findViewById(R.id.editQualification);
+        editExperience = findViewById(R.id.editExperience);
+        layoutVetFields = findViewById(R.id.layoutVetFields);
         backButton = findViewById(R.id.backButton);
         menuButton = findViewById(R.id.menuButton);
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        dbRef = FirebaseDatabase.getInstance().getReference();
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         // Back button
         backButton.setOnClickListener(v -> finish());
@@ -119,6 +127,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
         editPassword.setEnabled(editable);
         editPhone.setEnabled(editable);
         editAddress.setEnabled(editable);
+        editQualification.setEnabled(editable);
+        editExperience.setEnabled(editable);
         btnUploadPhoto.setEnabled(editable);
         btnSaveProfile.setEnabled(editable);
     }
@@ -130,13 +140,21 @@ public class EditUserProfileActivity extends AppCompatActivity {
         dbRef.child("users").child(user.getUid())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot snapshot) {
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
+                            userRole = snapshot.child("role").getValue(String.class);
+                            if ("Veterinarian".equalsIgnoreCase(userRole)) {
+                                layoutVetFields.setVisibility(android.view.View.VISIBLE);
+                                editQualification.setText(snapshot.child("qualification").getValue(String.class));
+                                editExperience.setText(snapshot.child("experience").getValue(String.class));
+                            } else {
+                                layoutVetFields.setVisibility(android.view.View.GONE);
+                            }
+
                             editUsername.setText(snapshot.child("name").getValue(String.class));
                             editPhone.setText(snapshot.child("phone").getValue(String.class));
                             editAddress.setText(snapshot.child("address").getValue(String.class));
 
-                            // Use 'photoUrl' for consistency
                             String imgUrl = snapshot.child("photoUrl").getValue(String.class);
                             if (imgUrl != null && !imgUrl.isEmpty()) {
                                 Glide.with(EditUserProfileActivity.this)
@@ -144,15 +162,13 @@ public class EditUserProfileActivity extends AppCompatActivity {
                                         .placeholder(R.drawable.ic_profile)
                                         .error(R.drawable.ic_profile)
                                         .into(profileImage);
-                            } else {
-                                profileImage.setImageResource(R.drawable.ic_profile);
                             }
                         }
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError error) {
-                        Toast.makeText(EditUserProfileActivity.this, "Failed to load profile: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(EditUserProfileActivity.this, "Failed to load profile", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -168,6 +184,11 @@ public class EditUserProfileActivity extends AppCompatActivity {
         updateData.put("name", username);
         updateData.put("phone", phone);
         updateData.put("address", address);
+
+        if ("Veterinarian".equalsIgnoreCase(userRole)) {
+            updateData.put("qualification", editQualification.getText().toString().trim());
+            updateData.put("experience", editExperience.getText().toString().trim());
+        }
 
         if (imageUri != null) {
             uploadProfileImageToCloudinary(imageUri, updateData, password);

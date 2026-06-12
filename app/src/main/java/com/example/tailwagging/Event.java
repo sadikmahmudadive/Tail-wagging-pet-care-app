@@ -6,6 +6,7 @@ import java.time.LocalTime;
 
 public class Event implements Serializable {
     public int id;
+    public String userId;
     public String title;
     public String category;
     public String note;
@@ -16,8 +17,9 @@ public class Event implements Serializable {
     public LocalTime toTime;
     public boolean isReminderEnabled;
 
-    public Event(int id, String title, String category, String note, String petName, String petId, LocalDate date, LocalTime fromTime, LocalTime toTime, boolean isReminderEnabled) {
+    public Event(int id, String userId, String title, String category, String note, String petName, String petId, LocalDate date, LocalTime fromTime, LocalTime toTime, boolean isReminderEnabled) {
         this.id = id;
+        this.userId = userId;
         this.title = title;
         this.category = category;
         this.note = note;

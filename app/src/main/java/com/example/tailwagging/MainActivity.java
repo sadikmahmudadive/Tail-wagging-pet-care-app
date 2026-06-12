@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -151,12 +152,78 @@ public class MainActivity extends AppCompatActivity {
 
         fetchAndShowRegisteredPets();
         showUpcomingEvents();
+        showTopVeterinarians();
+    }
+
+    private void showTopVeterinarians() {
+        RecyclerView recyclerViewVets = findViewById(R.id.recyclerViewVets);
+        if (recyclerViewVets == null) return;
+
+        recyclerViewVets.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        
+        dbRef.child("users").orderByChild("role").equalTo("Veterinarian")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<Vet> vetList = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            // Extract data from User profile to create Vet object
+                            String name = snapshot.child("name").getValue(String.class);
+                            String qualification = snapshot.child("qualification").getValue(String.class);
+                            String photoUrl = snapshot.child("photoUrl").getValue(String.class);
+                            String vetId = snapshot.getKey();
+                            if (qualification == null) qualification = "Registered Veterinarian";
+                            
+                            // Mocking some professional stats for now until Vets set them up
+                            float rating = 4.5f; 
+                            int reviews = 10;
+                            String tag = "Professional";
+                            String distance = "Local";
+                            String price = "$$";
+                            String experience = "Exp: 5+ years";
+                            String lastVisit = "N/A";
+                            int imageRes = R.drawable.ic_profile;
+
+                            Vet vet = new Vet(vetId, name, qualification, rating, reviews, tag, distance, price, experience, lastVisit, imageRes);
+                            if (photoUrl != null && !photoUrl.isEmpty()) {
+                                vet.setImageUrl(photoUrl);
+                            }
+                            vetList.add(vet);
+                        }
+                        
+                        if (vetList.isEmpty()) {
+                            // Fallback mock if no vets registered yet for UI testing
+                            Vet mockVet = new Vet("mock_id", "Dr. Nambuvan", "Bachelor of veterinary science", 5.0f, 100, "Expert", "2.5 km", "1000 LKR", "10 years", "25/11/2022", R.drawable.pet1);
+                            mockVet.setBio("Dr. Shehan, one of the most skilled and experienced veterinarians and the owner of the most convenient animal clinic \"Petz & Vetz\". Our paradise is situated in the heart of the town with a pleasant environment. We are ready to treat your beloved doggos & puppers with love and involvement.");
+                            mockVet.setRecommendedFor("Bella");
+                            vetList.add(mockVet);
+                        }
+
+                        VetAdapter vetAdapter = new VetAdapter(MainActivity.this, vetList);
+                        recyclerViewVets.setAdapter(vetAdapter);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        // Show mock data if database fails or no connection for testing
+                        List<Vet> vetList = new ArrayList<>();
+                        Vet mockVet = new Vet("mock_id", "Dr. Nambuvan", "Bachelor of veterinary science", 5.0f, 100, "Expert", "2.5 km", "1000 LKR", "10 years", "25/11/2022", R.drawable.pet1);
+                        mockVet.setBio("Dr. Shehan, one of the most skilled and experienced veterinarians and the owner of the most convenient animal clinic \"Petz & Vetz\". Our paradise is situated in the heart of the town with a pleasant environment.");
+                        mockVet.setRecommendedFor("Bella");
+                        vetList.add(mockVet);
+                        VetAdapter vetAdapter = new VetAdapter(MainActivity.this, vetList);
+                        recyclerViewVets.setAdapter(vetAdapter);
+                    }
+                });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        fetchAndDisplayUserData();
+        fetchAndShowRegisteredPets();
         showUpcomingEvents();
+        showTopVeterinarians();
     }
 
     private void showUpcomingEvents() {

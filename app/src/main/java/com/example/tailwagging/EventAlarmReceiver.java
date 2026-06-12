@@ -10,9 +10,19 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class EventAlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        String userId = intent.getStringExtra("userId");
+        String currentUid = FirebaseAuth.getInstance().getUid();
+
+        // Only show notification if the user who created it is still logged in
+        if (userId != null && !userId.equals(currentUid)) {
+            return;
+        }
+
         String title = intent.getStringExtra("title");
         String category = intent.getStringExtra("category");
         int eventId = intent.getIntExtra("id", 0);

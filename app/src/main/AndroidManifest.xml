@@ -74,6 +74,15 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+        <activity
+            android:name=".VetDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BookingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".VetDetailsActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="preloaded_fonts"

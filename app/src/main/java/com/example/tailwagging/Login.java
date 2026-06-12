@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -29,8 +30,11 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.security.MessageDigest;
 import java.util.HashMap;
@@ -94,8 +98,7 @@ public class Login extends AppCompatActivity {
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
         if (authLogin.getCurrentUser() != null) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
+            checkUserRoleAndRedirect(authLogin.getCurrentUser().getUid());
         }
 
         btnSignup.setOnClickListener(v -> {
@@ -117,12 +120,7 @@ public class Login extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = authLogin.getCurrentUser();
                         if (user != null) {
-                            Intent intent = new Intent(Login.this, MainActivity.class);
-                            intent.putExtra("name", user.getDisplayName());
-                            String profilePicUrl = user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "default_url";
-                            intent.putExtra("profile_pic_url", profilePicUrl);
-                            startActivity(intent);
-                            finish();
+                            checkUserRoleAndRedirect(user.getUid());
                         }
                     } else {
                         Toast.makeText(Login.this, "Login Failed: " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_SHORT).show();
@@ -151,6 +149,32 @@ public class Login extends AppCompatActivity {
         });
 
         btnGoogle.setOnClickListener(v -> signInWithGoogle());
+    }
+
+    private void checkUserRoleAndRedirect(String uid) {
+        dbRef.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String role = dataSnapshot.child("role").getValue(String.class);
+                    if ("Veterinarian".equalsIgnoreCase(role)) {
+                        startActivity(new Intent(Login.this, VetDashboardActivity.class));
+                    } else {
+                        startActivity(new Intent(Login.this, MainActivity.class));
+                    }
+                    finish();
+                } else {
+                    // Default to Pet Owner if no role found (for legacy users)
+                    startActivity(new Intent(Login.this, MainActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(Login.this, "Error checking user role", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void signInWithGoogle() {
@@ -190,21 +214,33 @@ public class Login extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = authLogin.getCurrentUser();
                         if (user != null) {
-                            // Save user data to Realtime Database
-                            Map<String, Object> userData = new HashMap<>();
-                            userData.put("name", user.getDisplayName());
-                            userData.put("email", user.getEmail());
-                            userData.put("photoUrl", user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "default_url");
+                            String uid = user.getUid();
+                            dbRef.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (!snapshot.exists()) {
+                                        // New user, save basic data
+                                        Map<String, Object> userData = new HashMap<>();
+                                        userData.put("name", user.getDisplayName());
+                                        userData.put("email", user.getEmail());
+                                        userData.put("photoUrl", user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "default_url");
+                                        userData.put("role", "Pet Owner"); // Default role
 
-                            dbRef.child("users").child(user.getUid()).setValue(userData)
-                                    .addOnSuccessListener(aVoid -> {
-                                        startActivity(new Intent(Login.this, MainActivity.class));
-                                        finish();
-                                    })
-                                    .addOnFailureListener(e -> {
-                                        Log.e(TAG, "Database Error: " + e.getMessage());
-                                        Toast.makeText(Login.this, "Failed to save user data", Toast.LENGTH_SHORT).show();
-                                    });
+                                        dbRef.child("users").child(uid).setValue(userData).addOnSuccessListener(aVoid -> {
+                                            startActivity(new Intent(Login.this, MainActivity.class));
+                                            finish();
+                                        });
+                                    } else {
+                                        // Existing user, just redirect
+                                        checkUserRoleAndRedirect(uid);
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    checkUserRoleAndRedirect(uid);
+                                }
+                            });
                         }
                     } else {
                         Log.e(TAG, "Firebase Auth Error: " + Objects.requireNonNull(task.getException()).getMessage());

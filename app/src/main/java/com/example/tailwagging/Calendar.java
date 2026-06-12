@@ -1,33 +1,34 @@
 package com.example.tailwagging;
 
-import android.os.Bundle;
-
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.NumberPicker;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.ArrayAdapter;
-import android.graphics.Color;
-import android.os.Build;
-import android.Manifest;
-import android.content.pm.PackageManager;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -56,6 +57,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
     private TextView tvYearPicker;
     private RecyclerView todayEventsRecyclerView;
     private TodayEventAdapter todayEventAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private Button btnEvents;
     private ImageButton btnBack;
     private View btnAddEvent;
@@ -94,6 +96,12 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         setUpMonthPicker();
         setUpTodayEventsSection();
 
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            fetchUserPets(null, null);
+            setMonthView();
+            updateTodayEvents();
+        });
+
         btnEvents.setOnClickListener(v -> {
             startActivity(new Intent(this, EventsActivity.class));
         });
@@ -102,6 +110,13 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         btnAddEvent.setOnClickListener(v -> showAddEventDialog(String.valueOf(selectedDay), null, null));
 
         requestNotificationPermission();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setMonthView();
+        updateTodayEvents();
     }
 
     private void requestNotificationPermission() {
@@ -114,7 +129,10 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
 
     private void fetchUserPets(String preSelectedPetId, String preSelectedCategory) {
         String userId = FirebaseAuth.getInstance().getUid();
-        if (userId == null) return;
+        if (userId == null) {
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+            return;
+        }
 
         dbRef.child("pets").orderByChild("ownerID").equalTo(userId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -132,11 +150,13 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                         if (preSelectedCategory != null) {
                             showAddEventDialog(String.valueOf(selectedDay), preSelectedPetId, preSelectedCategory);
                         }
+                        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         Toast.makeText(Calendar.this, "Failed to load pets", Toast.LENGTH_SHORT).show();
+                        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                     }
                 });
     }
@@ -145,15 +165,13 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         EventStore eventStore = EventStore.getInstance(this);
         List<Event> allEvents = eventStore.getAllEvents();
         
-        // Remove existing birthday events to avoid duplicates/stale data
         for (Event e : allEvents) {
             if ("Birthday".equalsIgnoreCase(e.category)) {
                 eventStore.deleteEvent(e);
                 AlarmHelper.cancelEventAlarm(this, e.id);
             }
         }
-
-        // Add current year birthdays for all pets
+        
         for (Pet pet : userPets) {
             if (pet.getDob() != null && !pet.getDob().isEmpty()) {
                 try {
@@ -166,8 +184,10 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                         LocalDate bdayDate = LocalDate.of(selectedYear, month, day);
                         
                         int eventId = ("birthday_" + pet.getPetID()).hashCode();
+                        String userId = FirebaseAuth.getInstance().getUid();
                         Event bdayEvent = new Event(
                                 eventId,
+                                userId,
                                 pet.getName() + "'s Birthday",
                                 "Birthday",
                                 "Happy Birthday to " + pet.getName() + "!",
@@ -198,6 +218,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         btnEvents = findViewById(R.id.btnEvents);
         btnBack = findViewById(R.id.btnBack);
         btnAddEvent = findViewById(R.id.btnAddEvent);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutCalendar);
     }
 
     private void setUpYearPicker() {
@@ -239,22 +260,22 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         LinearLayoutManager lm = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         monthPickerRecyclerView.setLayoutManager(lm);
         monthPickerRecyclerView.setAdapter(monthPickerAdapter);
-        // Scroll to selected month
         monthPickerRecyclerView.post(() -> monthPickerRecyclerView.scrollToPosition(selectedMonthIndex));
     }
 
     private void setMonthView() {
-        monthYearText.setText(selectedDate.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()) + " " + selectedDate.getYear());
+        monthYearText.setText(String.format(Locale.getDefault(), "%s %d", 
+            selectedDate.getMonth().getDisplayName(TextStyle.FULL, Locale.getDefault()), 
+            selectedDate.getYear()));
+            
         ArrayList<DayCell> dayCells = getDayCells(selectedDate);
 
         CalendarAdapter calendarAdapter = new CalendarAdapter(dayCells, this);
         calendarRecyclerView.setAdapter(calendarAdapter);
 
-        // Update the month picker selection
         selectedMonthIndex = selectedDate.getMonthValue() - 1;
         if (monthPickerAdapter != null) {
             monthPickerAdapter.setSelectedIndex(selectedMonthIndex);
-            monthPickerAdapter.notifyDataSetChanged();
             monthPickerRecyclerView.scrollToPosition(selectedMonthIndex);
         }
     }
@@ -265,16 +286,14 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         YearMonth prevYearMonth = currentYearMonth.minusMonths(1);
 
         int daysInMonth = currentYearMonth.lengthOfMonth();
-        int firstDayOfWeek = date.withDayOfMonth(1).getDayOfWeek().getValue() % 7; // Sunday=0
+        int firstDayOfWeek = date.withDayOfMonth(1).getDayOfWeek().getValue() % 7; 
 
-        // Fill previous month's end days
         int prevMonthDays = prevYearMonth.lengthOfMonth();
         for (int i = 0; i < firstDayOfWeek; i++) {
             int d = prevMonthDays - firstDayOfWeek + i + 1;
             cells.add(new DayCell(String.valueOf(d), true, false, false, false));
         }
 
-        // Fill current month days
         LocalDate today = LocalDate.now();
         EventStore eventStore = EventStore.getInstance(this);
         for (int i = 1; i <= daysInMonth; i++) {
@@ -285,7 +304,6 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
             cells.add(new DayCell(String.valueOf(i), false, isToday, isSelected, hasEvents));
         }
 
-        // Fill next month's start days to complete 6 rows (42 cells)
         int remaining = 42 - cells.size();
         for (int i = 1; i <= remaining; i++) {
             cells.add(new DayCell(String.valueOf(i), true, false, false, false));
@@ -305,7 +323,6 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
 
     @Override
     public void onItemLongClick(int position, DayCell dayCell) {
-        // Only allow delete if this is not an empty cell and not from another month
         if (!dayCell.dayText.isEmpty() && !dayCell.isOtherMonth) {
             LocalDate eventDate = LocalDate.of(selectedYear, selectedDate.getMonthValue(), Integer.parseInt(dayCell.dayText));
             List<Event> events = EventStore.getInstance(this).getEventsForDate(eventDate);
@@ -313,7 +330,6 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                 Toast.makeText(this, "No event to delete on this day", Toast.LENGTH_SHORT).show();
                 return;
             }
-            // If there is more than one event, show a dialog to select which one to delete
             if (events.size() == 1) {
                 showDeleteEventDialog(events.get(0), eventDate);
             } else {
@@ -325,7 +341,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
     private void showDeleteEventDialog(Event event, LocalDate eventDate) {
         new AlertDialog.Builder(this)
                 .setTitle("Delete Event")
-                .setMessage("Delete event: \"" + event.title + "\" for this day?")
+                .setMessage("Delete event: \"" + event.title + "\"?")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     EventStore.getInstance(this).deleteEvent(event);
                     AlarmHelper.cancelEventAlarm(this, event.id);
@@ -333,7 +349,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                     if (eventDate.equals(LocalDate.now())) {
                         updateTodayEvents();
                     }
-                    setMonthView(); // Refresh dots
+                    setMonthView(); 
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
@@ -362,8 +378,6 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         updateTodayEvents();
     }
 
-    // --- Today's Events Section ---
-
     private void setUpTodayEventsSection() {
         todayEventsRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
@@ -378,12 +392,9 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
 
     private List<Event> getTodayEvents(LocalDate date) {
         List<Event> events = EventStore.getInstance(this).getEventsForDate(date);
-        // Sort by fromTime
         Collections.sort(events, Comparator.comparing(e -> e.fromTime));
         return events;
     }
-
-    // --- Event Dialog and Time Picker ---
 
     private void showAddEventDialog(String dayText, String initialPetId, String initialCategory) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -401,7 +412,6 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         Spinner spinnerPetSelector = dialogView.findViewById(R.id.spinnerPetSelector);
         com.google.android.material.materialswitch.MaterialSwitch switchReminder = dialogView.findViewById(R.id.switchReminder);
 
-        // Populate Spinner
         List<String> petNames = new ArrayList<>();
         petNames.add("No Pet Selected");
         int selectionIndex = 0;
@@ -420,7 +430,6 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         tvFromTime.setText(fromTime.format(DateTimeFormatter.ofPattern("HH:mm")));
         tvToTime.setText(toTime.format(DateTimeFormatter.ofPattern("HH:mm")));
 
-        // Category Chips (clear first, then add)
         categoryLayout.removeAllViews();
         List<String> categories = Arrays.asList("Vet Appointment", "Vaccination", "Medication", "Food", "Training", "Grooming", "Hangout", "Other");
 
@@ -481,12 +490,13 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                 return;
             }
 
-            // Generate unique event id
             int eventId = (int) (System.currentTimeMillis() & 0xFFFFFFF);
             boolean isReminderEnabled = switchReminder.isChecked();
+            String userId = FirebaseAuth.getInstance().getUid();
 
             Event event = new Event(
                     eventId,
+                    userId,
                     title,
                     selectedCategory,
                     note,
@@ -502,25 +512,12 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
             AlarmHelper.setEventAlarm(this, event);
             Toast.makeText(this, "Event saved", Toast.LENGTH_SHORT).show();
             updateTodayEvents();
-            setMonthView(); // Refresh calendar to show dot
+            setMonthView(); 
             dialog.dismiss();
         });
 
         dialog.show();
     }
-
-    // (Optional: implement this for Android 12+)
-    /*
-    private void requestExactAlarmPermissionIfNeeded() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-            if (!alarmManager.canScheduleExactAlarms()) {
-                Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
-                startActivity(intent);
-            }
-        }
-    }
-    */
 
     private void showTimePickerDialog(final TextView timeTextView, final boolean isFromTime) {
         int hour = isFromTime ? fromTime.getHour() : toTime.getHour();

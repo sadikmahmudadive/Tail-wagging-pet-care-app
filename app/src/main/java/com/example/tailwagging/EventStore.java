@@ -3,6 +3,7 @@ package com.example.tailwagging;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -20,16 +21,19 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class EventStore {
     private static final String PREFS_NAME = "event_store";
-    private static final String EVENTS_KEY = "events";
+    private static final String EVENTS_KEY_PREFIX = "events_";
     private static EventStore instance;
     private final SharedPreferences prefs;
     private final Gson gson;
+    private final String userId;
     private List<Event> events;
 
-    private EventStore(Context context) {
+    private EventStore(Context context, String userId) {
+        this.userId = userId;
         prefs = context.getApplicationContext().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
@@ -67,21 +71,23 @@ public class EventStore {
     }
 
     public static synchronized EventStore getInstance(Context context) {
-        if (instance == null) {
-            instance = new EventStore(context);
+        String currentUid = FirebaseAuth.getInstance().getUid();
+        if (currentUid == null) currentUid = "guest"; 
+        
+        if (instance == null || !Objects.equals(instance.userId, currentUid)) {
+            instance = new EventStore(context, currentUid);
         }
         return instance;
     }
 
     private void loadEvents() {
-        String json = prefs.getString(EVENTS_KEY, null);
+        String json = prefs.getString(EVENTS_KEY_PREFIX + userId, null);
         if (json != null) {
             try {
                 Type listType = new TypeToken<ArrayList<Event>>() {}.getType();
                 events = gson.fromJson(json, listType);
                 if (events == null) events = new ArrayList<>();
             } catch (Exception e) {
-                // If parsing fails (e.g. format mismatch after update), start fresh
                 events = new ArrayList<>();
                 saveEvents();
             }
@@ -92,7 +98,7 @@ public class EventStore {
 
     public void saveEvents() {
         String json = gson.toJson(events);
-        prefs.edit().putString(EVENTS_KEY, json).apply();
+        prefs.edit().putString(EVENTS_KEY_PREFIX + userId, json).apply();
     }
 
     public void addEvent(Event event) {
@@ -100,14 +106,12 @@ public class EventStore {
         saveEvents();
     }
 
-    // Remove event by event object (new method for deletion)
     public void deleteEvent(Event event) {
         if (events.remove(event)) {
             saveEvents();
         }
     }
 
-    // Remove event by id (existing, for compatibility)
     public void removeEvent(int eventId) {
         for (int i = 0; i < events.size(); i++) {
             if (events.get(i).id == eventId) {
@@ -133,7 +137,6 @@ public class EventStore {
                 result.add(e);
             }
         }
-        // Sort by date, then by time
         result.sort((e1, e2) -> {
             int dateComp = e1.date.compareTo(e2.date);
             if (dateComp != 0) return dateComp;

@@ -17,6 +17,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
@@ -36,6 +38,7 @@ public class Profile extends AppCompatActivity {
 
     private ImageView profileImage;
     private TextView userEmail, userPhoneNumber;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private FirebaseAuth mAuth;
     private FirebaseUser user;
@@ -67,7 +70,7 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.swipeRefreshLayoutProfile), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -82,6 +85,7 @@ public class Profile extends AppCompatActivity {
         profileImage = findViewById(R.id.profileImage);
         userEmail = findViewById(R.id.userEmail);
         userPhoneNumber = findViewById(R.id.userPhoneNumber);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutProfile);
 
         reloadUserData();
 
@@ -92,6 +96,14 @@ public class Profile extends AppCompatActivity {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             aboutMeLauncher.launch(intent);
         });
+
+        swipeRefreshLayout.setOnRefreshListener(this::reloadUserData);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        reloadUserData();
     }
 
     private void reloadUserData() {
@@ -99,6 +111,7 @@ public class Profile extends AppCompatActivity {
             userEmail.setText("No user");
             userPhoneNumber.setText("No phone number");
             profileImage.setImageResource(R.drawable.ic_profile);
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
             return;
         }
         userEmail.setText(user.getEmail());
@@ -126,11 +139,13 @@ public class Profile extends AppCompatActivity {
                                 profileImage.setImageResource(R.drawable.ic_profile);
                             }
                         }
+                        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
                         Toast.makeText(Profile.this, "Failed to load profile: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                     }
                 });
     }

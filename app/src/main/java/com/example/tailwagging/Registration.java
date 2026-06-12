@@ -7,12 +7,13 @@ import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -21,10 +22,13 @@ import androidx.core.view.WindowInsetsCompat;
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,25 +37,11 @@ public class Registration extends AppCompatActivity {
 
     EditText textEmail, textPassword, textName;
     TextView btnLogin;
-    Button btnSignup, btnSelectPhoto;
-    Uri image;
-    ImageView profilePic;
+    Button btnSignup;
+    RadioGroup radioGroupRole;
 
     FirebaseAuth auth;
-    StorageReference storageReference;
     DatabaseReference dbRef;
-
-    private final ActivityResultLauncher<Intent> activityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode() == RESULT_OK) {
-            if (result.getData() != null) {
-                image = result.getData().getData();
-                btnSelectPhoto.setEnabled(true);
-                Glide.with(getApplicationContext()).load(image).into(profilePic);
-            }
-        } else {
-            Toast.makeText(Registration.this, "Please select an Image", Toast.LENGTH_SHORT).show();
-        }
-    });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,15 +59,14 @@ public class Registration extends AppCompatActivity {
         textName = findViewById(R.id.text_nameR);
         btnLogin = findViewById(R.id.btn_LoginR);
         btnSignup = findViewById(R.id.btn_SignupR);
+        radioGroupRole = findViewById(R.id.radioGroupRole);
 
         auth = FirebaseAuth.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference();
         // Use your custom Firebase Realtime Database URL
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         if (auth.getCurrentUser() != null) {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish();
+            checkUserRoleAndRedirect(auth.getCurrentUser().getUid());
         }
 
         btnLogin.setOnClickListener(view -> {
@@ -90,6 +79,9 @@ public class Registration extends AppCompatActivity {
             String email = textEmail.getText().toString().trim();
             String password = textPassword.getText().toString().trim();
             String name = textName.getText().toString().trim();
+            
+            int selectedRoleId = radioGroupRole.getCheckedRadioButtonId();
+            String role = (selectedRoleId == R.id.radioVet) ? "Veterinarian" : "Pet Owner";
 
             if (TextUtils.isEmpty(email)) {
                 Toast.makeText(Registration.this, "Email Field is Empty", Toast.LENGTH_SHORT).show();
@@ -113,13 +105,15 @@ public class Registration extends AppCompatActivity {
                                 Map<String, Object> userData = new HashMap<>();
                                 userData.put("name", name);
                                 userData.put("email", email);
+                                userData.put("role", role);
+                                userData.put("photoUrl", ""); // Initialize with empty string or default URL
 
                                 dbRef.child("users").child(userId)
                                         .setValue(userData)
                                         .addOnSuccessListener(aVoid -> {
                                             Toast.makeText(Registration.this, "User data added successfully", Toast.LENGTH_SHORT).show();
-                                            startActivity(new Intent(Registration.this, Login.class));
-                                            finish();
+                                            // Redirect to Login to trigger role check, or just call checkUserRoleAndRedirect directly
+                                            checkUserRoleAndRedirect(userId);
                                         })
                                         .addOnFailureListener(e -> {
                                             Toast.makeText(Registration.this, "Error adding data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -129,6 +123,32 @@ public class Registration extends AppCompatActivity {
                             Toast.makeText(Registration.this, "User not Created", Toast.LENGTH_SHORT).show();
                         }
                     });
+        });
+    }
+
+    private void checkUserRoleAndRedirect(String uid) {
+        dbRef.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    String role = dataSnapshot.child("role").getValue(String.class);
+                    if ("Veterinarian".equalsIgnoreCase(role)) {
+                        startActivity(new Intent(Registration.this, VetDashboardActivity.class));
+                    } else {
+                        startActivity(new Intent(Registration.this, MainActivity.class));
+                    }
+                    finish();
+                } else {
+                    startActivity(new Intent(Registration.this, MainActivity.class));
+                    finish();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                startActivity(new Intent(Registration.this, Login.class));
+                finish();
+            }
         });
     }
 }

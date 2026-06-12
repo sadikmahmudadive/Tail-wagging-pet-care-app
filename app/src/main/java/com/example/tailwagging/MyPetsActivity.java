@@ -82,6 +82,7 @@ public class MyPetsActivity extends AppCompatActivity implements PetAdapter.OnPe
     protected void onResume() {
         super.onResume();
         Log.d(TAG, "onResume called");
+        loadPets();
     }
 
     private void loadPets() {

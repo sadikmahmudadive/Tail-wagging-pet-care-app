@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class WellnessFragment extends Fragment {
     private RecyclerView rvVaccinations, rvAllergies;
     private HealthVaccinationAdapter vaccinationAdapter;
     private HealthAllergyAdapter allergyAdapter;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
@@ -37,16 +39,28 @@ public class WellnessFragment extends Fragment {
 
         rvVaccinations = view.findViewById(R.id.rvVaccinations);
         rvAllergies = view.findViewById(R.id.rvAllergies);
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshWellness);
 
         loadPetHealthData();
 
         view.findViewById(R.id.btnSeeAllVaccinations).setOnClickListener(v -> openCalendarWithCategory("Vaccination"));
         view.findViewById(R.id.btnSeeAllAllergies).setOnClickListener(v -> openCalendarWithCategory("Medication"));
         view.findViewById(R.id.btnStartAppointment).setOnClickListener(v -> openCalendarWithCategory("Vet Appointment"));
+
+        swipeRefreshLayout.setOnRefreshListener(this::loadPetHealthData);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadPetHealthData();
     }
 
     private void loadPetHealthData() {
-        if (selectedPet == null) return;
+        if (selectedPet == null) {
+            if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+            return;
+        }
 
         List<Event> allEvents = EventStore.getInstance(getContext()).getAllEvents();
         List<Event> petVaccinations = new ArrayList<>();
@@ -67,6 +81,8 @@ public class WellnessFragment extends Fragment {
 
         allergyAdapter = new HealthAllergyAdapter(petAllergies);
         rvAllergies.setAdapter(allergyAdapter);
+
+        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
     }
 
     private void openCalendarWithCategory(String category) {

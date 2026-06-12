@@ -41,6 +41,24 @@
     <string name="pet_location_label">Pet Location</string>
     <string name="track_pets_desc">Track your pets</string>
     <string name="check_wellness_desc">Check wellness</string>
+    <string name="top_veterinarians">Top Veterinarians</string>
+    <string name="last_visit_format">Last Visit: %1$s</string>
+    <string name="rating_reviews_format">%1$.1f {%2$d reviews}</string>
+    <string name="vet_profile_desc">Vet Profile</string>
+    <string name="star_desc">Star</string>
+    <string name="location_desc">Location</string>
+    <string name="price_desc">Price</string>
+    <string name="arrow_desc">Arrow</string>
+    <string name="welcome_vet">Welcome, Dr. %1$s</string>
+    <string name="your_appointments">Your Appointments</string>
+    <string name="logout">Logout</string>
+    <string name="book_appointment">Book Appointment</string>
+    <string name="select_pet">Select Pet</string>
+    <string name="select_date">Select Date</string>
+    <string name="choose_date">Choose Date</string>
+    <string name="select_time">Select Time</string>
+    <string name="choose_time">Choose Time</string>
+    <string name="confirm_appointment">Confirm Appointment</string>
 
     <!-- Events & Reminders -->
     <string name="events_reminders_title">Events &amp; Reminders</string>

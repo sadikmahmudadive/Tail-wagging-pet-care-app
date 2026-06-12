@@ -16,6 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.bumptech.glide.Glide;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,6 +41,7 @@ public class PetDetailsActivity extends AppCompatActivity {
     private CardView cardGender;
     private ImageButton buttonClosePetDetails, buttonEditPet;
     private Button buttonDeletePet;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private Pet selectedPet;
 
@@ -65,6 +68,7 @@ public class PetDetailsActivity extends AppCompatActivity {
         buttonClosePetDetails = findViewById(R.id.buttonClosePetDetails);
         buttonEditPet = findViewById(R.id.buttonEditPet);
         buttonDeletePet = findViewById(R.id.buttonDeletePet);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutPetDetails);
 
         // Status Section Buttons
         findViewById(R.id.buttonContactVet).setOnClickListener(v -> launchPetHealthActivity());
@@ -87,6 +91,8 @@ public class PetDetailsActivity extends AppCompatActivity {
         buttonDeletePet.setOnClickListener(v -> {
             showDeleteConfirmationDialog();
         });
+
+        swipeRefreshLayout.setOnRefreshListener(this::refreshPetData);
     }
 
     private void launchEditPetActivity() {
@@ -142,6 +148,7 @@ public class PetDetailsActivity extends AppCompatActivity {
     }
 
     private void refreshPetData() {
+        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(true);
         DatabaseReference petRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/")
                 .getReference("pets")
                 .child(selectedPet.getPetID());
@@ -158,11 +165,13 @@ public class PetDetailsActivity extends AppCompatActivity {
                     // Pet might have been deleted from another screen
                     finish();
                 }
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Toast.makeText(PetDetailsActivity.this, "Failed to refresh data", Toast.LENGTH_SHORT).show();
+                if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
             }
         });
     }

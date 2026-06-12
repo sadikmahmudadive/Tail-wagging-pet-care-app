@@ -345,8 +345,10 @@ public class AddEditPet extends AppCompatActivity {
                 LocalDate bdayDate = LocalDate.of(currentYear, month, day);
                 
                 int eventId = ("birthday_" + petId).hashCode();
+                String currentUserId = FirebaseAuth.getInstance().getUid();
                 Event bdayEvent = new Event(
                         eventId,
+                        currentUserId,
                         petName + "'s Birthday",
                         "Birthday",
                         "Happy Birthday to " + petName + "!",

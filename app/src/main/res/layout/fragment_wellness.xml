@@ -1,129 +1,136 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshWellness"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/light_gray">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
-        <!-- Vaccinations Section -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                style="@style/HealthSectionHeader"
-                android:text="@string/vaccinations_label" />
-
-            <TextView
-                android:id="@+id/btnSeeAllVaccinations"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:drawableEnd="@drawable/ic_chevron_right"
-                android:drawablePadding="4dp"
-                android:fontFamily="@font/fredoka"
-                android:text="@string/see_all"
-                android:textColor="@color/dark_blue"
-                android:textSize="14sp"
-                app:drawableTint="@color/dark_blue" />
-        </RelativeLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvVaccinations"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_health_vaccination" />
+            android:orientation="vertical"
+            android:padding="16dp">
 
-        <!-- Allergies Section -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp">
-
-            <TextView
-                style="@style/HealthSectionHeader"
-                android:text="@string/allergies_label" />
-
-            <TextView
-                android:id="@+id/btnSeeAllAllergies"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:drawableEnd="@drawable/ic_chevron_right"
-                android:drawablePadding="4dp"
-                android:fontFamily="@font/fredoka"
-                android:text="@string/see_all"
-                android:textColor="@color/dark_blue"
-                android:textSize="14sp"
-                app:drawableTint="@color/dark_blue" />
-        </RelativeLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAllergies"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:clipToPadding="false"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_health_allergy" />
-
-        <!-- Appointments Section -->
-        <TextView
-            style="@style/HealthSectionHeader"
-            android:layout_marginTop="24dp"
-            android:text="@string/appointments_label" />
-
-        <com.google.android.material.card.MaterialCardView
-            style="@style/HealthCard"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="0dp"
-            android:layout_marginTop="12dp">
-
-            <LinearLayout
+            <!-- Vaccinations Section -->
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="24dp">
+                android:layout_height="wrap_content">
 
                 <TextView
+                    style="@style/HealthSectionHeader"
+                    android:text="@string/vaccinations_label" />
+
+                <TextView
+                    android:id="@+id/btnSeeAllVaccinations"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:gravity="center"
-                    android:text="@string/appointment_prompt"
-                    android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:drawableEnd="@drawable/ic_chevron_right"
+                    android:drawablePadding="4dp"
+                    android:fontFamily="@font/fredoka"
+                    android:text="@string/see_all"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="14sp"
+                    app:drawableTint="@color/dark_blue" />
+            </RelativeLayout>
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnStartAppointment"
-                    android:layout_width="120dp"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvVaccinations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_health_vaccination" />
+
+            <!-- Allergies Section -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp">
+
+                <TextView
+                    style="@style/HealthSectionHeader"
+                    android:text="@string/allergies_label" />
+
+                <TextView
+                    android:id="@+id/btnSeeAllAllergies"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:backgroundTint="@color/health_green"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:text="@string/start_label"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    app:cornerRadius="24dp" />
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:drawableEnd="@drawable/ic_chevron_right"
+                    android:drawablePadding="4dp"
+                    android:fontFamily="@font/fredoka"
+                    android:text="@string/see_all"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="14sp"
+                    app:drawableTint="@color/dark_blue" />
+            </RelativeLayout>
 
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAllergies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/item_health_allergy" />
 
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+            <!-- Appointments Section -->
+            <TextView
+                style="@style/HealthSectionHeader"
+                android:layout_marginTop="24dp"
+                android:text="@string/appointments_label" />
+
+            <com.google.android.material.card.MaterialCardView
+                style="@style/HealthCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="0dp"
+                android:layout_marginTop="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="24dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:gravity="center"
+                        android:text="@string/appointment_prompt"
+                        android:textColor="@color/black"
+                        android:textSize="16sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnStartAppointment"
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:backgroundTint="@color/health_green"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="@string/start_label"
+                        android:textAllCaps="false"
+                        android:textColor="@color/white"
+                        app:cornerRadius="24dp" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

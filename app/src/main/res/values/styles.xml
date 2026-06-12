@@ -135,4 +135,9 @@
         <item name="android:fontFamily">@font/fredoka_bold</item>
     </style>
 
+    <style name="RoundedCorner16">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
 </resources>

@@ -257,6 +257,61 @@
                         android:fontFamily="@font/fredoka"
                         android:enabled="false"/>
                 </LinearLayout>
+
+                <!-- Vet Specific Fields -->
+                <LinearLayout
+                    android:id="@+id/layoutVetFields"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <!-- Qualification -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_profile_textboxes"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp">
+                        <EditText
+                            android:id="@+id/editQualification"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:hint="Professional Qualification"
+                            android:paddingStart="8dp"
+                            android:textColor="@color/mat_black"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/fredoka"
+                            android:inputType="textPersonName" />
+                    </LinearLayout>
+
+                    <!-- Experience -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_profile_textboxes"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="10dp"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp">
+                        <EditText
+                            android:id="@+id/editExperience"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:hint="Years of Experience"
+                            android:paddingStart="8dp"
+                            android:textColor="@color/mat_black"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/fredoka"
+                            android:inputType="textPersonName" />
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <!-- Save Button -->

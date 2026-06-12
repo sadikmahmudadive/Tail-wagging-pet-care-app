@@ -29,6 +29,7 @@ public class AlarmHelper {
         intent.putExtra("title", event.title);
         intent.putExtra("category", event.category);
         intent.putExtra("id", event.id);
+        intent.putExtra("userId", event.userId);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, event.id, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         Calendar cal = Calendar.getInstance();
