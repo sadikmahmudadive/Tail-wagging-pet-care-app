@@ -11,6 +11,7 @@ public class Vet implements Serializable {
     private String tag;
     private String distance;
     private String price;
+    private String phone;
     private String experience;
     private String lastVisit;
     private int imageResId;
@@ -44,6 +45,8 @@ public class Vet implements Serializable {
     public String getTag() { return tag; }
     public String getDistance() { return distance; }
     public String getPrice() { return price; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
     public String getExperience() { return experience; }
     public String getLastVisit() { return lastVisit; }
     public int getImageResId() { return imageResId; }

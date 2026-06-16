@@ -21,10 +21,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -77,7 +81,15 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_calendar);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.calendarRoot), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
         initWidgets();
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
@@ -110,6 +122,7 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
         btnAddEvent.setOnClickListener(v -> showAddEventDialog(String.valueOf(selectedDay), null, null));
 
         requestNotificationPermission();
+        NavbarHelper.setupNavbar(this);
     }
 
     @Override

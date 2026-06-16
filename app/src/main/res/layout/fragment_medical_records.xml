@@ -161,6 +161,31 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
+            <!-- Professional History Section -->
+            <TextView
+                style="@style/HealthSectionHeader"
+                android:layout_marginTop="24dp"
+                android:text="Professional History" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvProfessionalHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_service_record" />
+
+            <TextView
+                android:id="@+id/tvNoProHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_gravity="center"
+                android:fontFamily="@font/fredoka"
+                android:text="No professional records yet."
+                android:textColor="@color/grey_medium"
+                android:visibility="gone" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

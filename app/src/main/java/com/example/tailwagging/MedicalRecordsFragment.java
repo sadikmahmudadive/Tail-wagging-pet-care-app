@@ -6,20 +6,32 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MedicalRecordsFragment extends Fragment {
 
     private Pet selectedPet;
-    private RecyclerView rvPastVaccinations, rvPastAllergies, rvPastCough;
+    private RecyclerView rvPastVaccinations, rvPastAllergies, rvPastCough, rvProHistory;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private TextView tvNoProHistory;
+    private DatabaseReference dbRef;
 
     @Nullable
     @Override
@@ -31,6 +43,8 @@ public class MedicalRecordsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
+
         if (getArguments() != null) {
             selectedPet = getArguments().getParcelable("SELECTED_PET");
         }
@@ -38,20 +52,54 @@ public class MedicalRecordsFragment extends Fragment {
         rvPastVaccinations = view.findViewById(R.id.rvPastVaccinations);
         rvPastAllergies = view.findViewById(R.id.rvPastAllergies);
         rvPastCough = view.findViewById(R.id.rvPastCough);
+        rvProHistory = view.findViewById(R.id.rvProfessionalHistory);
+        tvNoProHistory = view.findViewById(R.id.tvNoProHistory);
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshMedical);
 
+        rvProHistory.setLayoutManager(new LinearLayoutManager(getContext()));
+
         loadMedicalHistory();
+        fetchProfessionalHistory();
 
         view.findViewById(R.id.btnSeeAllPastVaccinations).setOnClickListener(v -> openCalendarWithCategory("Vaccination"));
         view.findViewById(R.id.btnSeeAllTreatments).setOnClickListener(v -> openCalendarWithCategory("Medication"));
 
-        swipeRefreshLayout.setOnRefreshListener(this::loadMedicalHistory);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadMedicalHistory();
+            fetchProfessionalHistory();
+        });
+    }
+
+    private void fetchProfessionalHistory() {
+        if (selectedPet == null) return;
+
+        dbRef.child("service_records").orderByChild("petId").equalTo(selectedPet.getPetID())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        List<ServiceRecord> proList = new ArrayList<>();
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            ServiceRecord record = ds.getValue(ServiceRecord.class);
+                            if (record != null) proList.add(record);
+                        }
+                        Collections.reverse(proList);
+                        rvProHistory.setAdapter(new ServiceRecordAdapter(proList));
+                        tvNoProHistory.setVisibility(proList.isEmpty() ? View.VISIBLE : View.GONE);
+                        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
+                    }
+                });
     }
 
     @Override
     public void onResume() {
         super.onResume();
         loadMedicalHistory();
+        fetchProfessionalHistory();
     }
 
     private void loadMedicalHistory() {

@@ -3,8 +3,12 @@ package com.example.tailwagging;
 import android.os.Bundle;
 import android.widget.ImageButton;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
@@ -23,7 +27,14 @@ public class PetHealthActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pet_health);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.petHealthRoot), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
 
         selectedPet = getIntent().getParcelableExtra("SELECTED_PET");
 
@@ -43,6 +54,8 @@ public class PetHealthActivity extends AppCompatActivity {
                 tab.setText(getString(R.string.medical_records_tab));
             }
         }).attach();
+
+        NavbarHelper.setupNavbar(this);
     }
 
     private static class HealthPagerAdapter extends FragmentStateAdapter {

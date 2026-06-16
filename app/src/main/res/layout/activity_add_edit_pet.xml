@@ -4,7 +4,9 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_dashboard">
+    android:background="@drawable/background_dashboard"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <!-- Top Bar -->
     <LinearLayout
@@ -17,13 +19,17 @@
         android:paddingStart="12dp"
         android:paddingEnd="12dp">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/backBtn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_arrow_back"
             android:contentDescription="Back"
-            android:layout_marginEnd="8dp"/>
+            android:layout_marginEnd="8dp"
+            app:tint="@color/white" />
         <TextView
             android:id="@+id/tvAddPetsTitle"
             android:layout_width="0dp"
@@ -58,7 +64,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="16dp"
+                android:paddingBottom="120dp">
 
                 <!-- Added Pets Section -->
                 <TextView
@@ -329,4 +338,13 @@
             </LinearLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/bottomNavContainer"
+        layout="@layout/layout_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

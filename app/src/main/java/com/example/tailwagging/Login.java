@@ -157,7 +157,7 @@ public class Login extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     String role = dataSnapshot.child("role").getValue(String.class);
-                    if ("Veterinarian".equalsIgnoreCase(role)) {
+                    if ("Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role)) {
                         startActivity(new Intent(Login.this, VetDashboardActivity.class));
                     } else {
                         startActivity(new Intent(Login.this, MainActivity.class));

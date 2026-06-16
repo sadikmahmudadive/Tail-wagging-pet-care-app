@@ -12,8 +12,8 @@
         android:background="@drawable/bg_month_picker_item_selector"
         android:fontFamily="sans-serif-medium"
         android:gravity="center"
-        android:text="Mar"
-        android:textColor="#222222"
+        android:text="January"
+        android:textColor="@color/mat_black"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

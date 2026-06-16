@@ -1,23 +1,38 @@
 package com.example.tailwagging;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class VetDetailsActivity extends AppCompatActivity {
 
     private Vet selectedVet;
+    private DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +46,8 @@ public class VetDetailsActivity extends AppCompatActivity {
             return;
         }
 
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
+
         ImageButton btnBack = findViewById(R.id.btnBack);
         TextView tvHeaderName = findViewById(R.id.tvHeaderVetName);
         ImageView ivMain = findViewById(R.id.ivVetDetailMain);
@@ -41,10 +58,12 @@ public class VetDetailsActivity extends AppCompatActivity {
         TextView tvReviews = findViewById(R.id.tvReviewsCount);
         TextView tvHours = findViewById(R.id.tvBusinessHours);
         TextView tvDist = findViewById(R.id.tvVetDistanceDetail);
-        TextView tvFee = findViewById(R.id.tvVetFeeDetail);
+        TextView tvPhone = findViewById(R.id.tvVetPhoneDetail);
         TextView tvBio = findViewById(R.id.tvVetBio);
         TextView tvRecPet = findViewById(R.id.tvRecommendedPetName);
         Button btnBook = findViewById(R.id.btnBookAppointmentDetail);
+        
+        Button btnWriteReview = findViewById(R.id.btnWriteReview);
 
         tvHeaderName.setText(selectedVet.getName());
         tvName.setText(selectedVet.getName());
@@ -52,9 +71,27 @@ public class VetDetailsActivity extends AppCompatActivity {
         tvRating.setText(String.format(Locale.getDefault(), "%.1f", selectedVet.getRating()));
         rb.setRating(selectedVet.getRating());
         tvReviews.setText(String.format(Locale.getDefault(), "(%d reviews)", selectedVet.getReviewsCount()));
+        
+        View reviewsArea = findViewById(R.id.layoutReviewsHeader);
+        if (reviewsArea == null) reviewsArea = tvReviews;
+        
+        reviewsArea.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ReviewsActivity.class);
+            intent.putExtra("VET_ID", selectedVet.getId());
+            intent.putExtra("VET_NAME", selectedVet.getName());
+            startActivity(intent);
+        });
+
         tvHours.setText(selectedVet.getBusinessHours());
         tvDist.setText(selectedVet.getDistance());
-        tvFee.setText(String.format(Locale.getDefault(), "%s for an Appointment", selectedVet.getPrice()));
+        tvPhone.setText(selectedVet.getPhone() != null ? selectedVet.getPhone() : "Contact not provided");
+        if (selectedVet.getPhone() != null) {
+            tvPhone.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:" + selectedVet.getPhone()));
+                startActivity(intent);
+            });
+        }
         tvBio.setText(selectedVet.getBio());
         tvRecPet.setText(selectedVet.getRecommendedFor());
 
@@ -72,19 +109,101 @@ public class VetDetailsActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        setupBottomNavigation();
+        btnWriteReview.setOnClickListener(v -> showWriteReviewDialog());
+
+        NavbarHelper.setupNavbar(this);
     }
 
-    private void setupBottomNavigation() {
-        // IDs from layout_navigation_bar.xml
-        findViewById(R.id.navProfile).setOnClickListener(v -> startActivity(new Intent(this, Profile.class)));
-        findViewById(R.id.navCalendar).setOnClickListener(v -> startActivity(new Intent(this, Calendar.class)));
-        findViewById(R.id.navManage).setOnClickListener(v -> startActivity(new Intent(this, MyPetsActivity.class)));
-        findViewById(R.id.navAddPet).setOnClickListener(v -> startActivity(new Intent(this, AddEditPet.class)));
-        findViewById(R.id.navVet).setOnClickListener(v -> {
-            // Already on vet details/sections, maybe just go back to home or top
-            startActivity(new Intent(this, MainActivity.class));
-            finishAffinity();
+    private void showWriteReviewDialog() {
+        String currentUserId = FirebaseAuth.getInstance().getUid();
+        if (currentUserId == null) {
+            Toast.makeText(this, "Please login to write a review", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_review, null);
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogView)
+                .create();
+
+        RatingBar rb = dialogView.findViewById(R.id.rbWriteReview);
+        EditText etComment = dialogView.findViewById(R.id.etReviewComment);
+        Button btnSubmit = dialogView.findViewById(R.id.btnSubmitReview);
+
+        btnSubmit.setOnClickListener(v -> {
+            float rating = rb.getRating();
+            String comment = etComment.getText().toString().trim();
+
+            if (rating == 0) {
+                Toast.makeText(this, "Please select a rating", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            dbRef.child("users").child(currentUserId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    String name = snapshot.child("name").getValue(String.class);
+                    String photo = snapshot.child("photoUrl").getValue(String.class);
+                    
+                    String reviewId = dbRef.child("reviews").push().getKey();
+                    Review newReview = new Review(
+                            reviewId,
+                            currentUserId,
+                            name != null ? name : "User",
+                            photo,
+                            selectedVet.getId(),
+                            rating,
+                            comment,
+                            System.currentTimeMillis()
+                    );
+
+                    if (reviewId != null) {
+                        dbRef.child("reviews").child(reviewId).setValue(newReview)
+                                .addOnSuccessListener(aVoid -> {
+                                    updateVetOverallRating(rating);
+                                    Toast.makeText(VetDetailsActivity.this, "Review submitted!", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                });
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {}
+            });
+        });
+
+        dialog.show();
+    }
+
+    private void updateVetOverallRating(float newRating) {
+        dbRef.child("users").child(selectedVet.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                float currentRating = 0;
+                int currentCount = 0;
+                
+                Object ratingVal = snapshot.child("rating").getValue();
+                if (ratingVal != null) {
+                    currentRating = ((Number) ratingVal).floatValue();
+                }
+                
+                Integer countVal = snapshot.child("reviewsCount").getValue(Integer.class);
+                if (countVal != null) {
+                    currentCount = countVal;
+                }
+
+                int newCount = currentCount + 1;
+                float newAverage = ((currentRating * currentCount) + newRating) / newCount;
+
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("rating", newAverage);
+                updates.put("reviewsCount", newCount);
+
+                dbRef.child("users").child(selectedVet.getId()).updateChildren(updates);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 }

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -32,7 +33,7 @@ public class MyPetsActivity extends AppCompatActivity implements PetAdapter.OnPe
     private PetAdapter petAdapter;
     private List<Pet> petList;
     private LinearLayout layoutNoPets;
-    private AppCompatButton buttonBack;
+    private ImageButton buttonBack;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private FirebaseAuth mAuth;
@@ -76,6 +77,7 @@ public class MyPetsActivity extends AppCompatActivity implements PetAdapter.OnPe
         }
 
         loadPets();
+        NavbarHelper.setupNavbar(this);
     }
 
     @Override
@@ -83,6 +85,7 @@ public class MyPetsActivity extends AppCompatActivity implements PetAdapter.OnPe
         super.onResume();
         Log.d(TAG, "onResume called");
         loadPets();
+        NavbarHelper.setupNavbar(this);
     }
 
     private void loadPets() {

@@ -84,6 +84,12 @@
     <color name="surface_container">#F0F0F3</color>
     <color name="surface_container_high">#EBEBEF</color>
 
+    <color name="surface_translucent">#E6FFFFFF</color>
+    <color name="surface_glass">#F2FFFFFF</color>
+    <color name="black_overlay_light">#10000000</color>
+    <color name="black_overlay_medium">#40000000</color>
+    <color name="white_overlay_medium">#40FFFFFF</color>
+
     <!-- Pet Details Specific -->
     <color name="pet_attribute_bg">#DFF1E4</color>
     <color name="gender_female_bg">#F8BBD0</color>
@@ -95,5 +101,10 @@
     <color name="status_green_btn">#81C784</color>
     <color name="health_green">#66BB6A</color>
     <color name="health_tab_inactive">#B2E0B5</color>
+    <color name="rating_5">#4CAF50</color>
+    <color name="rating_4">#8BC34A</color>
+    <color name="rating_3">#CDDC39</color>
+    <color name="rating_2">#FFC107</color>
+    <color name="rating_1">#F44336</color>
 
 </resources>

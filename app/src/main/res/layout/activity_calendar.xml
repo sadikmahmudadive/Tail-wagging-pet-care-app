@@ -2,15 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/calendarRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_dashboard">
+    android:background="@drawable/background_dashboard"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <!-- Header -->
     <View
         android:id="@+id/headerBackground"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="180dp"
         android:background="@color/md_theme_light_primary"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -18,34 +21,48 @@
         android:id="@+id/btnBack"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="12dp"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_arrow_back"
-        android:contentDescription="@string/back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/white" />
+        app:tint="@color/white"
+        android:contentDescription="@string/back" />
 
     <TextView
-        android:id="@+id/tvCalendarTitle"
+        android:id="@+id/monthYearTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:fontFamily="@font/fredoka_bold"
-        android:text="@string/events_reminders_title"
         android:textColor="@color/white"
-        android:textSize="24sp"
+        android:textSize="22sp"
         app:layout_constraintBottom_toBottomOf="@+id/btnBack"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnBack" />
+        app:layout_constraintTop_toTopOf="@+id/btnBack"
+        tools:text="June 2026" />
+
+    <TextView
+        android:id="@+id/tvYearPicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/fredoka_bold"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/monthYearTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/monthYearTV"
+        tools:text="2026" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayoutCalendar"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavContainer"
         app:layout_constraintTop_toBottomOf="@+id/headerBackground"
         android:layout_marginTop="-40dp">
 
@@ -58,119 +75,77 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="32dp">
+                android:paddingBottom="130dp">
 
-                <!-- Calendar Card -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/monthPickerRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:clipToPadding="false"
+                    android:paddingHorizontal="12dp" />
+
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="16dp"
+                    android:layout_margin="16dp"
                     app:cardCornerRadius="24dp"
-                    app:cardElevation="8dp"
+                    app:cardElevation="4dp"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="16dp">
+                        android:padding="8dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <TextView
-                                android:id="@+id/monthYearTV"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/fredoka_bold"
-                                android:textColor="@color/black"
-                                android:textSize="20sp"
-                                tools:text="March 2025" />
-
-                            <TextView
-                                android:id="@+id/tvYearPicker"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:background="@drawable/bg_year_chip"
-                                android:fontFamily="@font/fredoka_bold"
-                                android:paddingHorizontal="12dp"
-                                android:paddingVertical="4dp"
-                                android:textColor="@color/md_theme_light_primary"
-                                android:textSize="16sp"
-                                tools:text="2025" />
-
-                        </LinearLayout>
-
-                        <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/monthPickerRecyclerView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:clipToPadding="false"
-                            android:overScrollMode="never"
-                            android:nestedScrollingEnabled="false"
-                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                             android:orientation="horizontal"
-                            tools:listitem="@layout/month_picker_item" />
+                            android:layout_marginBottom="8dp">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:orientation="horizontal">
-
-                            <TextView style="@style/CalendarWeekDayModern" android:text="S" />
-                            <TextView style="@style/CalendarWeekDayModern" android:text="M" />
-                            <TextView style="@style/CalendarWeekDayModern" android:text="T" />
-                            <TextView style="@style/CalendarWeekDayModern" android:text="W" />
-                            <TextView style="@style/CalendarWeekDayModern" android:text="T" />
-                            <TextView style="@style/CalendarWeekDayModern" android:text="F" />
-                            <TextView style="@style/CalendarWeekDayModern" android:text="S" />
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Su" android:gravity="center" android:fontFamily="@font/fredoka_bold" android:textColor="@color/black" android:textSize="14sp"/>
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Mo" android:gravity="center" android:fontFamily="@font/fredoka_bold" android:textColor="@color/black" android:textSize="14sp"/>
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Tu" android:gravity="center" android:fontFamily="@font/fredoka_bold" android:textColor="@color/black" android:textSize="14sp"/>
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="We" android:gravity="center" android:fontFamily="@font/fredoka_bold" android:textColor="@color/black" android:textSize="14sp"/>
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Th" android:gravity="center" android:fontFamily="@font/fredoka_bold" android:textColor="@color/black" android:textSize="14sp"/>
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Fr" android:gravity="center" android:fontFamily="@font/fredoka_bold" android:textColor="@color/black" android:textSize="14sp"/>
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="Sa" android:gravity="center" android:fontFamily="@font/fredoka_bold" android:textColor="@color/black" android:textSize="14sp"/>
                         </LinearLayout>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/calendarRecyclerView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="8dp"
-                            android:overScrollMode="never"
-                            android:nestedScrollingEnabled="false"
                             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                            app:spanCount="7"
-                            tools:listitem="@layout/calendar_day_cell" />
-
+                            app:spanCount="7" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
-                <!-- Today's Events -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="24dp"
-                    android:layout_marginTop="24dp"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="24dp"
+                    android:layout_marginTop="8dp">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:fontFamily="@font/fredoka_bold"
-                        android:text="Events"
+                        android:text="Today\'s Events"
                         android:textColor="@color/black"
                         android:textSize="20sp" />
 
-                    <com.google.android.material.button.MaterialButton
+                    <Button
                         android:id="@+id/btnEvents"
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="View All" />
-
+                        android:text="@string/see_all" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -179,26 +154,32 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:clipToPadding="false"
-                    android:nestedScrollingEnabled="false"
-                    android:paddingHorizontal="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="horizontal"
-                    tools:listitem="@layout/item_today_event" />
-
-                <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                    android:id="@+id/btnAddEvent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="24dp"
-                    android:text="@string/add_event"
-                    app:icon="@drawable/ic_add"
-                    android:textColor="@color/white"
-                    app:iconTint="@color/white"
-                    android:backgroundTint="@color/md_theme_light_primary"/>
+                    android:paddingHorizontal="16dp" />
 
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <include
+        android:id="@+id/bottomNavContainer"
+        layout="@layout/layout_navigation_bar"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnAddEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="112dp"
+        android:src="@drawable/ic_add"
+        android:contentDescription="@string/add_event"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:backgroundTint="@color/md_theme_light_primary"
+        app:tint="@color/white" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

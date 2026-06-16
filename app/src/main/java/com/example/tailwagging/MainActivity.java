@@ -2,10 +2,12 @@ package com.example.tailwagging;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,12 +34,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     FirebaseAuth mAuth;
     FirebaseUser user;
-    Button logoutButton;
+    ImageButton logoutButton;
     TextView textView, tvWelcomeMessage;
     ImageView userProfilePhoto;
 
@@ -45,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private PetAdapter petAdapterHorizontal; // Keep a reference if needed elsewhere, or make local
     private TodayEventAdapter todayEventAdapter;
+    private Double userLat, userLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,30 +73,7 @@ public class MainActivity extends AppCompatActivity {
         setDynamicWelcomeMessage();
         requestLocationPermission();
 
-        LinearLayout navCalendar = findViewById(R.id.navCalendar);
-        if (navCalendar != null) {
-            navCalendar.setOnClickListener(v -> launchCalendarActivity());
-        }
-
-        View navAddPet = findViewById(R.id.navAddPet);
-        if (navAddPet != null) {
-            navAddPet.setOnClickListener(v -> launchAddEditPetActivity());
-        }
-
-        LinearLayout navProfile = findViewById(R.id.navProfile);
-        if (navProfile != null) {
-            navProfile.setOnClickListener(v -> launchProfileActivity());
-        }
-
-        LinearLayout navVet = findViewById(R.id.navVet);
-        if (navVet != null) {
-            navVet.setOnClickListener(v -> launchPetHealthActivity());
-        }
-
-        LinearLayout navManage = findViewById(R.id.navManage);
-        if (navManage != null) {
-            navManage.setOnClickListener(v -> launchMyPetsActivity());
-        }
+        NavbarHelper.setupNavbar(this);
 
         // New: Click listener for My Pets navigation (if you add a dedicated button for it)
         Button navMyPets = findViewById(R.id.btnViewAllPets); // Assuming you add an ID navMyPets
@@ -116,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
         View btnViewAllEvents = findViewById(R.id.btnViewAllEvents);
         if (btnViewAllEvents != null) {
             btnViewAllEvents.setOnClickListener(v -> launchCalendarActivity());
+        }
+
+        View btnViewAllVets = findViewById(R.id.btnViewAllVets);
+        if (btnViewAllVets != null) {
+            btnViewAllVets.setOnClickListener(v -> launchPetHealthActivity());
         }
 
 
@@ -171,22 +157,37 @@ public class MainActivity extends AppCompatActivity {
                             String name = snapshot.child("name").getValue(String.class);
                             String qualification = snapshot.child("qualification").getValue(String.class);
                             String photoUrl = snapshot.child("photoUrl").getValue(String.class);
+                            String phone = snapshot.child("phone").getValue(String.class);
                             String vetId = snapshot.getKey();
+                            
+                            Double vLat = snapshot.child("latitude").getValue(Double.class);
+                            Double vLng = snapshot.child("longitude").getValue(Double.class);
+                            
                             if (qualification == null) qualification = "Registered Veterinarian";
                             
                             // Mocking some professional stats for now until Vets set them up
-                            float rating = 4.5f; 
+                            float rating = 4.5f;
                             int reviews = 10;
                             String tag = "Professional";
+                            
                             String distance = "Local";
+                            if (userLat != null && userLng != null && vLat != null && vLng != null) {
+                                float[] results = new float[1];
+                                Location.distanceBetween(userLat, userLng, vLat, vLng, results);
+                                distance = String.format(Locale.getDefault(), "%.1f km", results[0] / 1000);
+                            }
+
                             String price = "$$";
                             String experience = "Exp: 5+ years";
                             String lastVisit = "N/A";
                             int imageRes = R.drawable.ic_profile;
 
-                            Vet vet = new Vet(vetId, name, qualification, rating, reviews, tag, distance, price, experience, lastVisit, imageRes);
+                            Vet vet = new Vet(vetId, name, qualification, rating, reviews, tag, distance, "N/A", experience, lastVisit, imageRes);
                             if (photoUrl != null && !photoUrl.isEmpty()) {
                                 vet.setImageUrl(photoUrl);
+                            }
+                            if (phone != null) {
+                                vet.setPhone(phone);
                             }
                             vetList.add(vet);
                         }
@@ -285,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchPetHealthActivity() {
-        Intent intent = new Intent(MainActivity.this, PetHealthActivity.class);
+        Intent intent = new Intent(MainActivity.this, PetServicesActivity.class);
         startActivity(intent);
     }
 
@@ -327,6 +328,10 @@ public class MainActivity extends AppCompatActivity {
                         if (dataSnapshot.exists()) {
                             String username = dataSnapshot.child("name").getValue(String.class);
                             String photoUrl = dataSnapshot.child("photoUrl").getValue(String.class);
+                            
+                            userLat = dataSnapshot.child("latitude").getValue(Double.class);
+                            userLng = dataSnapshot.child("longitude").getValue(Double.class);
+                            
                             if (username != null && !username.isEmpty()) {
                                 textView.setText(username);
                             } else {
@@ -342,6 +347,9 @@ public class MainActivity extends AppCompatActivity {
                             } else {
                                 userProfilePhoto.setImageResource(R.drawable.ic_profile); // Default if no photoUrl in DB
                             }
+                            
+                            // Re-fetch vets now that we have user location
+                            showTopVeterinarians();
                         } else {
                             textView.setText(user.getEmail() != null ? user.getEmail() : "User Data Not Found");
                             userProfilePhoto.setImageResource(R.drawable.ic_profile);

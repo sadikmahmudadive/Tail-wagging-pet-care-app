@@ -3,6 +3,9 @@ package com.example.tailwagging;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -24,6 +27,8 @@ import com.bumptech.glide.Glide;
 import com.cloudinary.android.MediaManager;
 import com.cloudinary.android.callback.ErrorInfo;
 import com.cloudinary.android.callback.UploadCallback;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +37,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class EditUserProfileActivity extends AppCompatActivity {
@@ -40,6 +48,7 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private ImageView profileImage;
     private ImageButton btnUploadPhoto;
     private Button btnSaveProfile;
+    private Button btnUpdateLocation, btnPickOnMap;
     private EditText editEmail, editUsername, editPassword, editPhone, editAddress;
     private EditText editQualification, editExperience;
     private LinearLayout layoutVetFields;
@@ -48,17 +57,21 @@ public class EditUserProfileActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private DatabaseReference dbRef;
+    private FusedLocationProviderClient fusedLocationClient;
 
     private boolean isEditable = false;
     private String userRole = "Pet Owner";
     private static final int PICK_IMAGE = 1;
+    private static final int PICK_LOCATION = 2;
     private Uri imageUri = null;
+    private Double currentLat, currentLng;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.MyCustomDialogTheme);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user_profile);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Set custom width and height for dialog-style activity
         WindowManager.LayoutParams params = getWindow().getAttributes();
@@ -72,6 +85,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
         profileImage = findViewById(R.id.profileImage);
         btnUploadPhoto = findViewById(R.id.btnUploadPhoto);
         btnSaveProfile = findViewById(R.id.btnSaveProfile);
+        btnUpdateLocation = findViewById(R.id.btnUpdateLocation);
+        btnPickOnMap = findViewById(R.id.btnPickOnMap);
         editEmail = findViewById(R.id.editEmail);
         editUsername = findViewById(R.id.editUsername);
         editPassword = findViewById(R.id.editPassword);
@@ -106,9 +121,46 @@ public class EditUserProfileActivity extends AppCompatActivity {
             if (isEditable) saveProfileData();
         });
 
+        btnUpdateLocation.setOnClickListener(v -> getCurrentLocation());
+        btnPickOnMap.setOnClickListener(v -> {
+            Intent intent = new Intent(this, LocationPickerActivity.class);
+            startActivityForResult(intent, PICK_LOCATION);
+        });
+
         // Initially load user data and disable fields
         loadUserData();
         setEditable(false);
+    }
+
+    private void getCurrentLocation() {
+        if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            androidx.core.app.ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 100);
+            return;
+        }
+
+        fusedLocationClient.getLastLocation().addOnSuccessListener(this, location -> {
+            if (location != null) {
+                currentLat = location.getLatitude();
+                currentLng = location.getLongitude();
+                updateAddressFromLocation(location);
+            } else {
+                Toast.makeText(this, "Could not get location. Make sure GPS is on.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateAddressFromLocation(Location location) {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
+            if (addresses != null && !addresses.isEmpty()) {
+                Address address = addresses.get(0);
+                String addressString = address.getAddressLine(0);
+                editAddress.setText(addressString);
+            }
+        } catch (IOException e) {
+            Log.e("Geocoder", "Geocoder failed", e);
+        }
     }
 
     private void showEditPopup() {
@@ -131,6 +183,8 @@ public class EditUserProfileActivity extends AppCompatActivity {
         editExperience.setEnabled(editable);
         btnUploadPhoto.setEnabled(editable);
         btnSaveProfile.setEnabled(editable);
+        btnUpdateLocation.setEnabled(editable);
+        btnPickOnMap.setEnabled(editable);
     }
 
     private void loadUserData() {
@@ -143,10 +197,21 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
                             userRole = snapshot.child("role").getValue(String.class);
-                            if ("Veterinarian".equalsIgnoreCase(userRole)) {
+                            boolean isProfessional = "Veterinarian".equalsIgnoreCase(userRole) || 
+                                                 "Grooming".equalsIgnoreCase(userRole) || 
+                                                 "Boarding".equalsIgnoreCase(userRole);
+                            
+                            if (isProfessional) {
                                 layoutVetFields.setVisibility(android.view.View.VISIBLE);
                                 editQualification.setText(snapshot.child("qualification").getValue(String.class));
                                 editExperience.setText(snapshot.child("experience").getValue(String.class));
+                                
+                                // Adjust hints based on role
+                                if ("Grooming".equalsIgnoreCase(userRole)) {
+                                    editQualification.setHint("Service Specialty");
+                                } else if ("Boarding".equalsIgnoreCase(userRole)) {
+                                    editQualification.setHint("Facility Type");
+                                }
                             } else {
                                 layoutVetFields.setVisibility(android.view.View.GONE);
                             }
@@ -154,6 +219,9 @@ public class EditUserProfileActivity extends AppCompatActivity {
                             editUsername.setText(snapshot.child("name").getValue(String.class));
                             editPhone.setText(snapshot.child("phone").getValue(String.class));
                             editAddress.setText(snapshot.child("address").getValue(String.class));
+                            
+                            currentLat = snapshot.child("latitude").getValue(Double.class);
+                            currentLng = snapshot.child("longitude").getValue(Double.class);
 
                             String imgUrl = snapshot.child("photoUrl").getValue(String.class);
                             if (imgUrl != null && !imgUrl.isEmpty()) {
@@ -184,8 +252,15 @@ public class EditUserProfileActivity extends AppCompatActivity {
         updateData.put("name", username);
         updateData.put("phone", phone);
         updateData.put("address", address);
+        
+        if (currentLat != null) updateData.put("latitude", currentLat);
+        if (currentLng != null) updateData.put("longitude", currentLng);
 
-        if ("Veterinarian".equalsIgnoreCase(userRole)) {
+        boolean isProfessional = "Veterinarian".equalsIgnoreCase(userRole) || 
+                                 "Grooming".equalsIgnoreCase(userRole) || 
+                                 "Boarding".equalsIgnoreCase(userRole);
+
+        if (isProfessional) {
             updateData.put("qualification", editQualification.getText().toString().trim());
             updateData.put("experience", editExperience.getText().toString().trim());
         }
@@ -253,6 +328,14 @@ public class EditUserProfileActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 100 && grantResults.length > 0 && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            getCurrentLocation();
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
@@ -264,6 +347,13 @@ public class EditUserProfileActivity extends AppCompatActivity {
                     .error(R.drawable.ic_profile)
                     .into(profileImage);
             // Image will be uploaded on save
+        } else if (requestCode == PICK_LOCATION && resultCode == RESULT_OK && data != null) {
+            currentLat = data.getDoubleExtra("LATITUDE", 0.0);
+            currentLng = data.getDoubleExtra("LONGITUDE", 0.0);
+            String address = data.getStringExtra("ADDRESS");
+            if (address != null) {
+                editAddress.setText(address);
+            }
         }
     }
 }

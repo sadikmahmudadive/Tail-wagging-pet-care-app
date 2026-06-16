@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Modern Floating Bottom Navigation Bar — Provider (Vet/Service) View
+    Design: Glassmorphism pill card, active-chip highlight, gradient center FAB
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/navigationCardProvider"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginHorizontal="16dp"
+        app:cardCornerRadius="36dp"
+        app:cardBackgroundColor="@color/surface_glass"
+        app:cardElevation="20dp"
+        app:cardUseCompatPadding="false">
+
+        <!-- Subtle inner border overlay -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_nav_bar_glass" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="8dp">
+
+            <!-- ══════════════ HOME ══════════════ -->
+            <LinearLayout
+                android:id="@+id/navProviderHome"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/ripple_nav_item"
+                android:padding="4dp">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="32dp">
+
+                    <View
+                        android:id="@+id/chipBgProHome"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_nav_active_chip"
+                        android:alpha="0" />
+
+                    <ImageView
+                        android:id="@+id/ivProHome"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_home"
+                        app:tint="@color/dark_blue"
+                        android:alpha="0.55" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvProHome"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textSize="9.5sp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/dark_blue"
+                    android:alpha="0.55"
+                    android:letterSpacing="0.02"
+                    android:layout_marginTop="1dp" />
+            </LinearLayout>
+
+            <!-- ══════════════ SCHEDULE ══════════════ -->
+            <LinearLayout
+                android:id="@+id/navProviderCalendar"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/ripple_nav_item"
+                android:padding="4dp">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="32dp">
+
+                    <View
+                        android:id="@+id/chipBgProCalendar"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_nav_active_chip"
+                        android:alpha="0" />
+
+                    <ImageView
+                        android:id="@+id/ivProCalendar"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="@color/dark_blue"
+                        android:alpha="0.55" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvProCalendar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Schedule"
+                    android:textSize="9.5sp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/dark_blue"
+                    android:alpha="0.55"
+                    android:letterSpacing="0.02"
+                    android:layout_marginTop="1dp" />
+            </LinearLayout>
+
+            <!-- Spacer for Center FAB -->
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <!-- ══════════════ CLIENTS ══════════════ -->
+            <LinearLayout
+                android:id="@+id/navProviderPatients"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/ripple_nav_item"
+                android:padding="4dp">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="32dp">
+
+                    <View
+                        android:id="@+id/chipBgProPatients"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_nav_active_chip"
+                        android:alpha="0" />
+
+                    <ImageView
+                        android:id="@+id/ivProPatients"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_patients"
+                        app:tint="@color/dark_blue"
+                        android:alpha="0.55" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvProPatients"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clients"
+                    android:textSize="9.5sp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/dark_blue"
+                    android:alpha="0.55"
+                    android:letterSpacing="0.02"
+                    android:layout_marginTop="1dp" />
+            </LinearLayout>
+
+            <!-- ══════════════ PROFILE ══════════════ -->
+            <LinearLayout
+                android:id="@+id/navProviderProfile"
+                android:layout_width="0dp"
+                android:layout_height="52dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/ripple_nav_item"
+                android:padding="4dp">
+
+                <FrameLayout
+                    android:layout_width="44dp"
+                    android:layout_height="32dp">
+
+                    <View
+                        android:id="@+id/chipBgProProfile"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_nav_active_chip"
+                        android:alpha="0" />
+
+                    <ImageView
+                        android:id="@+id/ivProProfile"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_profile"
+                        app:tint="@color/dark_blue"
+                        android:alpha="0.55" />
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvProProfile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:textSize="9.5sp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/dark_blue"
+                    android:alpha="0.55"
+                    android:letterSpacing="0.02"
+                    android:layout_marginTop="1dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- ══════════════ ACTION (Center FAB) ══════════════ -->
+    <LinearLayout
+        android:id="@+id/navProviderAdd"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:elevation="24dp">
+
+        <!-- Floating FAB circle — rises above bar -->
+        <FrameLayout
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="-22dp"
+            android:elevation="24dp"
+            android:background="@drawable/bg_nav_fab_center">
+
+            <ImageView
+                android:id="@+id/ivProAdd"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_add"
+                app:tint="@color/white"
+                android:alpha="1.0" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvProAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Action"
+            android:textSize="9.5sp"
+            android:fontFamily="@font/fredoka_bold"
+            android:textColor="@color/md_theme_light_primary"
+            android:alpha="0.9"
+            android:letterSpacing="0.02"
+            android:layout_marginTop="3dp" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,14 +15,14 @@
         android:text="Event Title"
         android:textStyle="bold"
         android:textSize="18sp"
-        android:textColor="#222222"/>
+        android:textColor="@color/mat_black"/>
 
     <TextView
         android:id="@+id/tvEventDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="2025-05-09 | 14:00 - 15:00"
-        android:textColor="#555"
+        android:textColor="@color/md_theme_light_onSurfaceVariant"
         android:textSize="14sp"
         android:layout_marginTop="2dp"/>
 
@@ -31,7 +31,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Category"
-        android:textColor="#7D5FFF"
+        android:textColor="@color/md_theme_light_primary"
         android:textSize="14sp"
         android:layout_marginTop="2dp"
         android:layout_marginBottom="2dp"/>
@@ -41,7 +41,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Event Note"
-        android:textColor="#666"
+        android:textColor="@color/md_theme_light_outline"
         android:textSize="14sp"
         android:layout_marginTop="2dp"/>
 </LinearLayout>

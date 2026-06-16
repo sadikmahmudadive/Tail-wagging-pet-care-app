@@ -2,9 +2,12 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vetRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_dashboard">
+    android:background="@drawable/background_dashboard"
+    android:clipChildren="false"
+    android:clipToPadding="false">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/vetAppBar"
@@ -21,7 +24,7 @@
             app:cardCornerRadius="24dp"
             app:cardElevation="2dp"
             app:strokeWidth="0dp"
-            app:cardBackgroundColor="#F2FFFFFF">
+            app:cardBackgroundColor="@color/surface_glass">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -67,14 +70,18 @@
                         android:textSize="20sp" />
                 </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatButton
+                <ImageButton
                     android:id="@+id/btnLogoutVet"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/logout_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_circle_dark_blue"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/logout_button"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="@string/logout" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -84,7 +91,7 @@
         android:id="@+id/swipeRefreshLayoutVet"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/vetBottomNav"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavContainer"
         app:layout_constraintTop_toBottomOf="@+id/vetAppBar">
 
         <androidx.core.widget.NestedScrollView
@@ -96,7 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="100dp">
+                android:paddingBottom="130dp">
 
                 <!-- Stats Overview -->
                 <GridLayout
@@ -129,6 +136,7 @@
                                 android:textColor="@color/md_theme_light_primary"
                                 android:textSize="18sp" />
                             <TextView
+                                android:id="@+id/tvTodayLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/fredoka"
@@ -161,6 +169,7 @@
                                 android:textColor="@color/md_theme_light_tertiary"
                                 android:textSize="18sp" />
                             <TextView
+                                android:id="@+id/tvPatientsLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/fredoka"
@@ -244,10 +253,12 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
-        android:id="@+id/vetBottomNav"
-        layout="@layout/layout_navigation_bar"
+        android:id="@+id/bottomNavContainer"
+        layout="@layout/layout_navigation_bar_provider"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="80dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

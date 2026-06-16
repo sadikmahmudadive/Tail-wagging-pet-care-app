@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="10dp"
-    app:cardCornerRadius="28dp"
+    app:cardCornerRadius="24dp"
     app:cardElevation="3dp"
     app:cardBackgroundColor="@color/white"
     app:strokeWidth="0dp">
@@ -145,17 +145,17 @@
                     <ImageView
                         android:layout_width="14dp"
                         android:layout_height="14dp"
-                        android:src="@drawable/ic_money"
-                        android:contentDescription="@string/price_desc"
+                        android:src="@drawable/ic_profile_phone"
+                        android:contentDescription="Phone"
                         app:tint="@color/md_theme_light_outline" />
 
                     <TextView
-                        android:id="@+id/tvVetPrice"
+                        android:id="@+id/tvVetPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"
                         android:fontFamily="@font/fredoka"
-                        tools:text="100$"
+                        tools:text="0771234567"
                         android:textColor="@color/md_theme_light_outline"
                         android:textSize="11sp" />
                 </LinearLayout>

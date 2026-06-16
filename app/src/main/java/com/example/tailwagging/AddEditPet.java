@@ -148,6 +148,7 @@ public class AddEditPet extends AppCompatActivity {
         });
 
         showPets();
+        NavbarHelper.setupNavbar(this);
     }
 
     private void openImagePicker() {

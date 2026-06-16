@@ -1,14 +1,11 @@
 package com.example.tailwagging;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +16,6 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,8 +23,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +32,7 @@ public class Registration extends AppCompatActivity {
     EditText textEmail, textPassword, textName;
     TextView btnLogin;
     Button btnSignup;
-    RadioGroup radioGroupRole;
+    RadioButton radioPetOwner, radioVet, radioGroomer, radioBoarding;
 
     FirebaseAuth auth;
     DatabaseReference dbRef;
@@ -59,10 +53,15 @@ public class Registration extends AppCompatActivity {
         textName = findViewById(R.id.text_nameR);
         btnLogin = findViewById(R.id.btn_LoginR);
         btnSignup = findViewById(R.id.btn_SignupR);
-        radioGroupRole = findViewById(R.id.radioGroupRole);
+        
+        radioPetOwner = findViewById(R.id.radioPetOwner);
+        radioVet = findViewById(R.id.radioVet);
+        radioGroomer = findViewById(R.id.radioGroomer);
+        radioBoarding = findViewById(R.id.radioBoarding);
+
+        setupRadioButtons();
 
         auth = FirebaseAuth.getInstance();
-        // Use your custom Firebase Realtime Database URL
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         if (auth.getCurrentUser() != null) {
@@ -80,8 +79,7 @@ public class Registration extends AppCompatActivity {
             String password = textPassword.getText().toString().trim();
             String name = textName.getText().toString().trim();
             
-            int selectedRoleId = radioGroupRole.getCheckedRadioButtonId();
-            String role = (selectedRoleId == R.id.radioVet) ? "Veterinarian" : "Pet Owner";
+            final String role = getSelectedRole();
 
             if (TextUtils.isEmpty(email)) {
                 Toast.makeText(Registration.this, "Email Field is Empty", Toast.LENGTH_SHORT).show();
@@ -106,13 +104,12 @@ public class Registration extends AppCompatActivity {
                                 userData.put("name", name);
                                 userData.put("email", email);
                                 userData.put("role", role);
-                                userData.put("photoUrl", ""); // Initialize with empty string or default URL
+                                userData.put("photoUrl", "");
 
                                 dbRef.child("users").child(userId)
                                         .setValue(userData)
                                         .addOnSuccessListener(aVoid -> {
                                             Toast.makeText(Registration.this, "User data added successfully", Toast.LENGTH_SHORT).show();
-                                            // Redirect to Login to trigger role check, or just call checkUserRoleAndRedirect directly
                                             checkUserRoleAndRedirect(userId);
                                         })
                                         .addOnFailureListener(e -> {
@@ -126,13 +123,35 @@ public class Registration extends AppCompatActivity {
         });
     }
 
+    private void setupRadioButtons() {
+        radioPetOwner.setOnClickListener(v -> handleRadioSelection(radioPetOwner));
+        radioVet.setOnClickListener(v -> handleRadioSelection(radioVet));
+        radioGroomer.setOnClickListener(v -> handleRadioSelection(radioGroomer));
+        radioBoarding.setOnClickListener(v -> handleRadioSelection(radioBoarding));
+    }
+
+    private void handleRadioSelection(RadioButton selected) {
+        radioPetOwner.setChecked(false);
+        radioVet.setChecked(false);
+        radioGroomer.setChecked(false);
+        radioBoarding.setChecked(false);
+        selected.setChecked(true);
+    }
+
+    private String getSelectedRole() {
+        if (radioVet.isChecked()) return "Veterinarian";
+        if (radioGroomer.isChecked()) return "Grooming";
+        if (radioBoarding.isChecked()) return "Boarding";
+        return "Pet Owner";
+    }
+
     private void checkUserRoleAndRedirect(String uid) {
         dbRef.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     String role = dataSnapshot.child("role").getValue(String.class);
-                    if ("Veterinarian".equalsIgnoreCase(role)) {
+                    if ("Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role)) {
                         startActivity(new Intent(Registration.this, VetDashboardActivity.class));
                     } else {
                         startActivity(new Intent(Registration.this, MainActivity.class));

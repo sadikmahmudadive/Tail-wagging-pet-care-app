@@ -40,7 +40,7 @@ public class VetAdapter extends RecyclerView.Adapter<VetAdapter.VetViewHolder> {
         holder.tvVetRating.setText(context.getString(R.string.rating_reviews_format, vet.getRating(), vet.getReviewsCount()));
         holder.tvVetTag.setText(vet.getTag());
         holder.tvVetDistance.setText(vet.getDistance());
-        holder.tvVetPrice.setText(vet.getPrice());
+        holder.tvVetPhone.setText(vet.getPhone() != null ? vet.getPhone() : "N/A");
         holder.tvVetExperience.setText(vet.getExperience());
         holder.tvLastVisit.setText(context.getString(R.string.last_visit_format, vet.getLastVisit()));
 
@@ -78,7 +78,7 @@ public class VetAdapter extends RecyclerView.Adapter<VetAdapter.VetViewHolder> {
 
     public static class VetViewHolder extends RecyclerView.ViewHolder {
         ImageView ivVetProfile;
-        TextView tvVetName, tvVetQualification, tvVetRating, tvVetTag, tvVetDistance, tvVetPrice, tvVetExperience, tvLastVisit;
+        TextView tvVetName, tvVetQualification, tvVetRating, tvVetTag, tvVetDistance, tvVetPhone, tvVetExperience, tvLastVisit;
         View btnBookAppointment;
 
         public VetViewHolder(@NonNull View itemView) {
@@ -89,7 +89,7 @@ public class VetAdapter extends RecyclerView.Adapter<VetAdapter.VetViewHolder> {
             tvVetRating = itemView.findViewById(R.id.tvVetRating);
             tvVetTag = itemView.findViewById(R.id.tvVetTag);
             tvVetDistance = itemView.findViewById(R.id.tvVetDistance);
-            tvVetPrice = itemView.findViewById(R.id.tvVetPrice);
+            tvVetPhone = itemView.findViewById(R.id.tvVetPhone);
             tvVetExperience = itemView.findViewById(R.id.tvVetExperience);
             tvLastVisit = itemView.findViewById(R.id.tvLastVisit);
             btnBookAppointment = itemView.findViewById(R.id.btnBookAppointment);

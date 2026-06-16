@@ -77,6 +77,7 @@
     <string name="events_label">Events</string>
     <string name="view_all">View All</string>
     <string name="add_event">Add Event</string>
+    <string name="use_current_location">Use Current Location</string>
     <string name="sun_initial">S</string>
     <string name="mon_initial">M</string>
     <string name="tue_initial">T</string>

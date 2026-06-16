@@ -16,14 +16,18 @@
         android:background="@color/dark_blue"
         android:paddingHorizontal="8dp">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/backButton"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_arrow_back"
-            android:layout_centerVertical="true"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentStart="true"
-            app:tint="@color/white" />
+            android:layout_centerVertical="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="12dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_arrow_back"
+            app:tint="@color/white"
+            android:contentDescription="@string/back" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -229,33 +233,79 @@
                 <!-- Address -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/bg_profile_textboxes"
-                    android:gravity="center_vertical"
-                    android:layout_marginBottom="10dp"
-                    android:paddingStart="10dp"
-                    android:paddingEnd="10dp">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="8dp">
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_profile_location"
-                        app:tint="@color/mat_black" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/bg_profile_textboxes"
+                        android:gravity="center_vertical"
+                        android:paddingStart="10dp"
+                        android:paddingEnd="10dp">
 
-                    <EditText
-                        android:id="@+id/editAddress"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@android:color/transparent"
-                        android:hint="Address"
-                        android:paddingStart="8dp"
-                        android:inputType="textPostalAddress"
-                        android:textColor="@color/mat_black"
-                        android:textSize="16sp"
-                        android:fontFamily="@font/fredoka"
-                        android:enabled="false"/>
+                        <ImageView
+                            android:layout_width="18dp"
+                            android:layout_height="18dp"
+                            android:src="@drawable/ic_profile_location"
+                            app:tint="@color/mat_black" />
+
+                        <EditText
+                            android:id="@+id/editAddress"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:background="@android:color/transparent"
+                            android:hint="Address"
+                            android:paddingStart="8dp"
+                            android:inputType="textPostalAddress"
+                            android:textColor="@color/mat_black"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/fredoka"
+                            android:enabled="false"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="end">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnUpdateLocation"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:text="@string/use_current_location"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/fredoka"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="0dp"
+                            app:icon="@drawable/ic_location_pin"
+                            app:iconSize="14dp"
+                            android:enabled="false" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPickOnMap"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:text="Pick on Map"
+                            android:textSize="11sp"
+                            android:fontFamily="@font/fredoka"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="0dp"
+                            app:icon="@drawable/ic_vet"
+                            app:iconSize="14dp"
+                            android:enabled="false"
+                            android:layout_marginStart="8dp" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- Vet Specific Fields -->

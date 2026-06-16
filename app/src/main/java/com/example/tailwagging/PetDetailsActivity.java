@@ -10,15 +10,22 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
-
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,8 +34,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class PetDetailsActivity extends AppCompatActivity {
@@ -37,18 +47,31 @@ public class PetDetailsActivity extends AppCompatActivity {
     private TextView textViewPetNameDetail, textViewPetBreedDetail, textViewPetAgeDetail,
             textViewPetColorDetail, textViewPetHeightDetail, textViewPetWeightDetail,
             textViewPetDescriptionDetail, textViewVaccinationDetail, textViewMedicationDetail,
-            labelAbout, labelStatus;
+            labelAbout, labelStatus, tvNoHistory;
     private CardView cardGender;
     private ImageButton buttonClosePetDetails, buttonEditPet;
     private Button buttonDeletePet;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private RecyclerView rvHistory;
+    private ServiceRecordAdapter historyAdapter;
+    private final List<ServiceRecord> historyList = new ArrayList<>();
 
     private Pet selectedPet;
+    private DatabaseReference dbRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_pet_details);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.petDetailsRoot), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         // Initialize Views
         imageViewPetDetail = findViewById(R.id.imageViewPetDetail);
@@ -69,6 +92,9 @@ public class PetDetailsActivity extends AppCompatActivity {
         buttonEditPet = findViewById(R.id.buttonEditPet);
         buttonDeletePet = findViewById(R.id.buttonDeletePet);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutPetDetails);
+        
+        rvHistory = findViewById(R.id.rvServiceHistory);
+        tvNoHistory = findViewById(R.id.tvNoHistory);
 
         // Status Section Buttons
         findViewById(R.id.buttonContactVet).setOnClickListener(v -> launchPetHealthActivity());
@@ -80,6 +106,8 @@ public class PetDetailsActivity extends AppCompatActivity {
 
         if (selectedPet != null) {
             populatePetDetails(selectedPet);
+            setupHistoryList();
+            fetchServiceHistory();
         } else {
             Toast.makeText(this, "Pet details not found.", Toast.LENGTH_SHORT).show();
             finish();
@@ -93,6 +121,33 @@ public class PetDetailsActivity extends AppCompatActivity {
         });
 
         swipeRefreshLayout.setOnRefreshListener(this::refreshPetData);
+        NavbarHelper.setupNavbar(this);
+    }
+
+    private void setupHistoryList() {
+        rvHistory.setLayoutManager(new LinearLayoutManager(this));
+        historyAdapter = new ServiceRecordAdapter(historyList);
+        rvHistory.setAdapter(historyAdapter);
+    }
+
+    private void fetchServiceHistory() {
+        dbRef.child("service_records").orderByChild("petId").equalTo(selectedPet.getPetID())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        historyList.clear();
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            ServiceRecord record = ds.getValue(ServiceRecord.class);
+                            if (record != null) historyList.add(record);
+                        }
+                        Collections.reverse(historyList);
+                        historyAdapter.notifyDataSetChanged();
+                        tvNoHistory.setVisibility(historyList.isEmpty() ? View.VISIBLE : View.GONE);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
     }
 
     private void launchEditPetActivity() {

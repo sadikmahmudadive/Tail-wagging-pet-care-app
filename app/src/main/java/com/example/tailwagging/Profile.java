@@ -4,6 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,7 +40,7 @@ import java.util.Map;
 public class Profile extends AppCompatActivity {
 
     private ImageView profileImage;
-    private TextView userEmail, userPhoneNumber;
+    private TextView userEmail, userPhoneNumber, userAddress;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private FirebaseAuth mAuth;
@@ -70,7 +73,7 @@ public class Profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.swipeRefreshLayoutProfile), (v, insets) -> {
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.profileRoot), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -85,7 +88,11 @@ public class Profile extends AppCompatActivity {
         profileImage = findViewById(R.id.profileImage);
         userEmail = findViewById(R.id.userEmail);
         userPhoneNumber = findViewById(R.id.userPhoneNumber);
+        userAddress = findViewById(R.id.userAddress);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutProfile);
+
+        // Initial navbar setup (default to Pet Owner)
+        setupRoleBasedNavbar("Pet Owner");
 
         reloadUserData();
 
@@ -122,11 +129,27 @@ public class Profile extends AppCompatActivity {
                         if (dataSnapshot.exists()) {
                             String phone = dataSnapshot.child("phone").getValue(String.class);
                             String photoUrl = dataSnapshot.child("photoUrl").getValue(String.class);
+                            String name = dataSnapshot.child("name").getValue(String.class);
+                            String address = dataSnapshot.child("address").getValue(String.class);
+                            String role = dataSnapshot.child("role").getValue(String.class);
+
+                            setupRoleBasedNavbar(role);
+
+                            if (name != null) {
+                                ((TextView)findViewById(R.id.userName)).setText(name);
+                                ((TextView)findViewById(R.id.userNameHeader)).setText(name);
+                            }
 
                             if (phone != null && !phone.isEmpty()) {
                                 userPhoneNumber.setText(phone);
                             } else {
                                 userPhoneNumber.setText("No phone number");
+                            }
+
+                            if (address != null && !address.isEmpty()) {
+                                userAddress.setText(address);
+                            } else {
+                                userAddress.setText("No address added");
                             }
 
                             if (photoUrl != null && !photoUrl.isEmpty()) {
@@ -148,6 +171,29 @@ public class Profile extends AppCompatActivity {
                         if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                     }
                 });
+    }
+
+    private void setupRoleBasedNavbar(String role) {
+        FrameLayout container = findViewById(R.id.bottomNavContainer);
+        if (container == null) return;
+
+        container.removeAllViews();
+        boolean isProfessional = "Veterinarian".equalsIgnoreCase(role) || 
+                                 "Grooming".equalsIgnoreCase(role) || 
+                                 "Boarding".equalsIgnoreCase(role);
+
+        LayoutInflater inflater = LayoutInflater.from(this);
+        if (isProfessional) {
+            inflater.inflate(R.layout.layout_navigation_bar_provider, container, true);
+        } else {
+            inflater.inflate(R.layout.layout_navigation_bar, container, true);
+        }
+        
+        // Ensure the container doesn't block clicks to the rest of the screen
+        container.setClickable(false);
+        container.setFocusable(false);
+        
+        NavbarHelper.setupNavbar(this);
     }
 
     private void openImagePicker() {

@@ -6,6 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_dashboard"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     tools:context=".MainActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -21,7 +23,7 @@
             app:cardCornerRadius="24dp"
             app:cardElevation="2dp"
             app:strokeWidth="0dp"
-            app:cardBackgroundColor="#F2FFFFFF">
+            app:cardBackgroundColor="@color/surface_glass">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -67,14 +69,18 @@
                         android:textSize="20sp" />
                 </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatButton
+                <ImageButton
                     android:id="@+id/buttonLogout"
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:background="@drawable/logout_button"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/bg_circle_dark_blue"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/logout_button"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:contentDescription="Logout" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -95,7 +101,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingBottom="120dp">
+                android:paddingBottom="130dp">
 
                 <!-- My Pets Header -->
                 <LinearLayout
@@ -150,7 +156,7 @@
                         android:id="@+id/petsProgressOverlay"
                         android:layout_width="match_parent"
                         android:layout_height="160dp"
-                        android:background="#40FFFFFF"
+                        android:background="@color/white_overlay_medium"
                         android:visibility="gone">
 
                         <ProgressBar
@@ -381,9 +387,12 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <include
+        android:id="@+id/bottomNavContainer"
         layout="@layout/layout_navigation_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom" />
+        android:layout_height="80dp"
+        android:layout_marginBottom="16dp"
+        android:layout_gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
