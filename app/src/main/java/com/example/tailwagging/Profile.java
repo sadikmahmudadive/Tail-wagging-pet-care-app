@@ -91,8 +91,9 @@ public class Profile extends AppCompatActivity {
         userAddress = findViewById(R.id.userAddress);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutProfile);
 
-        // Initial navbar setup (default to Pet Owner)
-        setupRoleBasedNavbar("Pet Owner");
+        // Initial navbar setup (read from SharedPreferences to avoid flicker)
+        String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
+        setupRoleBasedNavbar(cachedRole);
 
         reloadUserData();
 
@@ -132,7 +133,9 @@ public class Profile extends AppCompatActivity {
                             String name = dataSnapshot.child("name").getValue(String.class);
                             String address = dataSnapshot.child("address").getValue(String.class);
                             String role = dataSnapshot.child("role").getValue(String.class);
-
+                            if (role != null) {
+                                getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                            }
                             setupRoleBasedNavbar(role);
 
                             if (name != null) {
@@ -194,6 +197,14 @@ public class Profile extends AppCompatActivity {
         container.setFocusable(false);
         
         NavbarHelper.setupNavbar(this);
+
+        // Bind the action button depending on which navbar was inflated
+        View navAdd = findViewById(R.id.navProviderAdd);
+        if (navAdd != null) {
+            navAdd.setOnClickListener(v -> {
+                startActivity(new Intent(Profile.this, VetDashboardActivity.class));
+            });
+        }
     }
 
     private void openImagePicker() {
