@@ -14,12 +14,14 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/navigationCardProvider"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="72dp"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="26dp"
         app:cardCornerRadius="36dp"
         app:cardBackgroundColor="@color/surface_glass"
-        app:cardElevation="20dp"
-        app:cardUseCompatPadding="false">
+        app:cardElevation="12dp"
+        app:cardUseCompatPadding="false"
+        app:layout_constraintTop_toTopOf="parent">
 
         <!-- Subtle inner border overlay -->
         <View
@@ -229,12 +231,12 @@
     <LinearLayout
         android:id="@+id/navProviderAdd"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintWidth_percent="0.2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/navigationCardProvider"
+        app:layout_constraintTop_toTopOf="@+id/navigationCardProvider"
         android:orientation="vertical"
         android:gravity="center"
         android:background="?attr/selectableItemBackgroundBorderless"
