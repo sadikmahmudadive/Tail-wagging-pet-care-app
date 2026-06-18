@@ -36,6 +36,22 @@ public class NavbarHelper {
     /* ─── public setup ────────────────────────────────────────── */
 
     public static void setupNavbar(Activity activity) {
+        android.view.ViewGroup container = activity.findViewById(R.id.bottomNavContainer);
+        String role = activity.getSharedPreferences("UserPrefs", Activity.MODE_PRIVATE).getString("user_role", "Pet Owner");
+        boolean isProvider = "Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role);
+
+        if (container != null) {
+            // Check if we need to inflate or re-inflate the correct navbar layout
+            boolean hasProviderNav = activity.findViewById(R.id.navProviderHome) != null;
+            boolean hasOwnerNav = activity.findViewById(R.id.navVet) != null;
+
+            if ((isProvider && !hasProviderNav) || (!isProvider && !hasOwnerNav)) {
+                container.removeAllViews();
+                activity.getLayoutInflater().inflate(isProvider ? R.layout.layout_navigation_bar_provider : R.layout.layout_navigation_bar, container, true);
+                container.setClickable(false);
+                container.setFocusable(false);
+            }
+        }
 
         // ── Owner / Pet-owner tabs ───────────────────────────────
         setupItem(activity,
@@ -80,6 +96,21 @@ public class NavbarHelper {
         setupItem(activity,
                 R.id.navProviderProfile,  Profile.class,
                 R.id.chipBgProProfile,    R.id.ivProProfile,  R.id.tvProProfile);
+
+        // Hide the opposite side's views to be doubly sure (though usually handled by inflation)
+        if (isProvider) {
+            int[] userIds = {R.id.navVet, R.id.navManage, R.id.navCalendar, R.id.navProfile, R.id.navAddPet};
+            for (int id : userIds) {
+                View v = activity.findViewById(id);
+                if (v != null) v.setVisibility(View.GONE);
+            }
+        } else {
+            int[] providerIds = {R.id.navProviderHome, R.id.navProviderCalendar, R.id.navProviderPatients, R.id.navProviderProfile, R.id.navProviderAdd};
+            for (int id : providerIds) {
+                View v = activity.findViewById(id);
+                if (v != null) v.setVisibility(View.GONE);
+            }
+        }
     }
 
     /* ─── regular nav item ────────────────────────────────────── */
@@ -91,6 +122,8 @@ public class NavbarHelper {
 
         View layout = activity.findViewById(layoutId);
         if (layout == null) return;
+
+        layout.setVisibility(View.VISIBLE);
 
         View     chipBg = activity.findViewById(chipBgId);
         ImageView icon  = activity.findViewById(iconId);
@@ -127,6 +160,8 @@ public class NavbarHelper {
 
         View layout = activity.findViewById(layoutId);
         if (layout == null) return;
+
+        layout.setVisibility(View.VISIBLE);
 
         // FAB icon is always white (set in XML); just wire click if target given
         if (targetClass == null) return;

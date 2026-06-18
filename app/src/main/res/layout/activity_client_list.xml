@@ -73,12 +73,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/rvClients" />
 
-    <include
+    <FrameLayout
         android:id="@+id/bottomNavContainer"
-        layout="@layout/layout_navigation_bar_provider"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="110dp"
         android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent" />
 

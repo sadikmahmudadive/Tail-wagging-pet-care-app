@@ -118,15 +118,22 @@
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
                         app:cardBackgroundColor="@color/md_theme_light_primaryContainer">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="12dp">
+                            android:padding="16dp">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_calendar"
+                                app:tint="@color/md_theme_light_primary"
+                                android:layout_marginBottom="4dp"/>
                             <TextView
                                 android:id="@+id/tvTodayApptsCount"
                                 android:layout_width="wrap_content"
@@ -134,7 +141,7 @@
                                 android:fontFamily="@font/fredoka_bold"
                                 android:text="0"
                                 android:textColor="@color/md_theme_light_primary"
-                                android:textSize="18sp" />
+                                android:textSize="20sp" />
                             <TextView
                                 android:id="@+id/tvTodayLabel"
                                 android:layout_width="wrap_content"
@@ -151,15 +158,22 @@
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
                         app:cardBackgroundColor="@color/md_theme_light_tertiaryContainer">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="12dp">
+                            android:padding="16dp">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_profile"
+                                app:tint="@color/md_theme_light_tertiary"
+                                android:layout_marginBottom="4dp"/>
                             <TextView
                                 android:id="@+id/tvTotalPatients"
                                 android:layout_width="wrap_content"
@@ -167,7 +181,7 @@
                                 android:fontFamily="@font/fredoka_bold"
                                 android:text="0"
                                 android:textColor="@color/md_theme_light_tertiary"
-                                android:textSize="18sp" />
+                                android:textSize="20sp" />
                             <TextView
                                 android:id="@+id/tvPatientsLabel"
                                 android:layout_width="wrap_content"
@@ -184,15 +198,22 @@
                         android:layout_height="wrap_content"
                         android:layout_columnWeight="1"
                         android:layout_margin="4dp"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="0dp"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
                         app:cardBackgroundColor="@color/gender_male_bg">
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:orientation="vertical"
-                            android:padding="12dp">
+                            android:padding="16dp">
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_star"
+                                app:tint="@color/dark_blue"
+                                android:layout_marginBottom="4dp"/>
                             <TextView
                                 android:id="@+id/tvVetRatingScore"
                                 android:layout_width="wrap_content"
@@ -200,7 +221,7 @@
                                 android:fontFamily="@font/fredoka_bold"
                                 android:text="4.8"
                                 android:textColor="@color/dark_blue"
-                                android:textSize="18sp" />
+                                android:textSize="20sp" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -210,13 +231,206 @@
                                 android:textSize="11sp" />
                         </LinearLayout>
                     </com.google.android.material.card.MaterialCardView>
-
                 </GridLayout>
+
+                <!-- Next Patient Spotlight -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="Next Appointment"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
+
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/cardNextPatient"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="12dp"
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="6dp"
+                    app:strokeWidth="0.5dp"
+                    app:strokeColor="@color/black_overlay_light"
+                    app:cardBackgroundColor="@color/white">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="20dp">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/ivNextPet"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:src="@drawable/ic_pet_placeholder"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:orientation="vertical"
+                            app:layout_constraintBottom_toBottomOf="@+id/ivNextPet"
+                            app:layout_constraintEnd_toStartOf="@+id/btnStartConsult"
+                            app:layout_constraintStart_toEndOf="@+id/ivNextPet"
+                            app:layout_constraintTop_toTopOf="@+id/ivNextPet">
+
+                            <TextView
+                                android:id="@+id/tvNextPetName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredoka_bold"
+                                android:text="Loading..."
+                                android:textColor="@color/black"
+                                android:textSize="20sp" />
+
+                            <TextView
+                                android:id="@+id/tvNextApptTime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredoka"
+                                android:text="--"
+                                android:textColor="@color/md_theme_light_primary"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnStartConsult"
+                            style="@style/Widget.Material3.Button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Start"
+                            app:cornerRadius="16dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Quick Actions -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="Quick Actions"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="12dp"
+                    android:paddingHorizontal="16dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/actionAddRecord"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="8dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="@color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:src="@drawable/ic_add"
+                                app:tint="@color/dark_blue" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/fredoka_bold"
+                                android:text="Record"
+                                android:textColor="@color/dark_blue"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/actionViewClients"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginHorizontal="4dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="@color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:src="@drawable/ic_profile"
+                                app:tint="@color/dark_blue" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/fredoka_bold"
+                                android:text="Clients"
+                                android:textColor="@color/dark_blue"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/actionRevenue"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="2dp"
+                        app:strokeWidth="0dp"
+                        app:cardBackgroundColor="@color/white">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:src="@drawable/ic_money"
+                                app:tint="@color/dark_blue" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/fredoka_bold"
+                                android:text="Revenue"
+                                android:textColor="@color/dark_blue"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
                     android:layout_marginHorizontal="24dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
@@ -232,10 +446,23 @@
                         android:layout_marginStart="12dp"
                         android:layout_weight="1"
                         android:fontFamily="@font/fredoka_bold"
-                        android:text="@string/your_appointments"
+                        android:text="Upcoming"
                         android:textColor="@color/black"
                         android:textSize="22sp" />
                 </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvEmptyAppts"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:layout_marginHorizontal="24dp"
+                    android:fontFamily="@font/fredoka"
+                    android:gravity="center"
+                    android:text="No upcoming appointments"
+                    android:textColor="@color/md_theme_light_outline"
+                    android:textSize="16sp"
+                    android:visibility="gone" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvVetAppointments"
@@ -252,12 +479,10 @@
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <include
+    <FrameLayout
         android:id="@+id/bottomNavContainer"
-        layout="@layout/layout_navigation_bar_provider"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="110dp"
         android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent" />
 

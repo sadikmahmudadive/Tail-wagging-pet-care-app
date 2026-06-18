@@ -162,6 +162,16 @@ public class PetServicesActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 userLat = snapshot.child("latitude").getValue(Double.class);
                 userLng = snapshot.child("longitude").getValue(Double.class);
+
+                String role = snapshot.child("role").getValue(String.class);
+                if (role != null) {
+                    String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
+                    if (!role.equalsIgnoreCase(cachedRole)) {
+                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                        NavbarHelper.setupNavbar(PetServicesActivity.this);
+                    }
+                }
+
                 // Refresh list if we already switched
                 fetchServices("Veterinarian"); 
             }

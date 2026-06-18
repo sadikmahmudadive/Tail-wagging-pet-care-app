@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -34,7 +34,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class Profile extends AppCompatActivity {
@@ -79,8 +78,6 @@ public class Profile extends AppCompatActivity {
             return insets;
         });
 
-        LinearLayout optionAboutMe = findViewById(R.id.optionAboutMe);
-
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
         dbRef = FirebaseDatabase.getInstance().getReference();
@@ -91,15 +88,21 @@ public class Profile extends AppCompatActivity {
         userAddress = findViewById(R.id.userAddress);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutProfile);
 
-        // Initial navbar setup (read from SharedPreferences to avoid flicker)
-        String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
-        setupRoleBasedNavbar(cachedRole);
+        NavbarHelper.setupNavbar(this);
+
+        // Bind the action button if it exists (Provider FAB)
+        View navAdd = findViewById(R.id.navProviderAdd);
+        if (navAdd != null) {
+            navAdd.setOnClickListener(v -> {
+                startActivity(new Intent(Profile.this, VetDashboardActivity.class));
+            });
+        }
 
         reloadUserData();
 
         profileImage.setOnClickListener(v -> openImagePicker());
 
-        optionAboutMe.setOnClickListener(v -> {
+        findViewById(R.id.optionAboutMe).setOnClickListener(v -> {
             Intent intent = new Intent(Profile.this, EditUserProfileActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             aboutMeLauncher.launch(intent);
@@ -134,9 +137,19 @@ public class Profile extends AppCompatActivity {
                             String address = dataSnapshot.child("address").getValue(String.class);
                             String role = dataSnapshot.child("role").getValue(String.class);
                             if (role != null) {
-                                getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                                String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
+                                if (!role.equalsIgnoreCase(cachedRole)) {
+                                    getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                                    NavbarHelper.setupNavbar(Profile.this);
+                                    // Re-bind action button after re-inflation
+                                    View newNavAdd = findViewById(R.id.navProviderAdd);
+                                    if (newNavAdd != null) {
+                                        newNavAdd.setOnClickListener(v2 -> {
+                                            startActivity(new Intent(Profile.this, VetDashboardActivity.class));
+                                        });
+                                    }
+                                }
                             }
-                            setupRoleBasedNavbar(role);
 
                             if (name != null) {
                                 ((TextView)findViewById(R.id.userName)).setText(name);
@@ -176,37 +189,6 @@ public class Profile extends AppCompatActivity {
                 });
     }
 
-    private void setupRoleBasedNavbar(String role) {
-        FrameLayout container = findViewById(R.id.bottomNavContainer);
-        if (container == null) return;
-
-        container.removeAllViews();
-        boolean isProfessional = "Veterinarian".equalsIgnoreCase(role) || 
-                                 "Grooming".equalsIgnoreCase(role) || 
-                                 "Boarding".equalsIgnoreCase(role);
-
-        LayoutInflater inflater = LayoutInflater.from(this);
-        if (isProfessional) {
-            inflater.inflate(R.layout.layout_navigation_bar_provider, container, true);
-        } else {
-            inflater.inflate(R.layout.layout_navigation_bar, container, true);
-        }
-        
-        // Ensure the container doesn't block clicks to the rest of the screen
-        container.setClickable(false);
-        container.setFocusable(false);
-        
-        NavbarHelper.setupNavbar(this);
-
-        // Bind the action button depending on which navbar was inflated
-        View navAdd = findViewById(R.id.navProviderAdd);
-        if (navAdd != null) {
-            navAdd.setOnClickListener(v -> {
-                startActivity(new Intent(Profile.this, VetDashboardActivity.class));
-            });
-        }
-    }
-
     private void openImagePicker() {
         Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         imagePickerLauncher.launch(intent);
@@ -224,8 +206,8 @@ public class Profile extends AppCompatActivity {
         progressDialog.show();
 
         MediaManager.get().upload(imageUri)
-                .unsigned("tail_wagging") // Use your unsigned preset
-                .option("folder", "profile_pics/") // Optional: organize in folder
+                .unsigned("tail_wagging")
+                .option("folder", "profile_pics/")
                 .callback(new UploadCallback() {
                     @Override
                     public void onStart(String requestId) {}

@@ -123,9 +123,16 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
 
         requestNotificationPermission();
 
-        String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
-        setupRoleBasedNavbar(cachedRole);
+        // Let NavbarHelper handle inflation and layout binding immediately
+        NavbarHelper.setupNavbar(this);
 
+        // Bind the action button if it exists (Provider FAB)
+        View navAdd = findViewById(R.id.navProviderAdd);
+        if (navAdd != null) {
+            navAdd.setOnClickListener(v -> showAddEventDialog(String.valueOf(selectedDay), null, null));
+        }
+
+        // Fetch from Firebase in the background to ensure we have the most up-to-date role cache
         com.google.firebase.auth.FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
             dbRef.child("users").child(user.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -134,42 +141,22 @@ public class Calendar extends AppCompatActivity implements CalendarAdapter.OnIte
                     if (snapshot.exists()) {
                         String role = snapshot.child("role").getValue(String.class);
                         if (role != null) {
-                            getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                            String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
+                            if (!role.equalsIgnoreCase(cachedRole)) {
+                                getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                                // Re-run setup if the role changed since cache
+                                NavbarHelper.setupNavbar(Calendar.this);
+                                View newNavAdd = findViewById(R.id.navProviderAdd);
+                                if (newNavAdd != null) {
+                                    newNavAdd.setOnClickListener(v2 -> showAddEventDialog(String.valueOf(selectedDay), null, null));
+                                }
+                            }
                         }
-                        setupRoleBasedNavbar(role);
                     }
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {}
             });
-        }
-    }
-
-    private void setupRoleBasedNavbar(String role) {
-        android.widget.FrameLayout container = findViewById(R.id.bottomNavContainer);
-        if (container == null) return;
-
-        container.removeAllViews();
-        boolean isProfessional = "Veterinarian".equalsIgnoreCase(role) || 
-                                 "Grooming".equalsIgnoreCase(role) || 
-                                 "Boarding".equalsIgnoreCase(role);
-
-        android.view.LayoutInflater inflater = android.view.LayoutInflater.from(this);
-        if (isProfessional) {
-            inflater.inflate(R.layout.layout_navigation_bar_provider, container, true);
-        } else {
-            inflater.inflate(R.layout.layout_navigation_bar, container, true);
-        }
-        
-        container.setClickable(false);
-        container.setFocusable(false);
-        
-        NavbarHelper.setupNavbar(this);
-
-        // Bind the action button depending on which navbar was inflated
-        View navAdd = findViewById(R.id.navProviderAdd);
-        if (navAdd != null) {
-            navAdd.setOnClickListener(v -> showAddEventDialog(String.valueOf(selectedDay), null, null));
         }
     }
 

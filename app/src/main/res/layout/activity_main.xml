@@ -386,12 +386,10 @@
         </androidx.core.widget.NestedScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <include
+    <FrameLayout
         android:id="@+id/bottomNavContainer"
-        layout="@layout/layout_navigation_bar"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="110dp"
         android:layout_gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent" />
 

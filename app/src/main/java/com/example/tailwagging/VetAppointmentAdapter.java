@@ -2,6 +2,7 @@ package com.example.tailwagging;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -79,6 +80,25 @@ public class VetAppointmentAdapter extends RecyclerView.Adapter<VetAppointmentAd
                     });
         });
 
+        holder.btnCall.setOnClickListener(v -> {
+            if (appt.userId != null) {
+                dbRef.child("users").child(appt.userId).child("phone").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String phone = snapshot.getValue(String.class);
+                        if (phone != null && !phone.isEmpty()) {
+                            Intent intent = new Intent(Intent.ACTION_DIAL);
+                            intent.setData(Uri.parse("tel:" + phone));
+                            context.startActivity(intent);
+                        } else {
+                            Toast.makeText(context, "No phone number found for this owner", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    @Override public void onCancelled(@NonNull DatabaseError error) {}
+                });
+            }
+        });
+
         holder.itemView.setOnClickListener(v -> {
             if (context instanceof ClientListActivity) {
                 // Fetch full pet object and open details
@@ -109,7 +129,7 @@ public class VetAppointmentAdapter extends RecyclerView.Adapter<VetAppointmentAd
     public static class ApptViewHolder extends RecyclerView.ViewHolder {
         TextView tvPetName, tvOwnerName, tvDate, tvTime, tvStatus;
         ImageView ivPetAppt;
-        View btnComplete;
+        View btnComplete, btnCall;
 
         public ApptViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -120,6 +140,7 @@ public class VetAppointmentAdapter extends RecyclerView.Adapter<VetAppointmentAd
             tvStatus = itemView.findViewById(R.id.tvApptStatus);
             ivPetAppt = itemView.findViewById(R.id.ivPetAppt);
             btnComplete = itemView.findViewById(R.id.btnCompleteAppt);
+            btnCall = itemView.findViewById(R.id.btnCallOwner);
         }
     }
 }

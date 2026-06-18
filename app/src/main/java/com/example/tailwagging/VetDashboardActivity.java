@@ -42,12 +42,22 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class VetDashboardActivity extends AppCompatActivity {
 
-    private TextView tvWelcomeVet, tvVetGreeting, tvTodayApptsCount, tvTotalPatients, tvVetRatingScore;
+    private TextView tvWelcomeVet, tvVetGreeting, tvTodayApptsCount, tvTotalPatients, tvVetRatingScore, tvEmptyAppts;
     private TextView tvTodayLabel, tvPatientsLabel;
     private CircleImageView ivVetProfile;
     private ImageButton btnLogout;
     private RecyclerView rvAppointments;
     private SwipeRefreshLayout swipeRefreshLayout;
+
+    // Next Patient UI
+    private View cardNextPatient;
+    private CircleImageView ivNextPet;
+    private TextView tvNextPetName, tvNextApptTime;
+    private Button btnStartConsult;
+
+    // Quick Action UI
+    private View actionAddRecord, actionViewClients, actionRevenue;
+
     private DatabaseReference dbRef;
     private String vetId;
     private final List<Appointment> appointmentsList = new ArrayList<>();
@@ -64,25 +74,14 @@ public class VetDashboardActivity extends AppCompatActivity {
             return insets;
         });
 
-        tvWelcomeVet = findViewById(R.id.tvWelcomeVet);
-        tvVetGreeting = findViewById(R.id.tvVetGreeting);
-        tvTodayApptsCount = findViewById(R.id.tvTodayApptsCount);
-        tvTotalPatients = findViewById(R.id.tvTotalPatients);
-        tvVetRatingScore = findViewById(R.id.tvVetRatingScore);
-        
-        tvTodayLabel = findViewById(R.id.tvTodayLabel);
-        tvPatientsLabel = findViewById(R.id.tvPatientsLabel);
-
-        ivVetProfile = findViewById(R.id.vetProfilePhoto);
-        btnLogout = findViewById(R.id.btnLogoutVet);
-        rvAppointments = findViewById(R.id.rvVetAppointments);
-        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutVet);
+        initWidgets();
 
         vetId = FirebaseAuth.getInstance().getUid();
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         setDynamicGreeting();
         setupNavigationBar();
+        setupQuickActions();
 
         swipeRefreshLayout.setOnRefreshListener(() -> {
             fetchVetData();
@@ -99,11 +98,46 @@ public class VetDashboardActivity extends AppCompatActivity {
         fetchAppointments();
         
         NavbarHelper.setupNavbar(this);
-        // Handle the unique "Add Action" for providers
-        View navAdd = findViewById(R.id.navProviderAdd);
-        if (navAdd != null) {
-            navAdd.setOnClickListener(v -> showAddRecordDialog());
-        }
+    }
+
+    private void initWidgets() {
+        tvWelcomeVet = findViewById(R.id.tvWelcomeVet);
+        tvVetGreeting = findViewById(R.id.tvVetGreeting);
+        tvTodayApptsCount = findViewById(R.id.tvTodayApptsCount);
+        tvTotalPatients = findViewById(R.id.tvTotalPatients);
+        tvVetRatingScore = findViewById(R.id.tvVetRatingScore);
+        
+        tvTodayLabel = findViewById(R.id.tvTodayLabel);
+        tvPatientsLabel = findViewById(R.id.tvPatientsLabel);
+
+        ivVetProfile = findViewById(R.id.vetProfilePhoto);
+        btnLogout = findViewById(R.id.btnLogoutVet);
+        rvAppointments = findViewById(R.id.rvVetAppointments);
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutVet);
+        tvEmptyAppts = findViewById(R.id.tvEmptyAppts);
+
+        // Next Patient Widgets
+        cardNextPatient = findViewById(R.id.cardNextPatient);
+        ivNextPet = findViewById(R.id.ivNextPet);
+        tvNextPetName = findViewById(R.id.tvNextPetName);
+        tvNextApptTime = findViewById(R.id.tvNextApptTime);
+        btnStartConsult = findViewById(R.id.btnStartConsult);
+
+        // Action Widgets
+        actionAddRecord = findViewById(R.id.actionAddRecord);
+        actionViewClients = findViewById(R.id.actionViewClients);
+        actionRevenue = findViewById(R.id.actionRevenue);
+    }
+
+    private void setupQuickActions() {
+        actionAddRecord.setOnClickListener(v -> showAddRecordDialog());
+        actionViewClients.setOnClickListener(v -> startActivity(new Intent(this, ClientListActivity.class)));
+        actionRevenue.setOnClickListener(v -> Toast.makeText(this, "Revenue Analytics coming soon!", Toast.LENGTH_SHORT).show());
+        
+        btnStartConsult.setOnClickListener(v -> {
+            Toast.makeText(this, "Starting consultation...", Toast.LENGTH_SHORT).show();
+            // Could navigate to a video call or detailed record page
+        });
     }
 
     @Override
@@ -305,9 +339,27 @@ public class VetDashboardActivity extends AppCompatActivity {
                             }
                         }
                         
+                        // Sort appointments: Today's first, then by date/time
+                        appointmentsList.sort((a, b) -> {
+                            int dateComp = a.date.compareTo(b.date);
+                            if (dateComp != 0) return dateComp;
+                            return a.time.compareTo(b.time);
+                        });
+
                         tvTodayApptsCount.setText(String.valueOf(todayCount));
                         tvTotalPatients.setText(String.valueOf(appointmentsList.size()));
                         
+                        if (appointmentsList.isEmpty()) {
+                            tvEmptyAppts.setVisibility(View.VISIBLE);
+                            rvAppointments.setVisibility(View.GONE);
+                        } else {
+                            tvEmptyAppts.setVisibility(View.GONE);
+                            rvAppointments.setVisibility(View.VISIBLE);
+                        }
+
+                        // Identify next appointment
+                        updateNextPatientUI();
+
                         VetAppointmentAdapter adapter = new VetAppointmentAdapter(VetDashboardActivity.this, appointmentsList);
                         rvAppointments.setAdapter(adapter);
                         swipeRefreshLayout.setRefreshing(false);
@@ -318,5 +370,32 @@ public class VetDashboardActivity extends AppCompatActivity {
                         swipeRefreshLayout.setRefreshing(false);
                     }
                 });
+    }
+
+    private void updateNextPatientUI() {
+        Appointment nextAppt = null;
+        String today = LocalDate.now().toString();
+        
+        for (Appointment a : appointmentsList) {
+            if ("PENDING".equalsIgnoreCase(a.status)) {
+                if (a.date.compareTo(today) >= 0) {
+                    nextAppt = a;
+                    break;
+                }
+            }
+        }
+
+        if (nextAppt != null) {
+            cardNextPatient.setVisibility(View.VISIBLE);
+            tvNextPetName.setText(nextAppt.petName);
+            tvNextApptTime.setText(nextAppt.time);
+            
+            Glide.with(this)
+                    .load(nextAppt.petImageUrl)
+                    .placeholder(R.drawable.ic_pet_placeholder)
+                    .into(ivNextPet);
+        } else {
+            cardNextPatient.setVisibility(View.GONE);
+        }
     }
 }

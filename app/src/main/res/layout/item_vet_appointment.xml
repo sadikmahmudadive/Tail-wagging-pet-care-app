@@ -115,5 +115,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/tvApptStatus" />
 
+        <View
+            android:id="@+id/dividerVertical"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="12dp"
+            android:background="@color/black_overlay_light"
+            app:layout_constraintBottom_toBottomOf="@+id/ivPetAppt"
+            app:layout_constraintEnd_toStartOf="@+id/btnCallOwner"
+            app:layout_constraintTop_toTopOf="@+id/ivPetAppt" />
+
+        <ImageButton
+            android:id="@+id/btnCallOwner"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:background="@drawable/bg_circle_light_blue"
+            android:padding="6dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_phone"
+            app:layout_constraintBottom_toBottomOf="@+id/ivPetAppt"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ivPetAppt"
+            app:tint="@color/md_theme_light_primary"
+            android:contentDescription="Call Owner" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

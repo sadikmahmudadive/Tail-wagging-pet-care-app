@@ -338,6 +338,16 @@ public class MainActivity extends AppCompatActivity {
                                 // Fallback if name is also empty in DB
                                 textView.setText(user.getEmail() != null ? user.getEmail() : "Unknown User");
                             }
+
+                            String role = dataSnapshot.child("role").getValue(String.class);
+                            if (role != null) {
+                                String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
+                                if (!role.equalsIgnoreCase(cachedRole)) {
+                                    getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                                    NavbarHelper.setupNavbar(MainActivity.this);
+                                }
+                            }
+
                             if (photoUrl != null && !photoUrl.isEmpty()) {
                                 Glide.with(MainActivity.this)
                                         .load(photoUrl)
