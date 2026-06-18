@@ -297,25 +297,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchAndDisplayUserData() {
-        if (user == null) return; // Should be checked before calling
+        if (user == null) return;
 
         String displayName = user.getDisplayName();
-
         if (displayName != null && !displayName.isEmpty()) {
             textView.setText(displayName);
-            if (user.getPhotoUrl() != null) {
-                Glide.with(this)
-                        .load(user.getPhotoUrl().toString())
-                        .placeholder(R.drawable.ic_profile)
-                        .error(R.drawable.ic_profile)
-                        .into(userProfilePhoto);
-            } else {
-                // If no Firebase Auth photo, try Realtime DB
-                fetchUserFieldsFromRealtimeDatabase();
-            }
-        } else {
-            fetchUserFieldsFromRealtimeDatabase();
         }
+        
+        if (user.getPhotoUrl() != null) {
+            Glide.with(this)
+                    .load(user.getPhotoUrl().toString())
+                    .placeholder(R.drawable.ic_profile)
+                    .error(R.drawable.ic_profile)
+                    .into(userProfilePhoto);
+        }
+
+        // Always fetch from Realtime DB to ensure role and other fields are synced
+        fetchUserFieldsFromRealtimeDatabase();
     }
 
     private void fetchUserFieldsFromRealtimeDatabase() {
@@ -342,8 +340,8 @@ public class MainActivity extends AppCompatActivity {
                             String role = dataSnapshot.child("role").getValue(String.class);
                             if (role != null) {
                                 String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
-                                if (!role.equalsIgnoreCase(cachedRole)) {
-                                    getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                                if (!role.trim().equalsIgnoreCase(cachedRole.trim())) {
+                                    getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role.trim()).apply();
                                     NavbarHelper.setupNavbar(MainActivity.this);
                                 }
                             }

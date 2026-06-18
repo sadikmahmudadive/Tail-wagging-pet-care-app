@@ -37,7 +37,8 @@ public class NavbarHelper {
 
     public static void setupNavbar(Activity activity) {
         android.view.ViewGroup container = activity.findViewById(R.id.bottomNavContainer);
-        String role = activity.getSharedPreferences("UserPrefs", Activity.MODE_PRIVATE).getString("user_role", "Pet Owner");
+        String rolePref = activity.getSharedPreferences("UserPrefs", Activity.MODE_PRIVATE).getString("user_role", "Pet Owner");
+        String role = (rolePref != null) ? rolePref.trim() : "Pet Owner";
         boolean isProvider = "Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role);
 
         if (container != null) {

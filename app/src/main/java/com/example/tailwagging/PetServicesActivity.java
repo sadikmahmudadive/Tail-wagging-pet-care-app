@@ -166,8 +166,8 @@ public class PetServicesActivity extends AppCompatActivity {
                 String role = snapshot.child("role").getValue(String.class);
                 if (role != null) {
                     String cachedRole = getSharedPreferences("UserPrefs", MODE_PRIVATE).getString("user_role", "Pet Owner");
-                    if (!role.equalsIgnoreCase(cachedRole)) {
-                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                    if (!role.trim().equalsIgnoreCase(cachedRole.trim())) {
+                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role.trim()).apply();
                         NavbarHelper.setupNavbar(PetServicesActivity.this);
                     }
                 }

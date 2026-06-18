@@ -152,7 +152,7 @@ public class Registration extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     String role = dataSnapshot.child("role").getValue(String.class);
                     if (role != null) {
-                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role.trim()).commit();
                     }
                     if ("Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role)) {
                         startActivity(new Intent(Registration.this, VetDashboardActivity.class));

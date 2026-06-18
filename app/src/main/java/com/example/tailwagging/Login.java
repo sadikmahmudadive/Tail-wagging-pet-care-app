@@ -158,7 +158,7 @@ public class Login extends AppCompatActivity {
                 if (dataSnapshot.exists()) {
                     String role = dataSnapshot.child("role").getValue(String.class);
                     if (role != null) {
-                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role).apply();
+                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role.trim()).commit();
                     }
                     if ("Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role)) {
                         startActivity(new Intent(Login.this, VetDashboardActivity.class));
@@ -228,6 +228,7 @@ public class Login extends AppCompatActivity {
                                         userData.put("email", user.getEmail());
                                         userData.put("photoUrl", user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "default_url");
                                         userData.put("role", "Pet Owner"); // Default role
+                                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", "Pet Owner").commit();
 
                                         dbRef.child("users").child(uid).setValue(userData).addOnSuccessListener(aVoid -> {
                                             startActivity(new Intent(Login.this, MainActivity.class));
