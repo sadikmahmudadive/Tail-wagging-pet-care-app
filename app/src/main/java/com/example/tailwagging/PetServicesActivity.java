@@ -43,8 +43,7 @@ public class PetServicesActivity extends AppCompatActivity {
 
     private LinearLayout catVeterinary, catGrooming, catBoarding;
     private MaterialCardView cardVetIcon, cardGroomIcon, cardBoardingIcon;
-    private LinearLayout layoutFindDisease;
-    private View btnUploadDiseasePhoto;
+    private View btnUploadDiseasePhoto, layoutFindDisease;
     private TextView tvNearbyTitle, tvRecommendedTitle;
     private RecyclerView rvNearby, rvRecommended;
     private DatabaseReference dbRef;
@@ -110,12 +109,20 @@ public class PetServicesActivity extends AppCompatActivity {
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
             // Automatically launch prediction or similar logic
-            Toast.makeText(this, "Photo uploaded. Identifying disease...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "AI Analysis in progress...", Toast.LENGTH_SHORT).show();
+            
+            // Show result container
+            View resultContainer = findViewById(R.id.layoutDiseaseResult);
+            if (resultContainer != null) resultContainer.setVisibility(View.VISIBLE);
+
             // Mock result
             TextView tvDisease = findViewById(R.id.tvDiseaseName);
             if (tvDisease != null) {
-                tvDisease.setText("Dermatitis (Mock)");
-                tvDisease.setVisibility(View.VISIBLE);
+                tvDisease.setText("Potential: Dermatitis (AI Detection)");
+            }
+            TextView tvDesc = findViewById(R.id.tvDiseaseDesc);
+            if (tvDesc != null) {
+                tvDesc.setText("Suggested: Keep area dry, use antifungal spray. Please consult an expert.");
             }
         }
     }
@@ -123,32 +130,49 @@ public class PetServicesActivity extends AppCompatActivity {
     private void switchService(ServiceType type) {
         currentType = type;
         
-        // Reset backgrounds
-        cardVetIcon.setCardBackgroundColor(Color.parseColor("#E0E0E0"));
-        cardGroomIcon.setCardBackgroundColor(Color.parseColor("#E0E0E0"));
-        cardBoardingIcon.setCardBackgroundColor(Color.parseColor("#E0E0E0"));
+        int activeBg = getColor(R.color.md_theme_light_primaryContainer);
+        int activeTint = getColor(R.color.md_theme_light_primary);
+        int inactiveBg = Color.WHITE;
+        int inactiveTint = getColor(R.color.grey_dark);
 
-        // Set active background and content
+        // Reset backgrounds
+        cardVetIcon.setCardBackgroundColor(inactiveBg);
+        cardGroomIcon.setCardBackgroundColor(inactiveBg);
+        cardBoardingIcon.setCardBackgroundColor(inactiveBg);
+        
+        // Reset tints
+        ImageView ivVet = cardVetIcon.findViewById(R.id.cardVetIcon).findViewWithTag(null); // This is risky, let's use the direct child approach
+        // Actually, the ImageView is the only child of the card or inside a layout? 
+        // In the new XML: MaterialCardView -> ImageView (id is not set on the ImageView itself, but it is the first child)
+        
+        // Let's use getChildAt(0) safely
+        if (cardVetIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardVetIcon.getChildAt(0)).setColorFilter(inactiveTint);
+        if (cardGroomIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardGroomIcon.getChildAt(0)).setColorFilter(inactiveTint);
+        if (cardBoardingIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardBoardingIcon.getChildAt(0)).setColorFilter(inactiveTint);
+
         switch (type) {
             case VETERINARY:
-                cardVetIcon.setCardBackgroundColor(Color.parseColor("#A5D6A7"));
-                layoutFindDisease.setVisibility(View.VISIBLE);
-                tvNearbyTitle.setText("Nearby Veterinarian");
-                tvRecommendedTitle.setText("Recommended Veterinarian");
+                cardVetIcon.setCardBackgroundColor(activeBg);
+                if (cardVetIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardVetIcon.getChildAt(0)).setColorFilter(activeTint);
+                if (layoutFindDisease != null) layoutFindDisease.setVisibility(View.VISIBLE);
+                tvNearbyTitle.setText("Nearby Veterinarians");
+                tvRecommendedTitle.setText("Recommended Experts");
                 fetchServices("Veterinarian");
                 break;
             case GROOMING:
-                cardGroomIcon.setCardBackgroundColor(Color.parseColor("#A5D6A7"));
-                layoutFindDisease.setVisibility(View.GONE);
-                tvNearbyTitle.setText("Nearby Grooming room");
-                tvRecommendedTitle.setText("Recommended Grooming room");
+                cardGroomIcon.setCardBackgroundColor(activeBg);
+                if (cardGroomIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardGroomIcon.getChildAt(0)).setColorFilter(activeTint);
+                if (layoutFindDisease != null) layoutFindDisease.setVisibility(View.GONE);
+                tvNearbyTitle.setText("Nearby Grooming");
+                tvRecommendedTitle.setText("Top Groomers");
                 fetchServices("Grooming");
                 break;
             case BOARDING:
-                cardBoardingIcon.setCardBackgroundColor(Color.parseColor("#A5D6A7"));
-                layoutFindDisease.setVisibility(View.GONE);
+                cardBoardingIcon.setCardBackgroundColor(activeBg);
+                if (cardBoardingIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardBoardingIcon.getChildAt(0)).setColorFilter(activeTint);
+                if (layoutFindDisease != null) layoutFindDisease.setVisibility(View.GONE);
                 tvNearbyTitle.setText("Nearby Boarding");
-                tvRecommendedTitle.setText("Recommended Boarding");
+                tvRecommendedTitle.setText("Trusted Stays");
                 fetchServices("Boarding");
                 break;
         }

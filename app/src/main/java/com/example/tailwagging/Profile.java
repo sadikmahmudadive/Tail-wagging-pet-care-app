@@ -108,6 +108,10 @@ public class Profile extends AppCompatActivity {
             aboutMeLauncher.launch(intent);
         });
 
+        findViewById(R.id.optionFavoriteVet).setOnClickListener(v -> {
+            startActivity(new Intent(Profile.this, FavoriteVetsActivity.class));
+        });
+
         swipeRefreshLayout.setOnRefreshListener(this::reloadUserData);
     }
 

@@ -111,7 +111,54 @@ public class VetDetailsActivity extends AppCompatActivity {
 
         btnWriteReview.setOnClickListener(v -> showWriteReviewDialog());
 
+        ImageButton btnFav = findViewById(R.id.btnFavorite);
+        checkIfFavorite(btnFav);
+        btnFav.setOnClickListener(v -> toggleFavorite(btnFav));
+
         NavbarHelper.setupNavbar(this);
+    }
+
+    private void checkIfFavorite(ImageButton btnFav) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+
+        dbRef.child("users").child(uid).child("favorites").child(selectedVet.getId())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            btnFav.setColorFilter(getColor(R.color.orange));
+                            btnFav.setTag("fav");
+                        } else {
+                            btnFav.setColorFilter(getColor(R.color.white));
+                            btnFav.setTag("not_fav");
+                        }
+                    }
+                    @Override public void onCancelled(@NonNull DatabaseError error) {}
+                });
+    }
+
+    private void toggleFavorite(ImageButton btnFav) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) {
+            Toast.makeText(this, "Login to favorite", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        DatabaseReference favRef = dbRef.child("users").child(uid).child("favorites").child(selectedVet.getId());
+        if ("fav".equals(btnFav.getTag())) {
+            favRef.removeValue().addOnSuccessListener(aVoid -> {
+                btnFav.setColorFilter(getColor(R.color.white));
+                btnFav.setTag("not_fav");
+                Toast.makeText(this, "Removed from favorites", Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            favRef.setValue(true).addOnSuccessListener(aVoid -> {
+                btnFav.setColorFilter(getColor(R.color.orange));
+                btnFav.setTag("fav");
+                Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show();
+            });
+        }
     }
 
     private void showWriteReviewDialog() {

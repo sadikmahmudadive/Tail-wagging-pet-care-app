@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,52 +9,48 @@
     android:clipChildren="false"
     android:clipToPadding="false">
 
-    <!-- Top Bar -->
-    <LinearLayout
-        android:id="@+id/topBar"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:orientation="horizontal"
-        android:background="@color/dark_blue"
-        android:gravity="center_vertical"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp">
-
-        <ImageButton
-            android:id="@+id/backBtn"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:padding="12dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_arrow_back"
-            android:contentDescription="Back"
-            android:layout_marginEnd="8dp"
-            app:tint="@color/white" />
-        <TextView
-            android:id="@+id/tvAddPetsTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Add Pets"
-            android:textColor="@android:color/white"
-            android:textSize="20sp"
-            android:gravity="center"
-            android:fontFamily="@font/fredoka_bold"/>
-    </LinearLayout>
-
+    <!-- Header Section -->
     <View
+        android:id="@+id/headerBg"
         android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:layout_below="@id/topBar"
-        android:background="@color/dark_blue"/>
+        android:layout_height="64dp"
+        android:background="@color/dark_blue"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/backBtn"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_arrow_back"
+        app:layout_constraintBottom_toBottomOf="@+id/headerBg"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/headerBg"
+        app:tint="@color/white"
+        android:contentDescription="Back" />
+
+    <TextView
+        android:id="@+id/tvAddPetsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/fredoka_bold"
+        android:text="Add Pets"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="@+id/headerBg"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/headerBg" />
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="82dp"
-        android:layout_marginBottom="16dp">
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavContainer"
+        app:layout_constraintTop_toBottomOf="@+id/headerBg">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -64,277 +61,277 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="120dp">
+                android:paddingBottom="140dp">
 
-                <!-- Added Pets Section -->
+                <!-- Current Pets Section -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Added Pets"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/mat_black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginTop="20dp"
                     android:fontFamily="@font/fredoka_bold"
-                    android:layout_marginBottom="8dp"/>
+                    android:text="Your Pets"
+                    android:textColor="@color/black"
+                    android:textSize="18sp" />
 
-                <!-- Dynamic Pet List -->
-                <LinearLayout
-                    android:id="@+id/layoutAddedPets"
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                    android:scrollbars="none"
+                    android:layout_marginTop="8dp">
+                    <LinearLayout
+                        android:id="@+id/layoutAddedPets"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingHorizontal="16dp" />
+                </HorizontalScrollView>
 
-                <!-- Add Pet Form -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add Pet"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/mat_black"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginBottom="8dp"
-                    android:fontFamily="@font/fredoka_bold"/>
-
-                <!-- Pet Image Input for the form -->
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/petImageInput"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_gravity="center_horizontal"
-                    android:src="@drawable/ic_profile"
-                    android:background="@drawable/bg_circle_accent"
-                    android:contentDescription="Pet image"
-                    android:layout_marginBottom="12dp"/>
-
-                <!-- Pet Name -->
-                <EditText
-                    android:id="@+id/etPetName"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:background="@drawable/bg_edittext_rounded"
-                    android:hint="Pet Name"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:textColor="@color/mat_black"
-                    android:textColorHint="@color/mat_black"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:textSize="15sp"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Breed Name + Find Breed Button -->
-                <LinearLayout
+                <!-- New Pet Form Section -->
+                <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="24dp"
+                    app:cardCornerRadius="28dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp"
+                    app:cardBackgroundColor="@color/surface_glass">
 
-                    <EditText
-                        android:id="@+id/etBreedName"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="2"
-                        android:background="@drawable/bg_edittext_rounded"
-                        android:hint="Breed Name"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:textColor="@color/mat_black"
-                        android:textColorHint="@color/mat_black"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="15sp"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="24dp">
 
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnFindBreedType"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:text="Find Breed"
-                        android:textColor="@android:color/white"
-                        android:background="@drawable/bg_btn_orange"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="13sp"
-                        android:layout_marginStart="8dp"/>
-                </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="Pet Details"
+                            android:textColor="@color/md_theme_light_primary"
+                            android:textSize="16sp"
+                            android:layout_marginBottom="16dp"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="3"
-                    android:layout_marginBottom="8dp">
+                        <FrameLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginBottom="24dp">
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/petImageInput"
+                                android:layout_width="120dp"
+                                android:layout_height="120dp"
+                                android:src="@drawable/ic_profile"
+                                app:civ_border_color="@color/md_theme_light_primaryContainer"
+                                app:civ_border_width="3dp" />
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnUploadPhoto"
+                                style="@style/Widget.Material3.Button.IconButton.Filled"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="bottom|end"
+                                app:icon="@drawable/ic_edit"
+                                app:iconSize="20dp"
+                                android:backgroundTint="@color/dark_blue" />
+                        </FrameLayout>
 
-                    <!-- Gender Dropdown -->
-                    <AutoCompleteTextView
-                        android:id="@+id/etPetGender"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_edittext_rounded"
-                        android:hint="Gender"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:textColor="@color/mat_black"
-                        android:textColorHint="@color/mat_black"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="15sp"
-                        android:dropDownWidth="match_parent"/>
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Pet Name"
+                            app:startIconDrawable="@drawable/ic_paw"
+                            app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPetName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredoka" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                    <!-- Age (auto) -->
-                    <EditText
-                        android:id="@+id/etPetAge"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_edittext_rounded"
-                        android:hint="Age"
-                        android:inputType="none"
-                        android:enabled="false"
-                        android:focusable="false"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:textColor="@color/mat_black"
-                        android:textColorHint="@color/mat_black"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="15sp"
-                        android:layout_marginStart="8dp"
-                        android:layout_marginEnd="8dp"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Breed"
+                                app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etBreedName"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/fredoka" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnFindBreedType"
+                                style="@style/Widget.Material3.Button.TonalButton"
+                                android:layout_width="wrap_content"
+                                android:layout_height="60dp"
+                                android:layout_marginStart="8dp"
+                                android:text="Scan"
+                                app:icon="@drawable/ic_search"
+                                app:cornerRadius="16dp" />
+                        </LinearLayout>
 
-                    <!-- Date of Birth -->
-                    <EditText
-                        android:id="@+id/etPetDob"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_edittext_rounded"
-                        android:hint="Date of Birth"
-                        android:focusable="false"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:textColor="@color/mat_black"
-                        android:textColorHint="@color/mat_black"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="14sp"/>
-                </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Gender"
+                                app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                                <AutoCompleteTextView
+                                    android:id="@+id/etPetGender"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/fredoka"
+                                    android:inputType="none" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="12dp"
+                                android:hint="DOB"
+                                app:startIconDrawable="@drawable/ic_calendar"
+                                app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etPetDob"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/fredoka"
+                                    android:focusable="false"
+                                    android:clickable="true" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:layout_marginBottom="8dp">
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:hint="Calculated Age"
+                            android:enabled="false"
+                            app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPetAge"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/fredoka" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                    <EditText
-                        android:id="@+id/etPetColor"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_edittext_rounded"
-                        android:hint="Color"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:textColor="@color/mat_black"
-                        android:textColorHint="@color/mat_black"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="15sp"
-                        android:layout_marginEnd="8dp"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Color"
+                                app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etPetColor"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/fredoka" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="12dp"
+                                android:hint="Sound"
+                                app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etPetSound"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/fredoka" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
 
-                    <EditText
-                        android:id="@+id/etPetSound"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_edittext_rounded"
-                        android:hint="Sound"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:textColor="@color/mat_black"
-                        android:textColorHint="@color/mat_black"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="15sp"/>
-                </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:orientation="horizontal">
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:hint="Height"
+                                app:suffixText="cm"
+                                app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etPetHeight"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/fredoka"
+                                    android:inputType="numberDecimal" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                            <com.google.android.material.textfield.TextInputLayout
+                                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_marginStart="12dp"
+                                android:hint="Weight"
+                                app:suffixText="kg"
+                                app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/etPetWeight"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/fredoka"
+                                    android:inputType="numberDecimal" />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:weightSum="2"
-                    android:layout_marginBottom="8dp">
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:hint="Bio"
+                            app:shapeAppearanceOverlay="@style/RoundedCorner16">
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etPetDescription"
+                                android:layout_width="match_parent"
+                                android:layout_height="120dp"
+                                android:gravity="top"
+                                android:fontFamily="@font/fredoka"
+                                android:inputType="textMultiLine" />
+                        </com.google.android.material.textfield.TextInputLayout>
 
-                    <EditText
-                        android:id="@+id/etPetHeight"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_edittext_rounded"
-                        android:hint="Height"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:textColor="@color/mat_black"
-                        android:textColorHint="@color/mat_black"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="15sp"
-                        android:layout_marginEnd="8dp"/>
-
-                    <EditText
-                        android:id="@+id/etPetWeight"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_edittext_rounded"
-                        android:hint="Weight"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:textColor="@color/mat_black"
-                        android:textColorHint="@color/mat_black"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textSize="15sp"/>
-                </LinearLayout>
-
-                <!-- Pet Description -->
-                <EditText
-                    android:id="@+id/etPetDescription"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:background="@drawable/bg_edittext_rounded"
-                    android:hint="Pet Description (e.g. Gifted by my mother)"
-                    android:padding="16dp"
-                    android:gravity="top"
-                    android:textColor="@color/mat_black"
-                    android:textColorHint="@color/mat_black"
-                    android:fontFamily="@font/fredoka"
-                    android:textSize="15sp"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- Upload Photo Button -->
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnUploadPhoto"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:text="Upload Photo"
-                    android:textColor="@android:color/white"
-                    android:background="@drawable/bg_btn_orange"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:textSize="17sp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
-                    android:elevation="2dp"/>
-
-                <!-- Add Pet Button -->
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnAddPet"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:text="Add Pet"
-                    android:textColor="@android:color/white"
-                    android:background="@drawable/bg_btn_orange"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:textSize="17sp"
-                    android:elevation="2dp"/>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnAddPet"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp"
+                            android:layout_marginTop="32dp"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="Register Pet"
+                            android:textSize="16sp"
+                            app:cornerRadius="16dp"
+                            android:backgroundTint="@color/dark_blue" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
         </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
@@ -343,5 +340,6 @@
         android:id="@+id/bottomNavContainer"
         android:layout_width="match_parent"
         android:layout_height="110dp"
-        android:layout_gravity="bottom" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

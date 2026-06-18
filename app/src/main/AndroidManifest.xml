@@ -95,6 +95,9 @@
         <activity
             android:name=".ReviewsActivity"
             android:exported="false" />
+        <activity
+            android:name=".FavoriteVetsActivity"
+            android:exported="false" />
 
         <meta-data
             android:name="preloaded_fonts"

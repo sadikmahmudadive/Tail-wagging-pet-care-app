@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -403,37 +404,35 @@ public class AddEditPet extends AppCompatActivity {
                             String name = petSnap.child("name").getValue(String.class);
                             String imageUrl = petSnap.child("imageUrl").getValue(String.class);
 
-                            LinearLayout petLayout = new LinearLayout(AddEditPet.this);
-                            petLayout.setOrientation(LinearLayout.HORIZONTAL);
-                            petLayout.setLayoutParams(new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    (int) getResources().getDimension(R.dimen.pet_item_height)
-                            ));
-                            petLayout.setBackgroundResource(R.drawable.bg_pet_card);
-                            petLayout.setPadding(12, 8, 12, 8);
+                            LinearLayout petItem = new LinearLayout(AddEditPet.this);
+                            petItem.setOrientation(LinearLayout.VERTICAL);
+                            petItem.setGravity(android.view.Gravity.CENTER);
+                            LinearLayout.LayoutParams itemParams = new LinearLayout.LayoutParams(
+                                    200, LinearLayout.LayoutParams.WRAP_CONTENT);
+                            itemParams.setMargins(0, 0, 32, 0);
+                            petItem.setLayoutParams(itemParams);
 
                             CircleImageView img = new CircleImageView(AddEditPet.this);
-                            LinearLayout.LayoutParams imgParams = new LinearLayout.LayoutParams(250,250);
-                            imgParams.setMarginStart(12);
-                            img.setLayoutParams(imgParams);
-                            img.setBackgroundResource(R.drawable.bg_circle_accent);
+                            img.setLayoutParams(new LinearLayout.LayoutParams(140, 140));
+                            img.setPadding(4, 4, 4, 4);
+                            img.setBorderWidth(4);
+                            img.setBorderColor(getResources().getColor(R.color.md_theme_light_primaryContainer));
                             Glide.with(AddEditPet.this).load(imageUrl).placeholder(R.drawable.ic_profile).into(img);
 
-                            EditText tv = new EditText(AddEditPet.this);
-                            LinearLayout.LayoutParams tvParams = new LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                            tvParams.setMarginStart(20);
-                            tv.setLayoutParams(tvParams);
+                            TextView tv = new TextView(AddEditPet.this);
+                            tv.setLayoutParams(new LinearLayout.LayoutParams(
+                                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                             tv.setText(name);
-                            tv.setTextSize(18);
-                            tv.setTypeface(tv.getTypeface(), android.graphics.Typeface.BOLD);
-                            tv.setTextColor(getResources().getColor(R.color.mat_black));
-                            tv.setEnabled(false);
+                            tv.setTextSize(12);
+                            tv.setMaxLines(1);
+                            tv.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                            tv.setTextColor(getResources().getColor(R.color.black));
+                            tv.setPadding(0, 8, 0, 0);
 
-                            petLayout.addView(img);
-                            petLayout.addView(tv);
+                            petItem.addView(img);
+                            petItem.addView(tv);
 
-                            layoutAddedPets.addView(petLayout);
+                            layoutAddedPets.addView(petItem);
                         }
                     }
 
