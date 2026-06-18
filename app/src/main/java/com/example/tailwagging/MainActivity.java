@@ -408,13 +408,14 @@ public class MainActivity extends AppCompatActivity {
                         recyclerViewPets.setAdapter(petAdapterHorizontal);
 
                         // Handle empty state for pets
-                        TextView noPetsTextView = findViewById(R.id.noPetsTextView); // Assuming you have a TextView with this ID
-                        if (noPetsTextView != null) {
+                        View cardEmptyPets = findViewById(R.id.cardEmptyPets);
+                        if (cardEmptyPets != null) {
                             if (petList.isEmpty()) {
-                                noPetsTextView.setVisibility(View.VISIBLE);
+                                cardEmptyPets.setVisibility(View.VISIBLE);
                                 recyclerViewPets.setVisibility(View.GONE);
+                                cardEmptyPets.setOnClickListener(v -> launchAddEditPetActivity());
                             } else {
-                                noPetsTextView.setVisibility(View.GONE);
+                                cardEmptyPets.setVisibility(View.GONE);
                                 recyclerViewPets.setVisibility(View.VISIBLE);
                             }
                         }

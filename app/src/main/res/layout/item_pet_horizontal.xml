@@ -1,25 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="110dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="130dp"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="2dp"
-    app:strokeWidth="0dp">
+    app:cardCornerRadius="28dp"
+    app:cardElevation="3dp"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/petImage"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@drawable/ic_pet_placeholder" />
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/ic_pet_placeholder"
+            app:civ_border_color="@color/md_theme_light_primaryContainer"
+            app:civ_border_width="2dp" />
 
         <TextView
             android:id="@+id/petName"
@@ -28,9 +31,22 @@
             android:layout_marginTop="12dp"
             android:fontFamily="@font/fredoka_bold"
             android:gravity="center"
-            android:text="Pet Name"
-            android:textColor="@color/md_theme_light_onSurface"
-            android:textSize="14sp" />
+            tools:text="Luna"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/petBreed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:fontFamily="@font/fredoka"
+            android:gravity="center"
+            tools:text="Golden Retriever"
+            android:textColor="@color/md_theme_light_outline"
+            android:textSize="11sp"
+            android:maxLines="1"
+            android:ellipsize="end" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

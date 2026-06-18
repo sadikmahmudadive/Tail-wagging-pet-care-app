@@ -96,6 +96,9 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             if (onPetSimpleClickListener != null) {
                 holder.itemView.setOnClickListener(v -> onPetSimpleClickListener.onPetCardClicked(pet));
             }
+            if (holder.petBreed != null) {
+                holder.petBreed.setText(pet.getBreed());
+            }
         }
     }
 
@@ -116,7 +119,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
 
     public static class PetViewHolder extends RecyclerView.ViewHolder {
         ImageView petImageSquare;
-        TextView petName;
+        TextView petName, petBreed;
         CircleImageView petImageCircle;
 
         public PetViewHolder(@NonNull View itemView, boolean isMyPetsHolder) {
@@ -127,6 +130,7 @@ public class PetAdapter extends RecyclerView.Adapter<PetAdapter.PetViewHolder> {
             } else {
                 petImageSquare = itemView.findViewById(R.id.petImage);
                 petName = itemView.findViewById(R.id.petName);
+                petBreed = itemView.findViewById(R.id.petBreed);
             }
         }
     }
