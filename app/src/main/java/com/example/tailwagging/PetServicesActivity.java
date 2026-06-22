@@ -108,22 +108,42 @@ public class PetServicesActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null) {
             Uri imageUri = data.getData();
-            // Automatically launch prediction or similar logic
-            Toast.makeText(this, "AI Analysis in progress...", Toast.LENGTH_SHORT).show();
-            
-            // Show result container
-            View resultContainer = findViewById(R.id.layoutDiseaseResult);
-            if (resultContainer != null) resultContainer.setVisibility(View.VISIBLE);
+            if (imageUri == null) return;
 
-            // Mock result
-            TextView tvDisease = findViewById(R.id.tvDiseaseName);
-            if (tvDisease != null) {
-                tvDisease.setText("Potential: Dermatitis (AI Detection)");
-            }
-            TextView tvDesc = findViewById(R.id.tvDiseaseDesc);
-            if (tvDesc != null) {
-                tvDesc.setText("Suggested: Keep area dry, use antifungal spray. Please consult an expert.");
-            }
+            Toast.makeText(this, "Uploading to Grok AI...", Toast.LENGTH_SHORT).show();
+            
+            String prompt = "You are a professional veterinary assistant. Analyze this photo of a pet's skin/body. " +
+                    "Identify potential health issues (e.g. Dermatitis, Fleas, Fungal Infection). " +
+                    "Provide your response in this exact format: " +
+                    "DIAGNOSIS: [Name of potential issue] | SUGGESTION: [Short advice for the owner]";
+
+            GeminiAiHelper.analyzePetImage(this, imageUri, prompt, new GeminiAiHelper.GeminiCallback() {
+                @Override
+                public void onSuccess(String analysis) {
+                    runOnUiThread(() -> {
+                        View resultContainer = findViewById(R.id.layoutDiseaseResult);
+                        if (resultContainer != null) resultContainer.setVisibility(View.VISIBLE);
+
+                        TextView tvDisease = findViewById(R.id.tvDiseaseName);
+                        TextView tvDesc = findViewById(R.id.tvDiseaseDesc);
+
+                        // Expected format: DIAGNOSIS: [Name] | SUGGESTION: [Advice]
+                        if (analysis.contains("|")) {
+                            String[] parts = analysis.split("\\|");
+                            if (tvDisease != null) tvDisease.setText(parts[0].replace("DIAGNOSIS:", "").trim());
+                            if (tvDesc != null) tvDesc.setText(parts[1].replace("SUGGESTION:", "").trim());
+                        } else {
+                            if (tvDisease != null) tvDisease.setText("AI Analysis Result");
+                            if (tvDesc != null) tvDesc.setText(analysis);
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    runOnUiThread(() -> Toast.makeText(PetServicesActivity.this, "AI Error: " + errorMessage, Toast.LENGTH_LONG).show());
+                }
+            });
         }
     }
 
@@ -141,7 +161,6 @@ public class PetServicesActivity extends AppCompatActivity {
         cardBoardingIcon.setCardBackgroundColor(inactiveBg);
         
         // Reset tints
-        ImageView ivVet = cardVetIcon.findViewById(R.id.cardVetIcon).findViewWithTag(null); // This is risky, let's use the direct child approach
         // Actually, the ImageView is the only child of the card or inside a layout? 
         // In the new XML: MaterialCardView -> ImageView (id is not set on the ImageView itself, but it is the first child)
         
