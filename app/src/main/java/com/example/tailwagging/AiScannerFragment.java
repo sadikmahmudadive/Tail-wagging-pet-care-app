@@ -54,6 +54,50 @@ public class AiScannerFragment extends Fragment {
             Intent intent = new Intent(getContext(), PetServicesActivity.class);
             startActivity(intent);
         });
+
+        view.findViewById(R.id.btnSaveAiResult).setOnClickListener(v -> saveAiResult());
+    }
+
+    private void saveAiResult() {
+        if (selectedPet == null) {
+            Toast.makeText(getContext(), "Please select a pet in the Health section first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String diagnosis = tvDiagnosis.getText().toString();
+        String suggestion = tvSuggestion.getText().toString();
+
+        if (diagnosis.isEmpty() || diagnosis.equals("Analysis Result")) {
+            Toast.makeText(getContext(), "No analysis to save", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        com.google.firebase.database.DatabaseReference dbRef = com.google.firebase.database.FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
+        String recordId = dbRef.child("service_records").push().getKey();
+        
+        ServiceRecord record = new ServiceRecord(
+                recordId,
+                selectedPet.getPetID(),
+                selectedPet.getName(),
+                "AI_SCANNER",
+                "Tail Wagging AI",
+                "AI Analysis",
+                java.time.LocalDate.now().toString(),
+                diagnosis,
+                suggestion,
+                System.currentTimeMillis()
+        );
+
+        if (recordId != null) {
+            dbRef.child("service_records").child(recordId).setValue(record)
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(getContext(), "Result saved to medical history!", Toast.LENGTH_SHORT).show();
+                        if (getView() != null) {
+                            getView().findViewById(R.id.btnSaveAiResult).setEnabled(false);
+                        }
+                    })
+                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to save: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        }
     }
 
     private void openImagePicker() {

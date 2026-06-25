@@ -148,8 +148,6 @@ public class NavbarHelper {
             activity.startActivity(intent);
             // Zero-flicker: suppress system transition animations
             activity.overridePendingTransition(0, 0);
-
-            if (!isHome) activity.finish();
         });
     }
 

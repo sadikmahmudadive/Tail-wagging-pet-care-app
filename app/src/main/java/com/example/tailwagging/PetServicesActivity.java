@@ -6,8 +6,11 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -48,8 +51,10 @@ public class PetServicesActivity extends AppCompatActivity {
     private View btnUploadDiseasePhoto, layoutFindDisease;
     private TextView tvNearbyTitle, tvRecommendedTitle;
     private RecyclerView rvNearby, rvRecommended;
+    private EditText etSearch;
     private DatabaseReference dbRef;
     private Double userLat, userLng;
+    private List<Vet> allLoadedServices = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +93,9 @@ public class PetServicesActivity extends AppCompatActivity {
         rvNearby.setLayoutManager(new LinearLayoutManager(this));
         rvRecommended.setLayoutManager(new LinearLayoutManager(this));
 
+        etSearch = findViewById(R.id.etSearchServices);
+        setupSearch();
+
         catVeterinary.setOnClickListener(v -> switchService(ServiceType.VETERINARY));
         catGrooming.setOnClickListener(v -> switchService(ServiceType.GROOMING));
         catBoarding.setOnClickListener(v -> switchService(ServiceType.BOARDING));
@@ -98,6 +106,42 @@ public class PetServicesActivity extends AppCompatActivity {
         
         // Initial state
         switchService(ServiceType.VETERINARY);
+    }
+
+    private void setupSearch() {
+        etSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                filterServices(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
+    }
+
+    private void filterServices(String query) {
+        if (query.isEmpty()) {
+            ServiceAdapter adapter = new ServiceAdapter(this, allLoadedServices);
+            rvNearby.setAdapter(adapter);
+            rvRecommended.setAdapter(adapter);
+            return;
+        }
+
+        List<Vet> filteredList = new ArrayList<>();
+        for (Vet service : allLoadedServices) {
+            if ((service.getName() != null && service.getName().toLowerCase().contains(query.toLowerCase())) ||
+                (service.getQualification() != null && service.getQualification().toLowerCase().contains(query.toLowerCase()))) {
+                filteredList.add(service);
+            }
+        }
+
+        ServiceAdapter adapter = new ServiceAdapter(this, filteredList);
+        rvNearby.setAdapter(adapter);
+        rvRecommended.setAdapter(adapter);
     }
 
     private void openImagePicker() {
@@ -284,6 +328,12 @@ public class PetServicesActivity extends AppCompatActivity {
                                 list.add(new Vet("b2", "Cutie Paws", "Home Environment", 4.9f, 60, "Cozy", "1.5 km", "1800 LKR", "4 years", "N/A", R.drawable.ic_profile));
                             }
                         }
+
+                        allLoadedServices.clear();
+                        allLoadedServices.addAll(list);
+
+                        // Reset search box when switching categories
+                        etSearch.setText("");
 
                         ServiceAdapter adapter = new ServiceAdapter(PetServicesActivity.this, list);
                         rvNearby.setAdapter(adapter);
