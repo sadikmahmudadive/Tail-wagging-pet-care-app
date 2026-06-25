@@ -21,8 +21,7 @@ import org.json.JSONObject;
 public class GeminiAiHelper {
     
     private static final String TAG = "GeminiAiHelper";
-    // TODO: Replace with your actual Gemini API Key
-    private static final String API_KEY = "AQ.Ab8RN6JAAp0mC5tRS4R_RDrr1pB4mgbzQ7WxJSDyex9C5vlm0w";
+    private static final String API_KEY = BuildConfig.GEMINI_API_KEY;
     private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
 
     public interface GeminiCallback {
