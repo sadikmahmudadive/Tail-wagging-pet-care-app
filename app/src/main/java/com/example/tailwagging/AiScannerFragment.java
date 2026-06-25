@@ -72,6 +72,13 @@ public class AiScannerFragment extends Fragment {
             ivScanPreview.setAlpha(1.0f);
             layoutUploadPrompt.setVisibility(View.GONE);
             cardResult.setVisibility(View.GONE);
+
+            if (!NetworkUtils.isNetworkAvailable(getContext())) {
+                Toast.makeText(getContext(), "AI Scanner requires an active internet connection", Toast.LENGTH_SHORT).show();
+                layoutUploadPrompt.setVisibility(View.VISIBLE);
+                return;
+            }
+
             progressBarAi.setVisibility(View.VISIBLE);
 
             String prompt = "You are a professional veterinary assistant. Analyze this photo of a pet's skin/body. " +

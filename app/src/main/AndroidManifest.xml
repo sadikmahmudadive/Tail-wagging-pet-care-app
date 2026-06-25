@@ -106,6 +106,10 @@
             android:name=".EventAlarmReceiver"
             android:exported="false" />
 
+        <receiver
+            android:name=".NotificationActionReceiver"
+            android:exported="false" />
+
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">

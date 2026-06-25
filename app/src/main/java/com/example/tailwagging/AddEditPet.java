@@ -247,6 +247,11 @@ public class AddEditPet extends AppCompatActivity {
         }
 
         if (imageUri != null) {
+            if (!NetworkUtils.isNetworkAvailable(this)) {
+                progressDialog.dismiss();
+                Toast.makeText(this, "Internet connection required to upload pet photo", Toast.LENGTH_LONG).show();
+                return;
+            }
             // Upload new image to Cloudinary
             MediaManager.get().upload(imageUri)
                     .unsigned("tail_wagging")

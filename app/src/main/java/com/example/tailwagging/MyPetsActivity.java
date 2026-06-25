@@ -98,6 +98,10 @@ public class MyPetsActivity extends AppCompatActivity implements PetAdapter.OnPe
             return;
         }
 
+        if (!NetworkUtils.isNetworkAvailable(this)) {
+            Toast.makeText(this, "Displaying pets from cache (Offline)", Toast.LENGTH_SHORT).show();
+        }
+
         Log.d(TAG, "Current user UID: " + currentUser.getUid());
 
         // Remove previous listener if present

@@ -319,20 +319,18 @@ public class MainActivity extends AppCompatActivity {
     private void fetchAndDisplayUserData() {
         if (user == null) return;
 
-        String displayName = user.getDisplayName();
-        if (displayName != null && !displayName.isEmpty()) {
-            textView.setText(displayName);
-        }
-        
-        if (user.getPhotoUrl() != null) {
-            Glide.with(this)
-                    .load(user.getPhotoUrl().toString())
-                    .placeholder(R.drawable.ic_profile)
-                    .error(R.drawable.ic_profile)
-                    .into(userProfilePhoto);
+        if (!NetworkUtils.isNetworkAvailable(this)) {
+            // If offline, try to load from cached display name/photo
+            String displayName = user.getDisplayName();
+            if (displayName != null && !displayName.isEmpty()) {
+                textView.setText(displayName);
+            }
+            if (user.getPhotoUrl() != null) {
+                Glide.with(this).load(user.getPhotoUrl().toString()).into(userProfilePhoto);
+            }
         }
 
-        // Always fetch from Realtime DB to ensure role and other fields are synced
+        // Always try to fetch from Realtime DB to ensure role and other fields are synced
         fetchUserFieldsFromRealtimeDatabase();
     }
 

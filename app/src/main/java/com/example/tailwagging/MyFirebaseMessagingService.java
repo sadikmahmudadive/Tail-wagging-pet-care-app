@@ -63,6 +63,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void showNotification(String title, String message) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String groupKey = "com.example.tailwagging.PUSH_GROUP";
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Push Alerts", NotificationManager.IMPORTANCE_HIGH);
@@ -71,17 +72,32 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notifications)
                 .setContentTitle(title)
                 .setContentText(message)
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(message)) // Expandable notification
                 .setAutoCancel(true)
+                .setGroup(groupKey)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent);
 
         notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+
+        // Create a summary notification for grouping
+        NotificationCompat.Builder summaryBuilder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle("Tail Wagging Alerts")
+                .setContentText("You have new updates")
+                .setSmallIcon(R.drawable.ic_notifications)
+                .setStyle(new NotificationCompat.InboxStyle()
+                        .setSummaryText("New alerts"))
+                .setGroup(groupKey)
+                .setGroupSummary(true)
+                .setAutoCancel(true);
+
+        notificationManager.notify(0, summaryBuilder.build());
     }
 
     private void saveToNotificationCenter(String title, String message) {

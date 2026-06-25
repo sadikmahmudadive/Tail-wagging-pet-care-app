@@ -77,6 +77,10 @@ public class NotificationActivity extends AppCompatActivity {
             return;
         }
 
+        if (!NetworkUtils.isNetworkAvailable(this)) {
+            Toast.makeText(this, "Viewing offline notifications", Toast.LENGTH_SHORT).show();
+        }
+
         dbRef.child("notifications").child(userId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

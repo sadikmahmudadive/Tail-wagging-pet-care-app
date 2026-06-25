@@ -151,6 +151,10 @@ public class LocationPickerActivity extends AppCompatActivity implements OnMapRe
     public void onMapReady(@NonNull MapLibreMap mapLibreMap) {
         this.mapLibreMap = mapLibreMap;
 
+        if (!NetworkUtils.isNetworkAvailable(this)) {
+            Toast.makeText(this, "Map tiles and address search require internet", Toast.LENGTH_LONG).show();
+        }
+
         mapLibreMap.setStyle(new Style.Builder().fromUri(STYLE_URL), style -> {
             // Default location: Colombo, Sri Lanka
             LatLng defaultLocation = new LatLng(6.9271, 79.8612);
