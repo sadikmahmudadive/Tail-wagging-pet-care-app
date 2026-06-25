@@ -109,24 +109,26 @@
                             android:fontFamily="@font/fredoka_bold"
                             android:textColor="@color/dark_blue" />
 
-                        <LinearLayout
-                            android:orientation="horizontal"
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSignOut"
+                            style="@style/Widget.Material3.Button.TonalButton"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_height="40dp"
                             android:layout_alignParentEnd="true"
-                            android:gravity="center_vertical"
-                            android:clickable="true"
-                            android:focusable="true">
-
-                            <TextView
-                                android:id="@+id/signOut"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Sign out"
-                                android:textColor="@color/red"
-                                android:textSize="16sp"
-                                android:fontFamily="@font/fredoka_bold"/>
-                        </LinearLayout>
+                            android:layout_centerVertical="true"
+                            android:text="Sign out"
+                            android:textColor="@color/red"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/fredoka_bold"
+                            app:icon="@drawable/logout_button"
+                            app:iconTint="@color/red"
+                            app:iconSize="18dp"
+                            app:cornerRadius="20dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            app:backgroundTint="@color/status_health_bg"/>
                     </RelativeLayout>
 
                     <!-- Email -->

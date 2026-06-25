@@ -53,6 +53,7 @@ dependencies {
     implementation ("com.google.firebase:firebase-storage-ktx")
     implementation ("com.google.firebase:firebase-database-ktx")
     implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.google.firebase:firebase-messaging-ktx")
     implementation ("com.google.code.gson:gson:2.10.1") //calendar store event
 
 // Glide for image loading

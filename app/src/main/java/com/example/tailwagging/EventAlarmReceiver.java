@@ -7,19 +7,26 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 
 public class EventAlarmReceiver extends BroadcastReceiver {
+    private static final String TAG = "EventAlarmReceiver";
+
     @Override
     public void onReceive(Context context, Intent intent) {
+        Log.d(TAG, "Alarm received!");
         String userId = intent.getStringExtra("userId");
         String currentUid = FirebaseAuth.getInstance().getUid();
 
+        Log.d(TAG, "Event userId: " + userId + ", Current UID: " + currentUid);
+
         // Only show notification if the user who created it is still logged in
         if (userId != null && !userId.equals(currentUid)) {
+            Log.w(TAG, "User ID mismatch. Skipping notification.");
             return;
         }
 
@@ -46,5 +53,22 @@ public class EventAlarmReceiver extends BroadcastReceiver {
                 .setAutoCancel(true);
 
         notificationManager.notify(eventId, builder.build());
+
+        // Save to Notification Center in Firebase
+        saveNotificationToCenter(currentUid, title, category);
+    }
+
+    private void saveNotificationToCenter(String userId, String title, String category) {
+        if (userId == null) return;
+        
+        com.google.firebase.database.DatabaseReference dbRef = com.google.firebase.database.FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
+        String notifId = dbRef.child("notifications").child(userId).push().getKey();
+        
+        String timestamp = java.time.format.DateTimeFormatter.ofPattern("hh:mm a").format(java.time.LocalTime.now());
+        NotificationItem item = new NotificationItem(notifId, "Reminder: " + title, "Category: " + category, timestamp, "ALARM");
+        
+        if (notifId != null) {
+            dbRef.child("notifications").child(userId).child(notifId).setValue(item);
+        }
     }
 }

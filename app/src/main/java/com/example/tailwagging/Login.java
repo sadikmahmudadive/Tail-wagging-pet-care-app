@@ -159,6 +159,7 @@ public class Login extends AppCompatActivity {
                     String role = dataSnapshot.child("role").getValue(String.class);
                     if (role != null) {
                         getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role.trim()).commit();
+                        updateFcmToken(uid);
                     }
                     if ("Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role)) {
                         startActivity(new Intent(Login.this, VetDashboardActivity.class));
@@ -178,6 +179,16 @@ public class Login extends AppCompatActivity {
                 Toast.makeText(Login.this, "Error checking user role", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void updateFcmToken(String uid) {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        String token = task.getResult();
+                        dbRef.child("users").child(uid).child("fcmToken").setValue(token);
+                    }
+                });
     }
 
     private void signInWithGoogle() {
@@ -231,6 +242,7 @@ public class Login extends AppCompatActivity {
                                         getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", "Pet Owner").commit();
 
                                         dbRef.child("users").child(uid).setValue(userData).addOnSuccessListener(aVoid -> {
+                                            updateFcmToken(uid);
                                             startActivity(new Intent(Login.this, MainActivity.class));
                                             finish();
                                         });

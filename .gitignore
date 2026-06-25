@@ -1,15 +1,41 @@
+# Built objects and intermediate files
+bin/
+gen/
+out/
+build/
+.gradle/
+
+# Android Studio / IntelliJ IDEA
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+*.iws
+*.ipr
+/captures/
+.externalNativeBuild/
+.cxx/
+cmake-build-*/
+
+# Local configuration file (contains sensitive info like SDK path)
 local.properties
+
+# Log files
+*.log
+
+# Android App Bundle / APKs
+*.apk
+*.aab
+
+# Keystore files (NEVER commit these)
+*.jks
+*.keystore
+*.p12
+
+# Google Services (Keep private if needed, but often omitted for open source)
+# google-services.json
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Kotlin
+.kotlin/

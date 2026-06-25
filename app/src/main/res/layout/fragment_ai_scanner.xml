@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_gray"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredoka_bold"
+            android:text="AI Health Scanner"
+            android:textColor="@color/black"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/fredoka"
+            android:text="Upload a photo of your pet's skin or body part to identify potential health issues using AI."
+            android:textColor="@color/grey_dark"
+            android:textSize="14sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardUploadContainer"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="24dp"
+            app:cardCornerRadius="28dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/md_theme_light_primaryContainer">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:id="@+id/ivScanPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/pet1"
+                    android:alpha="0.4" />
+
+                <LinearLayout
+                    android:id="@+id/layoutUploadPrompt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_edit"
+                        app:tint="@color/md_theme_light_primary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="Tap to upload photo"
+                        android:textColor="@color/md_theme_light_primary"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <ProgressBar
+                    android:id="@+id/progressBarAi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:visibility="gone" />
+
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Result Section -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp"
+            app:cardBackgroundColor="@color/white">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_status"
+                        app:tint="@color/health_green" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="Analysis Result"
+                        android:textColor="@color/black"
+                        android:textSize="17sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvDiagnosis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/red"
+                    android:textSize="16sp"
+                    tools:text="Diagnosis: Dermatitis" />
+
+                <TextView
+                    android:id="@+id/tvSuggestion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/fredoka"
+                    android:textColor="@color/grey_dark"
+                    android:textSize="14sp"
+                    tools:text="Suggestion: Use medicated shampoo and consult a veterinarian." />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBookVet"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Consult a Veterinarian"
+                    app:cornerRadius="12dp" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:alpha="0.6"
+            android:fontFamily="@font/fredoka"
+            android:gravity="center"
+            android:text="Note: AI analysis is for informational purposes only. Always consult a certified professional for medical diagnosis."
+            android:textColor="@color/grey_medium"
+            android:textSize="11sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="120dp" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

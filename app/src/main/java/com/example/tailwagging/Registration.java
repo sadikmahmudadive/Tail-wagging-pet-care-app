@@ -130,6 +130,16 @@ public class Registration extends AppCompatActivity {
         radioBoarding.setOnClickListener(v -> handleRadioSelection(radioBoarding));
     }
 
+    private void updateFcmToken(String uid) {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        String token = task.getResult();
+                        dbRef.child("users").child(uid).child("fcmToken").setValue(token);
+                    }
+                });
+    }
+
     private void handleRadioSelection(RadioButton selected) {
         radioPetOwner.setChecked(false);
         radioVet.setChecked(false);
@@ -153,6 +163,7 @@ public class Registration extends AppCompatActivity {
                     String role = dataSnapshot.child("role").getValue(String.class);
                     if (role != null) {
                         getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role.trim()).commit();
+                        updateFcmToken(uid);
                     }
                     if ("Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role)) {
                         startActivity(new Intent(Registration.this, VetDashboardActivity.class));

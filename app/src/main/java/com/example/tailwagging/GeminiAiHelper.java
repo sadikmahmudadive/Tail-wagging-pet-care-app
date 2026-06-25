@@ -22,8 +22,8 @@ public class GeminiAiHelper {
     
     private static final String TAG = "GeminiAiHelper";
     // TODO: Replace with your actual Gemini API Key
-    private static final String API_KEY = "AQ.Ab8RN6JjfDYa3WOlAb65deNzMUT2NXCVr1tw8KgrclwXzMZXEg";
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-3.5-flash:generateContent?key=" + API_KEY;
+    private static final String API_KEY = "AQ.Ab8RN6JAAp0mC5tRS4R_RDrr1pB4mgbzQ7WxJSDyex9C5vlm0w";
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
 
     public interface GeminiCallback {
         void onSuccess(String analysis);
@@ -37,6 +37,10 @@ public class GeminiAiHelper {
         if ("YOUR_GEMINI_API_KEY".equals(API_KEY)) {
             callback.onFailure("API Key not configured. Please set your Gemini API key in GeminiAiHelper.java");
             return;
+        }
+
+        if (API_KEY.startsWith("AQ.")) {
+            Log.w(TAG, "Potentially Invalid API Key: Your key starts with 'AQ.', which is typical for xAI (Grok). Gemini keys usually start with 'AIza'. We will proceed, but this may cause a 403 error.");
         }
 
         String base64Image = encodeImageToBase64(context, imageUri);
@@ -96,21 +100,40 @@ public class GeminiAiHelper {
                         
                         if (!response.isSuccessful()) {
                             Log.e(TAG, "Server Error: " + response.code() + " - " + rawJson);
-                            callback.onFailure("Server Error: " + response.code());
+                            String errorMsg = "Server Error: " + response.code();
+                            if (response.code() == 503) {
+                                errorMsg = "Gemini is busy (High Demand). Please try again in a few seconds.";
+                            } else if (rawJson.contains("API_KEY_INVALID")) {
+                                errorMsg = "Invalid API Key. Please check your key in Google AI Studio.";
+                            } else if (rawJson.contains("MODEL_NOT_FOUND")) {
+                                errorMsg = "AI Model not found. We are trying to reach the latest server.";
+                            }
+                            callback.onFailure(errorMsg);
                             return;
                         }
 
                         JSONObject jsonResponse = new JSONObject(rawJson);
                         // Gemini response path: candidates[0].content.parts[0].text
-                        String aiContent = jsonResponse.getJSONArray("candidates")
-                                .getJSONObject(0)
-                                .getJSONObject("content")
-                                .getJSONArray("parts")
-                                .getJSONObject(0)
-                                .getString("text");
-
-                        Log.d(TAG, "AI Content: " + aiContent);
-                        callback.onSuccess(aiContent);
+                        JSONArray candidates = jsonResponse.optJSONArray("candidates");
+                        
+                        if (candidates != null && candidates.length() > 0) {
+                            String aiContent = candidates.getJSONObject(0)
+                                    .getJSONObject("content")
+                                    .getJSONArray("parts")
+                                    .getJSONObject(0)
+                                    .getString("text");
+                            
+                            Log.d(TAG, "AI Content: " + aiContent);
+                            callback.onSuccess(aiContent);
+                        } else {
+                            // Check for safety filters or blocked content
+                            String blockReason = "";
+                            if (jsonResponse.has("promptFeedback")) {
+                                blockReason = " (Content blocked by safety filters)";
+                            }
+                            Log.e(TAG, "No candidates in response: " + rawJson);
+                            callback.onFailure("AI could not generate a result. Please try another photo." + blockReason);
+                        }
                     } catch (JSONException e) {
                         Log.e(TAG, "JSON Parsing Error", e);
                         callback.onFailure("Failed to parse AI response.");

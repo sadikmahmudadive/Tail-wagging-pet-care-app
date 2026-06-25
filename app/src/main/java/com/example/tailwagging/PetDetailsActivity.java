@@ -168,6 +168,8 @@ public class PetDetailsActivity extends AppCompatActivity {
     private void launchPetHealthActivity() {
         Intent intent = new Intent(PetDetailsActivity.this, PetHealthActivity.class);
         intent.putExtra("SELECTED_PET", selectedPet);
+        // Direct to tab index 2 (AI Scanner)
+        intent.putExtra("START_TAB", 2);
         startActivity(intent);
     }
 

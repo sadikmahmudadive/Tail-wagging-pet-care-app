@@ -6,10 +6,12 @@ import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -110,7 +112,12 @@ public class PetServicesActivity extends AppCompatActivity {
             Uri imageUri = data.getData();
             if (imageUri == null) return;
 
-            Toast.makeText(this, "Uploading to Grok AI...", Toast.LENGTH_SHORT).show();
+            Log.d("PetServicesActivity", "Image selected for AI Health Scanner: " + imageUri.toString());
+            Toast.makeText(this, "Uploading to Gemini AI...", Toast.LENGTH_SHORT).show();
+
+            // Show loading state
+            ProgressBar pb = findViewById(R.id.progressBarScanner);
+            if (pb != null) pb.setVisibility(View.VISIBLE);
             
             String prompt = "You are a professional veterinary assistant. Analyze this photo of a pet's skin/body. " +
                     "Identify potential health issues (e.g. Dermatitis, Fleas, Fungal Infection). " +
@@ -121,6 +128,7 @@ public class PetServicesActivity extends AppCompatActivity {
                 @Override
                 public void onSuccess(String analysis) {
                     runOnUiThread(() -> {
+                        if (pb != null) pb.setVisibility(View.GONE);
                         View resultContainer = findViewById(R.id.layoutDiseaseResult);
                         if (resultContainer != null) resultContainer.setVisibility(View.VISIBLE);
 
@@ -141,7 +149,10 @@ public class PetServicesActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(String errorMessage) {
-                    runOnUiThread(() -> Toast.makeText(PetServicesActivity.this, "AI Error: " + errorMessage, Toast.LENGTH_LONG).show());
+                    runOnUiThread(() -> {
+                        if (pb != null) pb.setVisibility(View.GONE);
+                        Toast.makeText(PetServicesActivity.this, "AI Error: " + errorMessage, Toast.LENGTH_LONG).show();
+                    });
                 }
             });
         }

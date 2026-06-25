@@ -97,6 +97,13 @@ public class VetDashboardActivity extends AppCompatActivity {
         fetchVetData();
         fetchAppointments();
         
+        ImageButton btnNotifications = findViewById(R.id.btnNotificationsVet);
+        if (btnNotifications != null) {
+            btnNotifications.setOnClickListener(v -> {
+                startActivity(new Intent(this, NotificationActivity.class));
+            });
+        }
+        
         NavbarHelper.setupNavbar(this);
     }
 
@@ -143,8 +150,21 @@ public class VetDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (vetId != null) {
+            updateFcmToken(vetId);
+        }
         fetchVetData();
         fetchAppointments();
+    }
+
+    private void updateFcmToken(String uid) {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        String token = task.getResult();
+                        dbRef.child("users").child(uid).child("fcmToken").setValue(token);
+                    }
+                });
     }
 
     private void setupNavigationBar() {

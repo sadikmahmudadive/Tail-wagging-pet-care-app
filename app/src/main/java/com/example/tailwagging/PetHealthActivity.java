@@ -47,11 +47,17 @@ public class PetHealthActivity extends AppCompatActivity {
         HealthPagerAdapter adapter = new HealthPagerAdapter(this, selectedPet);
         viewPager.setAdapter(adapter);
 
+        // Check if we should jump to AI Scanner directly
+        int startTab = getIntent().getIntExtra("START_TAB", 0);
+        viewPager.setCurrentItem(startTab, false);
+
         new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
             if (position == 0) {
                 tab.setText(getString(R.string.wellness_tab));
-            } else {
+            } else if (position == 1) {
                 tab.setText(getString(R.string.medical_records_tab));
+            } else {
+                tab.setText("AI Scanner");
             }
         }).attach();
 
@@ -72,8 +78,10 @@ public class PetHealthActivity extends AppCompatActivity {
             Fragment fragment;
             if (position == 0) {
                 fragment = new WellnessFragment();
-            } else {
+            } else if (position == 1) {
                 fragment = new MedicalRecordsFragment();
+            } else {
+                fragment = new AiScannerFragment();
             }
 
             if (pet != null) {
@@ -86,7 +94,7 @@ public class PetHealthActivity extends AppCompatActivity {
 
         @Override
         public int getItemCount() {
-            return 2;
+            return 3;
         }
     }
 }

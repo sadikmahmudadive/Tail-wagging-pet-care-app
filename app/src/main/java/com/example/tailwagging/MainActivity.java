@@ -104,6 +104,13 @@ public class MainActivity extends AppCompatActivity {
             btnViewAllVets.setOnClickListener(v -> launchPetHealthActivity());
         }
 
+        ImageButton btnNotifications = findViewById(R.id.buttonNotifications);
+        if (btnNotifications != null) {
+            btnNotifications.setOnClickListener(v -> {
+                startActivity(new Intent(MainActivity.this, NotificationActivity.class));
+            });
+        }
+
 
         logoutButton.setOnClickListener(v -> {
             new AlertDialog.Builder(MainActivity.this)
@@ -221,10 +228,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (user != null) {
+            updateFcmToken(user.getUid());
+        }
         fetchAndDisplayUserData();
         fetchAndShowRegisteredPets();
         showUpcomingEvents();
         showTopVeterinarians();
+    }
+
+    private void updateFcmToken(String uid) {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        String token = task.getResult();
+                        dbRef.child("users").child(uid).child("fcmToken").setValue(token);
+                    }
+                });
     }
 
     private void showUpcomingEvents() {

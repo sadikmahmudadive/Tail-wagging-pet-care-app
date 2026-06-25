@@ -34,6 +34,13 @@ public class AlarmHelper {
 
         Calendar cal = Calendar.getInstance();
         cal.set(event.date.getYear(), event.date.getMonthValue() - 1, event.date.getDayOfMonth(), event.fromTime.getHour(), event.fromTime.getMinute(), 0);
+        cal.set(Calendar.MILLISECOND, 0);
+
+        // If the time is in the past, don't set the alarm (or it will fire immediately)
+        if (cal.getTimeInMillis() <= System.currentTimeMillis()) {
+            return;
+        }
+
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
     }
 

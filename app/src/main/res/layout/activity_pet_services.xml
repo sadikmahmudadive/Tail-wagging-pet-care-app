@@ -279,6 +279,13 @@
                                         android:textColor="@color/white"
                                         android:textSize="16sp" />
                                 </LinearLayout>
+
+                                <ProgressBar
+                                    android:id="@+id/progressBarScanner"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:visibility="gone" />
                             </FrameLayout>
                         </com.google.android.material.card.MaterialCardView>
 

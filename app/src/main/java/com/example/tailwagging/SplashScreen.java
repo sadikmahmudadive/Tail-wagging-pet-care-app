@@ -54,13 +54,25 @@ public class SplashScreen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     String role = dataSnapshot.child("role").getValue(String.class);
-                    if ("Veterinarian".equalsIgnoreCase(role)) {
+                    if (role != null) {
+                        // Sync role to cache for instant navbar loading
+                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", role.trim()).commit();
+                    }
+
+                    updateFcmToken(uid);
+                    
+                    boolean isProvider = "Veterinarian".equalsIgnoreCase(role) || 
+                                         "Grooming".equalsIgnoreCase(role) || 
+                                         "Boarding".equalsIgnoreCase(role);
+
+                    if (isProvider) {
                         startActivity(new Intent(SplashScreen.this, VetDashboardActivity.class));
                     } else {
                         startActivity(new Intent(SplashScreen.this, MainActivity.class));
                     }
                     finish();
                 } else {
+                    updateFcmToken(uid);
                     // Default to Pet Owner if no role found
                     startActivity(new Intent(SplashScreen.this, MainActivity.class));
                     finish();
@@ -74,5 +86,16 @@ public class SplashScreen extends AppCompatActivity {
                 finish();
             }
         });
+    }
+
+    private void updateFcmToken(String uid) {
+        com.google.firebase.messaging.FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        String token = task.getResult();
+                        DatabaseReference dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
+                        dbRef.child("users").child(uid).child("fcmToken").setValue(token);
+                    }
+                });
     }
 }

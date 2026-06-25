@@ -112,6 +112,22 @@ public class Profile extends AppCompatActivity {
             startActivity(new Intent(Profile.this, FavoriteVetsActivity.class));
         });
 
+        findViewById(R.id.btnSignOut).setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("Logout")
+                    .setMessage("Are you sure you want to sign out?")
+                    .setPositiveButton("Logout", (dialog, which) -> {
+                        mAuth.signOut();
+                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().clear().apply();
+                        Intent intent = new Intent(Profile.this, Login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
+                        finish();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
+
         swipeRefreshLayout.setOnRefreshListener(this::reloadUserData);
     }
 

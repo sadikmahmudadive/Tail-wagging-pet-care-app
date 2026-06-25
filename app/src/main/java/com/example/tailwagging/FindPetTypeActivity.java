@@ -55,8 +55,12 @@ public class FindPetTypeActivity extends Activity {
         }
     }
 
+    private int retryCount = 0;
+    private static final int MAX_RETRIES = 2;
+
     private void findPetSpecies(String uriString) {
-        ProgressDialog dialog = ProgressDialog.show(this, "", "Finding pet species via Gemini AI...", true);
+        ProgressDialog dialog = ProgressDialog.show(this, "", 
+            retryCount > 0 ? "Gemini busy, retrying (" + retryCount + ")..." : "Finding pet species via Gemini AI...", true);
 
         Uri uri = Uri.parse(uriString);
         String prompt = "Identify the breed or species of the pet in this photo. Be specific (e.g. Golden Retriever, Persian Cat). " +
@@ -66,6 +70,7 @@ public class FindPetTypeActivity extends Activity {
             @Override
             public void onSuccess(String analysis) {
                 runOnUiThread(() -> {
+                    retryCount = 0;
                     dialog.dismiss();
                     String species = analysis.trim();
                     textResult.setText("Your Pet is a " + species);
@@ -79,9 +84,23 @@ public class FindPetTypeActivity extends Activity {
             @Override
             public void onFailure(String errorMessage) {
                 Log.e("FindPetTypeActivity", "Gemini Error: " + errorMessage);
+                
+                if (errorMessage.contains("503") || errorMessage.contains("busy")) {
+                    if (retryCount < MAX_RETRIES) {
+                        retryCount++;
+                        runOnUiThread(() -> {
+                            dialog.dismiss();
+                            // Wait 2 seconds before retrying
+                            imageViewPet.postDelayed(() -> findPetSpecies(uriString), 2000);
+                        });
+                        return;
+                    }
+                }
+
                 runOnUiThread(() -> {
+                    retryCount = 0;
                     dialog.dismiss();
-                    textResult.setText("Failed to detect species: " + errorMessage);
+                    textResult.setText("Failed to detect species: " + errorMessage + "\n\nPlease tap 'DETECT PET TYPE' to try again.");
                 });
             }
         });

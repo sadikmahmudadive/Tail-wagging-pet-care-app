@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <View
+            android:id="@+id/viewUnreadIndicator"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/bg_circle_dark_blue"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvNotifTitle"
+            app:layout_constraintBottom_toBottomOf="@+id/tvNotifTitle" />
+
+        <TextView
+            android:id="@+id/tvNotifTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:fontFamily="@font/fredoka_bold"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvNotifTime"
+            app:layout_constraintStart_toEndOf="@+id/viewUnreadIndicator"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Appointment Reminder" />
+
+        <TextView
+            android:id="@+id/tvNotifTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/fredoka"
+            android:textColor="@color/grey_medium"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/tvNotifTitle"
+            tools:text="2 hrs ago" />
+
+        <TextView
+            android:id="@+id/tvNotifMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="@font/fredoka"
+            android:textColor="@color/grey_dark"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/tvNotifTitle"
+            app:layout_constraintTop_toBottomOf="@+id/tvNotifTitle"
+            tools:text="Luna has a vaccination appointment today at 10:30 AM." />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>
