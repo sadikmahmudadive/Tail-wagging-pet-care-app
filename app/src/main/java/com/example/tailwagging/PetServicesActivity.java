@@ -168,7 +168,7 @@ public class PetServicesActivity extends AppCompatActivity {
                     "Provide your response in this exact format: " +
                     "DIAGNOSIS: [Name of potential issue] | SUGGESTION: [Short advice for the owner]";
 
-            GeminiAiHelper.analyzePetImage(this, imageUri, prompt, new GeminiAiHelper.GeminiCallback() {
+            ChatGptAiHelper.analyzePetImage(this, imageUri, prompt, new ChatGptAiHelper.GeminiCallback() {
                 @Override
                 public void onSuccess(String analysis) {
                     runOnUiThread(() -> {

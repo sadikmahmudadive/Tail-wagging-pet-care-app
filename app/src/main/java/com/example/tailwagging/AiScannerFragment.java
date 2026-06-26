@@ -130,7 +130,7 @@ public class AiScannerFragment extends Fragment {
                     "Provide your response in this exact format: " +
                     "DIAGNOSIS: [Name of potential issue] | SUGGESTION: [Short advice for the owner]";
 
-            GeminiAiHelper.analyzePetImage(getContext(), imageUri, prompt, new GeminiAiHelper.GeminiCallback() {
+            ChatGptAiHelper.analyzePetImage(getContext(), imageUri, prompt, new ChatGptAiHelper.GeminiCallback() {
                 @Override
                 public void onSuccess(String analysis) {
                     if (getActivity() == null) return;

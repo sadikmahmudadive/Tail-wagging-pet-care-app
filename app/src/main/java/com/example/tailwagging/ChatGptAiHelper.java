@@ -16,31 +16,24 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
- * Helper class to integrate with Google's Gemini API.
+ * Helper class to integrate with OpenAI's ChatGPT (Vision) API to analyze pet images.
  */
-public class GeminiAiHelper {
-    
-    private static final String TAG = "GeminiAiHelper";
-    private static final String API_KEY = BuildConfig.GEMINI_API_KEY;
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
+public class ChatGptAiHelper {
 
-    public interface GeminiCallback {
+    private static final String TAG = "ChatGptAiHelper";
+    private static final String API_KEY = "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";
+    private static final String OPENAI_CHAT_COMPLETIONS_URL = "https://api.openai.com/v1/chat/completions";
+
+    public interface GeminiCallback { // Keeping name to minimize ripple changes in callers
         void onSuccess(String analysis);
         void onFailure(String errorMessage);
     }
 
     /**
-     * Analyzes a pet image using Gemini 3.5 Flash with a custom prompt.
+     * Analyzes a pet image using ChatGPT Vision (gpt-4o-mini) with a custom prompt.
      */
     public static void analyzePetImage(@NonNull Context context, @NonNull Uri imageUri, @NonNull String prompt, @NonNull GeminiCallback callback) {
-        if ("YOUR_GEMINI_API_KEY".equals(API_KEY)) {
-            callback.onFailure("API Key not configured. Please set your Gemini API key in GeminiAiHelper.java");
-            return;
-        }
-
-        if (API_KEY.startsWith("AQ.")) {
-            Log.w(TAG, "Potentially Invalid API Key: Your key starts with 'AQ.', which is typical for xAI (Grok). Gemini keys usually start with 'AIza'. We will proceed, but this may cause a 403 error.");
-        }
+        // API_KEY always non-empty due to fallback above
 
         String base64Image = encodeImageToBase64(context, imageUri);
         if (base64Image == null) {
@@ -51,28 +44,33 @@ public class GeminiAiHelper {
         OkHttpClient client = new OkHttpClient();
 
         try {
-            // Gemini JSON structure
+            // Build a Chat Completions request with text + image (as data URL)
             JSONObject root = new JSONObject();
-            JSONArray contents = new JSONArray();
-            JSONObject content = new JSONObject();
-            JSONArray parts = new JSONArray();
+            root.put("model", "gpt-4o-mini");
 
-            // Text part
-            JSONObject textPart = new JSONObject();
-            textPart.put("text", prompt);
-            parts.put(textPart);
+            JSONArray messages = new JSONArray();
+            JSONObject userMsg = new JSONObject();
+            userMsg.put("role", "user");
 
-            // Image part
-            JSONObject imagePart = new JSONObject();
-            JSONObject inlineData = new JSONObject();
-            inlineData.put("mime_type", "image/jpeg");
-            inlineData.put("data", base64Image);
-            imagePart.put("inline_data", inlineData);
-            parts.put(imagePart);
+            JSONArray content = new JSONArray();
 
-            content.put("parts", parts);
-            contents.put(content);
-            root.put("contents", contents);
+            JSONObject textBlock = new JSONObject();
+            textBlock.put("type", "text");
+            textBlock.put("text", prompt);
+            content.put(textBlock);
+
+            JSONObject imageUrl = new JSONObject();
+            imageUrl.put("url", "data:image/jpeg;base64," + base64Image);
+
+            JSONObject imageBlock = new JSONObject();
+            imageBlock.put("type", "image_url");
+            imageBlock.put("image_url", imageUrl);
+            content.put(imageBlock);
+
+            userMsg.put("content", content);
+            messages.put(userMsg);
+
+            root.put("messages", messages);
 
             RequestBody body = RequestBody.create(
                     root.toString(),
@@ -80,8 +78,10 @@ public class GeminiAiHelper {
             );
 
             Request request = new Request.Builder()
-                    .url(GEMINI_API_URL)
+                    .url(OPENAI_CHAT_COMPLETIONS_URL)
                     .post(body)
+                    .addHeader("Authorization", "Bearer " + API_KEY)
+                    .addHeader("Content-Type", "application/json")
                     .build();
 
             client.newCall(request).enqueue(new Callback() {
@@ -96,42 +96,31 @@ public class GeminiAiHelper {
                     try (ResponseBody responseBody = response.body()) {
                         String rawJson = responseBody != null ? responseBody.string() : "";
                         Log.d(TAG, "Raw Response: " + rawJson);
-                        
+
                         if (!response.isSuccessful()) {
-                            Log.e(TAG, "Server Error: " + response.code() + " - " + rawJson);
-                            String errorMsg = "Server Error: " + response.code();
-                            if (response.code() == 503) {
-                                errorMsg = "Gemini is busy (High Demand). Please try again in a few seconds.";
-                            } else if (rawJson.contains("API_KEY_INVALID")) {
-                                errorMsg = "Invalid API Key. Please check your key in Google AI Studio.";
-                            } else if (rawJson.contains("MODEL_NOT_FOUND")) {
-                                errorMsg = "AI Model not found. We are trying to reach the latest server.";
-                            }
+                            String errorMsg = "OpenAI Error: " + response.code();
+                            // Try to extract message
+                            try {
+                                JSONObject err = new JSONObject(rawJson).optJSONObject("error");
+                                if (err != null) errorMsg = err.optString("message", errorMsg);
+                            } catch (Exception ignored) { }
                             callback.onFailure(errorMsg);
                             return;
                         }
 
-                        JSONObject jsonResponse = new JSONObject(rawJson);
-                        // Gemini response path: candidates[0].content.parts[0].text
-                        JSONArray candidates = jsonResponse.optJSONArray("candidates");
-                        
-                        if (candidates != null && candidates.length() > 0) {
-                            String aiContent = candidates.getJSONObject(0)
-                                    .getJSONObject("content")
-                                    .getJSONArray("parts")
-                                    .getJSONObject(0)
-                                    .getString("text");
-                            
-                            Log.d(TAG, "AI Content: " + aiContent);
-                            callback.onSuccess(aiContent);
-                        } else {
-                            // Check for safety filters or blocked content
-                            String blockReason = "";
-                            if (jsonResponse.has("promptFeedback")) {
-                                blockReason = " (Content blocked by safety filters)";
+                        JSONObject json = new JSONObject(rawJson);
+                        JSONArray choices = json.optJSONArray("choices");
+                        if (choices != null && choices.length() > 0) {
+                            JSONObject message = choices.getJSONObject(0).optJSONObject("message");
+                            String aiContent = message != null ? message.optString("content", "") : "";
+                            if (aiContent == null) aiContent = "";
+                            if (aiContent.isEmpty()) {
+                                callback.onFailure("AI returned empty result. Please try another photo.");
+                            } else {
+                                callback.onSuccess(aiContent.trim());
                             }
-                            Log.e(TAG, "No candidates in response: " + rawJson);
-                            callback.onFailure("AI could not generate a result. Please try another photo." + blockReason);
+                        } else {
+                            callback.onFailure("No choices returned by AI.");
                         }
                     } catch (JSONException e) {
                         Log.e(TAG, "JSON Parsing Error", e);
@@ -152,7 +141,7 @@ public class GeminiAiHelper {
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
             if (bitmap == null) return null;
 
-            // Gemini handles large images well, but resizing to 1024 for speed/bandwidth
+            // Resize to ~1024px max for speed/bandwidth
             int maxSize = 1024;
             int width = bitmap.getWidth();
             int height = bitmap.getHeight();

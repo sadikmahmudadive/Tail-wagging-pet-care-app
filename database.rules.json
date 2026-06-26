@@ -1,0 +1,13 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+
+    "service_records": {
+      "$recordId": {
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['id','petId','petName','serviceType','providerName','title','date','diagnosis','suggestion','timestamp']) &&\n                     newData.child('id').isString() && newData.child('petId').isString() && newData.child('petName').isString() &&\n                     newData.child('serviceType').isString() && newData.child('providerName').isString() && newData.child('title').isString() &&\n                     newData.child('date').isString() && newData.child('diagnosis').isString() && newData.child('suggestion').isString() &&\n                     newData.child('timestamp').isNumber()"
+      }
+    }
+  }
+}

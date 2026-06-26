@@ -13,9 +13,6 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 
-import java.io.IOException;
-import okhttp3.*;
-
 public class FindPetTypeActivity extends Activity {
 
     private ImageView imageViewPet;
@@ -66,7 +63,7 @@ public class FindPetTypeActivity extends Activity {
         String prompt = "Identify the breed or species of the pet in this photo. Be specific (e.g. Golden Retriever, Persian Cat). " +
                 "Respond ONLY with the name of the breed/species.";
 
-        GeminiAiHelper.analyzePetImage(this, uri, prompt, new GeminiAiHelper.GeminiCallback() {
+        ChatGptAiHelper.analyzePetImage(this, uri, prompt, new ChatGptAiHelper.GeminiCallback() {
             @Override
             public void onSuccess(String analysis) {
                 runOnUiThread(() -> {
