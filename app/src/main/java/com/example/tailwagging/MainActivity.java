@@ -139,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
 
         fetchAndDisplayUserData();
 
+        if (user != null && "admin@mail.com".equalsIgnoreCase(user.getEmail())) {
+            Toast.makeText(this, "Admin Mode: User View", Toast.LENGTH_SHORT).show();
+        }
+
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
         if (swipeRefreshLayout != null) {
             swipeRefreshLayout.setOnRefreshListener(() -> {

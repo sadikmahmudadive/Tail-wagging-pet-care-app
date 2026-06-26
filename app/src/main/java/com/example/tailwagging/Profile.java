@@ -112,6 +112,14 @@ public class Profile extends AppCompatActivity {
             startActivity(new Intent(Profile.this, FavoriteVetsActivity.class));
         });
 
+        View adminOption = findViewById(R.id.optionAdminDashboard);
+        if (user != null && "admin@mail.com".equalsIgnoreCase(user.getEmail())) {
+            adminOption.setVisibility(View.VISIBLE);
+            adminOption.setOnClickListener(v -> {
+                startActivity(new Intent(Profile.this, AdminDashboardActivity.class));
+            });
+        }
+
         findViewById(R.id.btnSignOut).setOnClickListener(v -> {
             new androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle("Logout")

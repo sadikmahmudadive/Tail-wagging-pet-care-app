@@ -48,6 +48,14 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void checkUserRoleAndRedirect(String uid) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null && "admin@mail.com".equalsIgnoreCase(user.getEmail())) {
+            getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", "Pet Owner").apply();
+            startActivity(new Intent(SplashScreen.this, AdminDashboardActivity.class));
+            finish();
+            return;
+        }
+
         DatabaseReference dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
         dbRef.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

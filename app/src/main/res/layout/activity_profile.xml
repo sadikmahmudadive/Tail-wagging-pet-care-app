@@ -337,6 +337,43 @@
                             app:tint="@color/dark_blue"
                             android:contentDescription="Go"/>
                     </LinearLayout>
+
+                    <!-- Option Item 4 (Admin Only) -->
+                    <LinearLayout
+                        android:id="@+id/optionAdminDashboard"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:paddingStart="18dp"
+                        android:paddingEnd="18dp"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@drawable/ic_status"
+                            app:tint="@color/dark_blue"
+                            android:contentDescription="Admin Panel"/>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Admin Dashboard"
+                            android:textSize="17sp"
+                            android:textColor="@color/dark_blue"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:layout_marginStart="14dp"/>
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_arrow_right"
+                            app:tint="@color/dark_blue"
+                            android:contentDescription="Go"/>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>

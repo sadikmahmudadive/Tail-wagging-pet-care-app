@@ -156,6 +156,14 @@ public class Registration extends AppCompatActivity {
     }
 
     private void checkUserRoleAndRedirect(String uid) {
+        FirebaseUser user = auth.getCurrentUser();
+        if (user != null && "admin@mail.com".equalsIgnoreCase(user.getEmail())) {
+            getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().putString("user_role", "Pet Owner").apply();
+            startActivity(new Intent(Registration.this, AdminDashboardActivity.class));
+            finish();
+            return;
+        }
+
         dbRef.child("users").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
