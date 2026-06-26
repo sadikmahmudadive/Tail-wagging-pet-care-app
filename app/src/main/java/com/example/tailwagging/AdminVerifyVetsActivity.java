@@ -1,13 +1,12 @@
 package com.example.tailwagging;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -27,13 +26,13 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminUserListActivity extends AppCompatActivity implements AdminUserAdapter.OnUserActionListener {
+public class AdminVerifyVetsActivity extends AppCompatActivity implements AdminUserAdapter.OnUserActionListener {
 
-    private RecyclerView rvUsers;
-    private ProgressBar pbUsers;
+    private RecyclerView rvVets;
+    private ProgressBar pbVets;
     private AdminUserAdapter adapter;
-    private final List<AdminUser> userList = new ArrayList<>();
-    private final List<AdminUser> allUsers = new ArrayList<>();
+    private final List<AdminUser> vetList = new ArrayList<>();
+    private final List<AdminUser> allVets = new ArrayList<>();
     private DatabaseReference dbRef;
     private EditText etSearch;
 
@@ -49,17 +48,19 @@ public class AdminUserListActivity extends AppCompatActivity implements AdminUse
             return insets;
         });
 
-        rvUsers = findViewById(R.id.rvAdminUsers);
-        pbUsers = findViewById(R.id.pbAdminUsers);
+        rvVets = findViewById(R.id.rvAdminUsers);
+        pbVets = findViewById(R.id.pbAdminUsers);
         etSearch = findViewById(R.id.etSearchUsers);
+        ((TextView)findViewById(R.id.tvAdminUserListTitle)).setText("Vet Verification");
+        
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        rvUsers.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AdminUserAdapter(userList, this);
-        rvUsers.setAdapter(adapter);
+        rvVets.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new AdminUserAdapter(vetList, this);
+        rvVets.setAdapter(adapter);
 
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
-        fetchUsers();
+        fetchVets();
         setupSearch();
     }
 
@@ -67,78 +68,59 @@ public class AdminUserListActivity extends AppCompatActivity implements AdminUse
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
-                filterUsers(s.toString());
+                filterVets(s.toString());
             }
             @Override public void afterTextChanged(Editable s) {}
         });
     }
 
-    private void filterUsers(String query) {
-        userList.clear();
+    private void filterVets(String query) {
+        vetList.clear();
         if (query.isEmpty()) {
-            userList.addAll(allUsers);
+            vetList.addAll(allVets);
         } else {
-            for (AdminUser u : allUsers) {
+            for (AdminUser u : allVets) {
                 if ((u.name != null && u.name.toLowerCase().contains(query.toLowerCase())) ||
                     (u.email != null && u.email.toLowerCase().contains(query.toLowerCase()))) {
-                    userList.add(u);
+                    vetList.add(u);
                 }
             }
         }
         adapter.notifyDataSetChanged();
     }
 
-    private void fetchUsers() {
-        pbUsers.setVisibility(View.VISIBLE);
-        dbRef.child("users").addValueEventListener(new ValueEventListener() {
+    private void fetchVets() {
+        pbVets.setVisibility(View.VISIBLE);
+        dbRef.child("users").orderByChild("role").equalTo("Veterinarian")
+                .addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                allUsers.clear();
+                allVets.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     AdminUser user = ds.getValue(AdminUser.class);
                     if (user != null) {
                         user.id = ds.getKey();
-                        allUsers.add(user);
+                        allVets.add(user);
                     }
                 }
-                filterUsers(etSearch.getText().toString());
-                pbUsers.setVisibility(View.GONE);
+                filterVets(etSearch.getText().toString());
+                pbVets.setVisibility(View.GONE);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                pbUsers.setVisibility(View.GONE);
-                Toast.makeText(AdminUserListActivity.this, "Failed to load users", Toast.LENGTH_SHORT).show();
+                pbVets.setVisibility(View.GONE);
             }
         });
     }
 
     @Override
     public void onDelete(AdminUser user) {
-        if ("admin@mail.com".equalsIgnoreCase(user.email)) {
-            Toast.makeText(this, "Cannot delete main admin", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Delete User")
-                .setMessage("Are you sure you want to delete " + user.name + "? This action cannot be undone.")
-                .setPositiveButton("Delete", (dialog, which) -> {
-                    dbRef.child("users").child(user.id).removeValue().addOnSuccessListener(aVoid -> {
-                        Toast.makeText(this, "User deleted", Toast.LENGTH_SHORT).show();
-                    });
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+        dbRef.child("users").child(user.id).removeValue();
     }
 
     @Override
     public void onToggleVerify(AdminUser user) {
-        boolean nextState = !user.isVerified;
-        dbRef.child("users").child(user.id).child("isVerified").setValue(nextState)
-                .addOnSuccessListener(aVoid -> {
-                    String msg = nextState ? "User verified" : "Verification removed";
-                    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-                });
+        dbRef.child("users").child(user.id).child("isVerified").setValue(!user.isVerified);
     }
 }

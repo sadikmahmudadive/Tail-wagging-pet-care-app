@@ -42,6 +42,8 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
         holder.tvPhone.setText(service.getPhone() != null ? service.getPhone() : "N/A");
         holder.tvHours.setText(service.getBusinessHours());
         
+        holder.ivVerified.setVisibility(service.isVerified() ? View.VISIBLE : View.GONE);
+        
         // Randomly set OPEN/CLOSED for display purposes if not in data
         boolean isOpen = position % 2 == 0;
         holder.tvStatus.setText(isOpen ? "OPEN" : "CLOSED");
@@ -66,12 +68,13 @@ public class ServiceAdapter extends RecyclerView.Adapter<ServiceAdapter.ServiceV
     }
 
     public static class ServiceViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivLogo;
+        ImageView ivLogo, ivVerified;
         TextView tvName, tvRating, tvStatus, tvDistance, tvPhone, tvHours;
 
         public ServiceViewHolder(@NonNull View itemView) {
             super(itemView);
             ivLogo = itemView.findViewById(R.id.ivServiceLogo);
+            ivVerified = itemView.findViewById(R.id.ivVerifiedBadge);
             tvName = itemView.findViewById(R.id.tvServiceName);
             tvRating = itemView.findViewById(R.id.tvServiceRating);
             tvStatus = itemView.findViewById(R.id.tvServiceStatus);

@@ -115,6 +115,8 @@ public class VetDetailsActivity extends AppCompatActivity {
         tvBio.setText(selectedVet.getBio());
         tvRecPet.setText(selectedVet.getRecommendedFor());
 
+        findViewById(R.id.ivVerifiedDetail).setVisibility(selectedVet.isVerified() ? View.VISIBLE : View.GONE);
+
         if (selectedVet.getImageUrl() != null && !selectedVet.getImageUrl().isEmpty()) {
             Glide.with(this).load(selectedVet.getImageUrl()).placeholder(R.drawable.ic_profile).into(ivMain);
         } else {

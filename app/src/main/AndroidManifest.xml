@@ -31,6 +31,15 @@
             android:name=".AdminUserListActivity"
             android:exported="false" />
         <activity
+            android:name=".AdminAnalyticsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminVerifyVetsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminBroadcastActivity"
+            android:exported="false" />
+        <activity
             android:name=".FindPetTypeActivity"
             android:theme="@style/FloatingDialogActivity"
             android:exported="false" />

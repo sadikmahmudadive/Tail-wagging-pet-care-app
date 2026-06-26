@@ -19,6 +19,7 @@ public class Vet implements Serializable {
     private String businessHours;
     private String bio;
     private String recommendedFor;
+    private boolean isVerified;
 
     public Vet(String id, String name, String qualification, float rating, int reviewsCount, String tag, String distance, String price, String experience, String lastVisit, int imageResId) {
         this.id = id;
@@ -58,4 +59,6 @@ public class Vet implements Serializable {
     public void setBio(String bio) { this.bio = bio; }
     public String getRecommendedFor() { return recommendedFor; }
     public void setRecommendedFor(String recommendedFor) { this.recommendedFor = recommendedFor; }
+    public boolean isVerified() { return isVerified; }
+    public void setVerified(boolean verified) { isVerified = verified; }
 }

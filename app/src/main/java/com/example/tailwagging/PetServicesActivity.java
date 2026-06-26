@@ -309,7 +309,11 @@ public class PetServicesActivity extends AppCompatActivity {
                             Integer cVal = snapshot.child("reviewsCount").getValue(Integer.class);
                             if (cVal != null) reviews = cVal;
 
+                            Boolean isVerified = snapshot.child("isVerified").getValue(Boolean.class);
+
                             Vet vet = new Vet(id, name, qualification, rating, reviews, "Expert", distance, "N/A", "10 years", "N/A", R.drawable.ic_profile);
+                            if (isVerified != null) vet.setVerified(isVerified);
+
                             if (photoUrl != null && !photoUrl.isEmpty()) vet.setImageUrl(photoUrl);
                             if (phone != null) vet.setPhone(phone);
                             list.add(vet);

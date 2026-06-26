@@ -44,6 +44,8 @@ public class VetAdapter extends RecyclerView.Adapter<VetAdapter.VetViewHolder> {
         holder.tvVetExperience.setText(vet.getExperience());
         holder.tvLastVisit.setText(context.getString(R.string.last_visit_format, vet.getLastVisit()));
 
+        holder.ivVerifiedBadge.setVisibility(vet.isVerified() ? View.VISIBLE : View.GONE);
+
         if (vet.getImageUrl() != null && !vet.getImageUrl().isEmpty()) {
             Glide.with(context)
                     .load(vet.getImageUrl())
@@ -77,13 +79,14 @@ public class VetAdapter extends RecyclerView.Adapter<VetAdapter.VetViewHolder> {
     }
 
     public static class VetViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivVetProfile;
+        ImageView ivVetProfile, ivVerifiedBadge;
         TextView tvVetName, tvVetQualification, tvVetRating, tvVetTag, tvVetDistance, tvVetPhone, tvVetExperience, tvLastVisit;
         View btnBookAppointment;
 
         public VetViewHolder(@NonNull View itemView) {
             super(itemView);
             ivVetProfile = itemView.findViewById(R.id.ivVetProfile);
+            ivVerifiedBadge = itemView.findViewById(R.id.ivVerifiedBadge);
             tvVetName = itemView.findViewById(R.id.tvVetName);
             tvVetQualification = itemView.findViewById(R.id.tvVetQualification);
             tvVetRating = itemView.findViewById(R.id.tvVetRating);

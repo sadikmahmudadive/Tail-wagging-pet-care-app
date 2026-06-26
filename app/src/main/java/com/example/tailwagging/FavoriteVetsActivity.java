@@ -136,7 +136,11 @@ public class FavoriteVetsActivity extends AppCompatActivity {
                                     Integer cVal = vetSnap.child("reviewsCount").getValue(Integer.class);
                                     if (cVal != null) reviews = cVal;
 
+                                    Boolean isVerified = vetSnap.child("isVerified").getValue(Boolean.class);
+
                                     Vet vet = new Vet(vetId, name, qualification, rating, reviews, "Favorite", distance, "N/A", "N/A", "N/A", R.drawable.ic_profile);
+                                    if (isVerified != null) vet.setVerified(isVerified);
+
                                     if (photoUrl != null && !photoUrl.isEmpty()) vet.setImageUrl(photoUrl);
                                     if (phone != null) vet.setPhone(phone);
                                     favVetList.add(vet);

@@ -192,12 +192,15 @@ public class MainActivity extends AppCompatActivity {
                                 distance = String.format(Locale.getDefault(), "%.1f km", results[0] / 1000);
                             }
 
-                            String price = "$$";
                             String experience = "Exp: 5+ years";
                             String lastVisit = "N/A";
                             int imageRes = R.drawable.ic_profile;
+                            
+                            Boolean isVerified = snapshot.child("isVerified").getValue(Boolean.class);
 
                             Vet vet = new Vet(vetId, name, qualification, rating, reviews, tag, distance, "N/A", experience, lastVisit, imageRes);
+                            if (isVerified != null) vet.setVerified(isVerified);
+
                             if (photoUrl != null && !photoUrl.isEmpty()) {
                                 vet.setImageUrl(photoUrl);
                             }

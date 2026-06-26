@@ -5,40 +5,71 @@
     android:id="@+id/adminRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_dashboard">
+    android:background="@color/light_gray">
 
+    <!-- Header Section -->
     <View
         android:id="@+id/adminHeaderBg"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
+        android:layout_height="220dp"
         android:background="@color/dark_blue"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvAdminGreeting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="64dp"
+        android:fontFamily="@font/fredoka"
+        android:text="Welcome Back,"
+        android:textColor="@color/white_overlay_medium"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tvAdminTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
         android:fontFamily="@font/fredoka_bold"
-        android:text="Admin Control Center"
+        android:text="System Admin"
         android:textColor="@color/white"
-        android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:textSize="26sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvAdminGreeting" />
+
+    <ImageButton
+        android:id="@+id/btnLogoutAdmin"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_circle_white"
+        android:padding="12dp"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_logout_modern"
+        app:layout_constraintBottom_toBottomOf="@+id/tvAdminTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvAdminGreeting"
+        app:tint="@color/red" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/adminHeaderBg">
+        app:layout_constraintTop_toBottomOf="@+id/adminHeaderBg"
+        android:layout_marginTop="-40dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
+            android:padding="20dp">
 
+            <!-- Stats Overview Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,75 +80,262 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:orientation="horizontal"
+                    android:padding="20dp"
+                    android:weightSum="3">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:text="Quick Management"
-                        android:textColor="@color/black"
-                        android:textSize="18sp" />
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvAdminStatUsers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="..."
+                            android:textColor="@color/dark_blue"
+                            android:textSize="20sp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredoka"
+                            android:text="Users"
+                            android:textColor="@color/grey_medium"
+                            android:textSize="12sp" />
+                    </LinearLayout>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnManageUsers"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginTop="16dp"
-                        android:text="Manage Users"
-                        app:icon="@drawable/ic_username" />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:background="@color/surface_container_high" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnManageVets"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginTop="12dp"
-                        android:text="Verify Veterinarians"
-                        app:icon="@drawable/ic_vet" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvAdminStatPets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="..."
+                            android:textColor="@color/health_green"
+                            android:textSize="20sp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredoka"
+                            android:text="Pets"
+                            android:textColor="@color/grey_medium"
+                            android:textSize="12sp" />
+                    </LinearLayout>
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnViewAnalytics"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginTop="12dp"
-                        android:text="System Analytics"
-                        app:icon="@drawable/ic_status" />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:background="@color/surface_container_high" />
 
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnPushBroadcast"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginTop="12dp"
-                        android:text="Push Broadcast"
-                        app:icon="@drawable/ic_notifications" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnUserView"
-                        style="@style/Widget.Material3.Button.TonalButton"
-                        android:layout_width="match_parent"
-                        android:layout_height="60dp"
-                        android:layout_marginTop="12dp"
-                        android:text="Switch to Pet Owner View"
-                        app:icon="@drawable/ic_pets"
-                        app:iconTint="@color/md_theme_light_primary" />
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/tvAdminStatVets"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="..."
+                            android:textColor="@color/orange"
+                            android:textSize="20sp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/fredoka"
+                            android:text="Vets"
+                            android:textColor="@color/grey_medium"
+                            android:textSize="12sp" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnLogoutAdmin"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
                 android:layout_marginTop="32dp"
-                android:backgroundTint="@color/red"
-                android:text="Logout Admin"
+                android:fontFamily="@font/fredoka_bold"
+                android:text="Administrative Tools"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
+            <!-- Action Grid -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:columnCount="2"
+                android:rowCount="2">
+
+                <!-- Manage Users -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnManageUsers"
+                    android:layout_width="0dp"
+                    android:layout_height="140dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_username"
+                            app:tint="@color/dark_blue" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="Users"
+                            android:textColor="@color/black"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Verify Vets -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnManageVets"
+                    android:layout_width="0dp"
+                    android:layout_height="140dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_vet"
+                            app:tint="@color/health_green" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="Verify Vets"
+                            android:textColor="@color/black"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Broadcast -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnPushBroadcast"
+                    android:layout_width="0dp"
+                    android:layout_height="140dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_notifications"
+                            app:tint="@color/orange" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="Broadcast"
+                            android:textColor="@color/black"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Analytics -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/btnViewAnalytics"
+                    android:layout_width="0dp"
+                    android:layout_height="140dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="2dp"
+                    app:strokeWidth="0dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:src="@drawable/ic_status"
+                            app:tint="@color/red" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="12dp"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="Analytics"
+                            android:textColor="@color/black"
+                            android:textSize="15sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+            </GridLayout>
+
+            <!-- Switch Mode Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnUserView"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:layout_marginTop="24dp"
+                android:backgroundTint="@color/dark_blue"
+                android:fontFamily="@font/fredoka_bold"
+                android:text="Switch to Pet Owner View"
+                android:textAllCaps="false"
                 android:textColor="@color/white"
-                app:cornerRadius="16dp" />
+                android:textSize="16sp"
+                app:cornerRadius="18dp"
+                app:icon="@drawable/ic_pets"
+                app:iconGravity="textStart"
+                app:iconTint="@color/white" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="40dp" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

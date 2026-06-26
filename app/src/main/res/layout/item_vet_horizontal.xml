@@ -39,14 +39,31 @@
                 android:layout_weight="1"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvVetName"
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredoka_bold"
-                    tools:text="Dr. Nambuvan"
-                    android:textColor="@color/black"
-                    android:textSize="20sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvVetName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:textColor="@color/black"
+                        android:textSize="20sp"
+                        tools:text="Dr. Nambuvan" />
+
+                    <ImageView
+                        android:id="@+id/ivVerifiedBadge"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:layout_marginStart="6dp"
+                        android:src="@drawable/ic_verified"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:contentDescription="Verified" />
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/tvVetQualification"
