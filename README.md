@@ -4,23 +4,24 @@ Tail Wagging is a comprehensive Android application designed to help pet owners 
 
 ## Features
 
-- **Pet Profiles:** Create and manage detailed profiles for all your pets.
-- **Calendar & Reminders:** Schedule vet visits, medication, grooming, and more with automated notifications.
-- **AI Health Scanner:** Analyze pet-related health concerns from photos using OpenAI ChatGPT Vision.
-- **Service Locator:** Find nearby pet services and veterinary clinics.
-- **Notification Center:** Keep track of all reminders and important alerts in one place.
-- **User Profiles:** Manage your account and pet owner details.
+- **Pet Profiles:** Create and manage detailed profiles for all your pets including medical history and birthdays.
+- **AI Health Scanner:** Analyze pet-related health concerns from photos using **Google Gemini 1.5 Flash**. Save results directly to your pet's medical records.
+- **Offline Support:** View your pets, notifications, and scheduled events even without an internet connection thanks to Firebase Disk Persistence.
+- **Actionable Notifications:** Get smart reminders for vet visits and tasks with direct actions like "Mark Done" or "Dismiss" from the notification bar.
+- **Service Locator & Search:** Find nearby pet services (Veterinarians, Grooming, Boarding) with real-time search and category filtering.
+- **Calendar & Reminders:** A complete scheduling system for pet care with automated local alarms.
+- **Modern UI:** Immersive parallax headers, sticky action bars, and Material 3 design for a premium experience.
 
 ## Tech Stack
 
 - **Language:** Java
-- **UI Framework:** Android XML with Google Material Design
-- **Database:** Firebase Realtime Database
+- **UI Framework:** Android XML with Google Material Design 3
+- **Database:** Firebase Realtime Database (with Offline Persistence)
 - **Authentication:** Firebase Auth
 - **Storage:** Firebase Storage & Cloudinary
-- **AI Integration:** OpenAI ChatGPT Vision (gpt-4o-mini via OkHttp)
+- **AI Integration:** Google Gemini 1.5 Flash (via OkHttp)
 - **Maps:** MapLibre SDK
-- **Image Loading:** Glide
+- **Image Loading:** Glide (with disk caching)
 - **Build System:** Gradle (Kotlin DSL)
 
 ## Getting Started
@@ -29,7 +30,7 @@ Tail Wagging is a comprehensive Android application designed to help pet owners 
 
 - Android Studio Koala or newer
 - JDK 11+
-- An OpenAI API Key (for the AI features)
+- A Google Gemini API Key (obtained from [Google AI Studio](https://aistudio.google.com/))
 
 ### Setup
 
@@ -42,10 +43,26 @@ Tail Wagging is a comprehensive Android application designed to help pet owners 
    Open the project folder in Android Studio and let Gradle sync.
 
 3. **Configure API Keys:**
-   Create a `local.properties` file in the root directory (if not already present) and add your OpenAI API key:
+   Create a `local.properties` file in the root directory (if not already present) and add your API keys:
    ```properties
-   OPENAI_API_KEY=YOUR_ACTUAL_API_KEY_HERE
+   GEMINI_API_KEY=YOUR_GEMINI_KEY
+   OPENAI_API_KEY=YOUR_OPENAI_KEY
    ```
+   *Note: These keys are kept local and won't be committed to Git for security.*
+
+## Security & Privacy (Strict Rules)
+
+To prevent API keys from being leaked and disabled by providers (OpenAI, Google), this project uses a strict security workflow:
+
+1.  **BuildConfig Integration**: All API keys are injected at build time from `local.properties`. Never hardcode keys in Java files.
+2.  **GitHub Actions**: A security scanner (`gitleaks`) runs on every push. If a secret is detected, the build will fail.
+3.  **Pre-commit Hook**: A script is provided in `Support/pre-commit-hook.sh`. You should install it to prevent committing keys locally:
+    ```bash
+    cp Support/pre-commit-hook.sh .git/hooks/pre-commit
+    chmod +x .git/hooks/pre-commit
+    ```
+
+If your key is revoked, check your git history to ensure you haven't committed it in a previous version.
 
 4. **Firebase Setup:**
    - Create a new project in the [Firebase Console](https://console.firebase.google.com/).
@@ -54,26 +71,6 @@ Tail Wagging is a comprehensive Android application designed to help pet owners 
 
 5. **Run the app:**
    Select your emulator or physical device and click the "Run" button.
-
-## Firebase Security Rules
-
-This project includes baseline secure Firebase rules. They require authentication for all reads/writes and add light validation for AI medical history entries stored in Realtime Database.
-
-Files:
-- `database.rules.json` (Firebase Realtime Database)
-- `firestore.rules` (Cloud Firestore)
-- `storage.rules` (Cloud Storage)
-
-Deploying rules (via Firebase CLI):
-1. Install and login: `npm i -g firebase-tools` then `firebase login`
-2. Initialize (once): `firebase init` and select Database, Firestore, and Storage. Point to the rule files above when prompted.
-3. Deploy:
-   - Realtime Database: `firebase deploy --only database`
-   - Firestore: `firebase deploy --only firestore:rules`
-   - Storage: `firebase deploy --only storage`
-
-Notes:
-- Current app writes AI results to the Realtime Database path `service_records/{recordId}`. Rules validate field presence and types. For stricter access control (per-user ownership), include a `userId` field on each record and extend the rules to enforce `request.auth.uid == newData.child('userId').val()`.
 
 ## License
 

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dashboardAppBar"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:stateListAnimator="@null"
+    app:elevation="0dp"
+    app:liftOnScroll="false">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_app_bar_card"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:paddingStart="14dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="14dp"
+        app:layout_scrollFlags="noScroll">
+
+        <View
+            android:id="@+id/appBarAvatarRing"
+            android:layout_width="58dp"
+            android:layout_height="58dp"
+            android:background="@drawable/bg_app_bar_avatar_ring"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/appBarProfilePhoto"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:src="@drawable/ic_profile"
+            app:civ_border_color="@color/white"
+            app:civ_border_width="2dp"
+            app:layout_constraintBottom_toBottomOf="@id/appBarAvatarRing"
+            app:layout_constraintEnd_toEndOf="@id/appBarAvatarRing"
+            app:layout_constraintStart_toStartOf="@id/appBarAvatarRing"
+            app:layout_constraintTop_toTopOf="@id/appBarAvatarRing" />
+
+        <LinearLayout
+            android:id="@+id/appBarTextContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="12dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/appBarActionsContainer"
+            app:layout_constraintStart_toEndOf="@id/appBarAvatarRing"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/appBarGreeting"
+                style="@style/AppBarGreetingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="Good Morning," />
+
+            <TextView
+                android:id="@+id/appBarUserName"
+                style="@style/AppBarUserNameText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:ellipsize="end"
+                android:maxLines="1"
+                tools:text="Alex Johnson" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/appBarActionsContainer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:id="@+id/appBarNotifications"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_app_bar_icon_button"
+                    android:contentDescription="@string/notifications"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_notifications"
+                    app:tint="@color/md_theme_light_primary" />
+
+                <View
+                    android:id="@+id/appBarNotificationBadge"
+                    android:layout_width="9dp"
+                    android:layout_height="9dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_app_bar_notification_dot"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+            </FrameLayout>
+
+            <ImageButton
+                android:id="@+id/appBarLogout"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_app_bar_logout_button"
+                android:contentDescription="@string/logout"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_logout_modern" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.appbar.AppBarLayout>

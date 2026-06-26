@@ -21,7 +21,7 @@ import org.json.JSONObject;
 public class ChatGptAiHelper {
 
     private static final String TAG = "ChatGptAiHelper";
-    private static final String API_KEY = "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";
+    private static final String API_KEY = BuildConfig.OPENAI_API_KEY;
     private static final String OPENAI_CHAT_COMPLETIONS_URL = "https://api.openai.com/v1/chat/completions";
 
     public interface GeminiCallback { // Keeping name to minimize ripple changes in callers

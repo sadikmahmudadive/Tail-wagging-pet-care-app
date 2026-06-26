@@ -114,6 +114,14 @@ public class NavbarHelper {
         }
     }
 
+    /**
+     * Convenience method to refresh the navbar on lifecycle changes (e.g., after role switch).
+     * Currently just delegates to setupNavbar, but kept for future extensibility.
+     */
+    public static void refresh(Activity activity) {
+        setupNavbar(activity);
+    }
+
     /* ─── regular nav item ────────────────────────────────────── */
 
     private static void setupItem(Activity activity,

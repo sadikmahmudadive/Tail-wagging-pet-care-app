@@ -1,327 +1,363 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:clipChildren="false"
-    android:clipToPadding="false">
+    android:background="@color/md_theme_light_background">
 
-    <!-- Green Header -->
-    <View
-        android:id="@+id/headerBg"
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/health_green"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_height="300dp"
+        android:background="@color/md_theme_light_background"
+        android:fitsSystemWindows="true">
 
-    <ImageButton
-        android:id="@+id/btnBack"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="12dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_arrow_back"
-        app:layout_constraintBottom_toBottomOf="@+id/headerBg"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/headerBg"
-        app:tint="@color/white"
-        android:contentDescription="@string/back" />
-
-    <ImageButton
-        android:id="@+id/btnFavorite"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="8dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="12dp"
-        android:scaleType="fitCenter"
-        android:src="@drawable/ic_star"
-        app:layout_constraintBottom_toBottomOf="@+id/headerBg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/headerBg"
-        app:tint="@color/white"
-        android:contentDescription="Favorite" />
-
-    <TextView
-        android:id="@+id/tvHeaderVetName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/fredoka_bold"
-        android:textColor="@color/white"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/headerBg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/headerBg"
-        tools:text="Dr. Nambuvan" />
-
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomNavContainer"
-        app:layout_constraintTop_toBottomOf="@+id/headerBg">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+            android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="120dp">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/dark_blue"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false">
 
-            <!-- Vet Main Image -->
             <ImageView
                 android:id="@+id/ivVetDetailMain"
                 android:layout_width="match_parent"
-                android:layout_height="280dp"
+                android:layout_height="match_parent"
+                android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/pet1"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_collapseMode="parallax" />
 
             <View
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:background="@drawable/bg_curve_white_top"
-                app:layout_constraintBottom_toBottomOf="@+id/ivVetDetailMain" />
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_app_bar_glow"
+                app:layout_collapseMode="parallax" />
 
-            <!-- Info Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardVetInfo"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="-40dp"
-                app:cardCornerRadius="24dp"
-                app:cardElevation="8dp"
-                app:layout_constraintTop_toBottomOf="@+id/ivVetDetailMain"
-                app:strokeWidth="0dp">
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin"
+                app:contentInsetStart="0dp"
+                app:popupTheme="@style/ThemeOverlay.Material3.Light">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:layout_height="match_parent">
+
+                    <ImageButton
+                        android:id="@+id/btnBack"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_circle_white"
+                        android:elevation="2dp"
+                        android:padding="8dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_arrow_back"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/dark_blue" />
 
                     <TextView
-                        android:id="@+id/tvVetNameDetail"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/tvHeaderVetName"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="16dp"
                         android:fontFamily="@font/fredoka_bold"
-                        android:textColor="@color/black"
-                        android:textSize="24sp"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:textSize="18sp"
+                        android:alpha="0"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/btnFavorite"
+                        app:layout_constraintStart_toEndOf="@+id/btnBack"
+                        app:layout_constraintTop_toTopOf="parent"
                         tools:text="Dr. Nambuvan" />
 
-                    <TextView
-                        android:id="@+id/tvVetQualificationDetail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:fontFamily="@font/fredoka_bold"
-                        android:textColor="@color/dark_blue"
-                        android:textSize="16sp"
-                        tools:text="Bachelor of Veterinary Science" />
+                    <ImageButton
+                        android:id="@+id/btnFavorite"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/bg_circle_white"
+                        android:elevation="2dp"
+                        android:padding="8dp"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/ic_star"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/dark_blue" />
 
-                    <LinearLayout
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="-30dp"
+        android:background="@drawable/bg_curve_white_top"
+        android:clipToPadding="false"
+        android:elevation="4dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="32dp"
+            android:paddingBottom="140dp">
+
+            <TextView
+                android:id="@+id/tvVetNameDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fredoka_bold"
+                android:textColor="@color/black"
+                android:textSize="28sp"
+                tools:text="Dr. Nambuvan" />
+
+            <TextView
+                android:id="@+id/tvVetQualificationDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/fredoka_bold"
+                android:textColor="@color/md_theme_light_primary"
+                android:textSize="15sp"
+                tools:text="Bachelor of Veterinary Science" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RatingBar
+                    android:id="@+id/ratingBarVet"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:numStars="5"
+                    android:progressTint="@color/orange"
+                    android:rating="5" />
+
+                <TextView
+                    android:id="@+id/tvRatingScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    tools:text="5.0" />
+
+                <TextView
+                    android:id="@+id/tvReviewsCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:fontFamily="@font/fredoka"
+                    android:textColor="@color/grey_medium"
+                    android:textSize="13sp"
+                    tools:text="(100 reviews)" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/surface_container_high" />
+
+            <!-- Highlight Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_location_pin"
+                        app:tint="@color/md_theme_light_primary" />
+                    <TextView
+                        android:id="@+id/tvVetDistanceDetail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:id="@+id/tvRatingScore"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/fredoka_bold"
-                            android:textColor="@color/black"
-                            android:textSize="14sp"
-                            tools:text="5.0" />
-
-                        <RatingBar
-                            android:id="@+id/ratingBarVet"
-                            style="?android:attr/ratingBarStyleSmall"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:numStars="5"
-                            android:progressTint="@color/orange"
-                            android:rating="5" />
-
-                        <TextView
-                            android:id="@+id/tvReviewsCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:fontFamily="@font/fredoka"
-                            android:textColor="@color/grey_medium"
-                            android:textSize="13sp"
-                            tools:text="(100 reviews)" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:src="@drawable/ic_calendar"
-                                app:tint="@color/grey_medium" />
-
-                            <TextView
-                                android:id="@+id/tvBusinessHours"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
-                                android:fontFamily="@font/fredoka"
-                                android:textColor="@color/grey_medium"
-                                android:textSize="12sp"
-                                tools:text="Monday - Friday: 8.00 am - 5.00 pm" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:src="@drawable/ic_location_pin"
-                                app:tint="@color/grey_medium" />
-
-                            <TextView
-                                android:id="@+id/tvVetDistanceDetail"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
-                                android:fontFamily="@font/fredoka"
-                                android:textColor="@color/grey_medium"
-                                android:textSize="12sp"
-                                tools:text="2.5 km" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_profile_phone"
-                            app:tint="@color/health_green" />
-
-                        <TextView
-                            android:id="@+id/tvVetPhoneDetail"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:fontFamily="@font/fredoka_bold"
-                            android:textColor="@color/health_green"
-                            android:textSize="16sp"
-                            tools:text="+94 77 123 4567" />
-                    </LinearLayout>
-
+                        android:fontFamily="@font/fredoka_bold"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        tools:text="2.5 km" />
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
 
-            <!-- Bio Section -->
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@color/surface_container_high" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_phone"
+                        app:tint="@color/health_green" />
+                    <TextView
+                        android:id="@+id/tvVetPhoneDetail"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        tools:text="+94 77 123" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:background="@color/surface_container_high" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="vertical">
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_history"
+                        app:tint="@color/orange" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="Expert"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:fontFamily="@font/fredoka_bold"
+                android:text="About"
+                android:textColor="@color/black"
+                android:textSize="18sp" />
+
             <TextView
                 android:id="@+id/tvVetBio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="8dp"
                 android:fontFamily="@font/fredoka"
-                android:lineSpacingExtra="4dp"
+                android:lineSpacingExtra="6dp"
                 android:textColor="@color/grey_dark"
                 android:textSize="15sp"
-                app:layout_constraintTop_toBottomOf="@+id/cardVetInfo"
-                tools:text="Dr. Shehan, one of the most skilled and experienced veterinarians and the owner of the most convenient animal clinic Petz &amp; Vetz. Our paradise is situated in the heart of the town with a pleasant environment. We are ready to treat your beloved doggos &amp; puppers with love and involvement." />
+                tools:text="Dr. Shehan is a highly skilled veterinarian with over 10 years of experience in small animal care. He specializes in dermatology and internal medicine." />
 
             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_calendar"
+                    app:tint="@color/grey_medium" />
+                <TextView
+                    android:id="@+id/tvBusinessHours"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:fontFamily="@font/fredoka"
+                    android:textColor="@color/grey_medium"
+                    android:textSize="13sp"
+                    tools:text="Mon - Fri: 8:00 AM - 5:00 PM" />
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/layoutRecommended"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="20dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/tvVetBio">
+                android:layout_marginTop="24dp"
+                app:cardBackgroundColor="@color/md_theme_light_secondaryContainer"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:text="Recommended For:"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
 
-                <TextView
-                    android:id="@+id/tvRecommendedPetName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="@drawable/bg_rounded_gray"
-                    android:paddingHorizontal="16dp"
-                    android:paddingVertical="4dp"
-                    android:fontFamily="@font/fredoka"
-                    android:textColor="@color/grey_dark"
-                    android:textSize="12sp"
-                    tools:text="Bella" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_paw"
+                        app:tint="@color/md_theme_light_onSecondaryContainer" />
 
-            </LinearLayout>
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="Recommended for"
+                        android:textColor="@color/md_theme_light_onSecondaryContainer"
+                        android:textSize="14sp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnBookAppointmentDetail"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="32dp"
-                android:backgroundTint="@color/health_green"
-                android:fontFamily="@font/fredoka_bold"
-                android:text="Book an Appointment"
-                android:textAllCaps="false"
-                android:textSize="18sp"
-                app:cornerRadius="16dp"
-                app:icon="@drawable/ic_calendar"
-                app:iconGravity="end"
-                app:iconPadding="12dp"
-                app:layout_constraintTop_toBottomOf="@+id/layoutRecommended" />
-
-            <View
-                android:id="@+id/dividerReviews"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="32dp"
-                android:background="@color/black_overlay_light"
-                app:layout_constraintTop_toBottomOf="@+id/btnBookAppointmentDetail" />
+                    <TextView
+                        android:id="@+id/tvRecommendedPetName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:textColor="@color/md_theme_light_primary"
+                        android:textSize="15sp"
+                        tools:text="Bella" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <LinearLayout
                 android:id="@+id/layoutReviewsHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="40dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@+id/dividerReviews">
+                android:orientation="horizontal">
 
                 <TextView
                     android:layout_width="0dp"
@@ -337,9 +373,9 @@
                     style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Write a Review"
+                    android:text="Write Review"
                     android:textColor="@color/md_theme_light_primary"
-                    android:textSize="14sp" />
+                    android:fontFamily="@font/fredoka_bold" />
             </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -347,32 +383,61 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
-                android:clipToPadding="false"
                 android:nestedScrollingEnabled="false"
-                android:paddingHorizontal="24dp"
-                app:layout_constraintTop_toBottomOf="@+id/layoutReviewsHeader"
                 tools:listitem="@layout/item_review" />
 
             <TextView
                 android:id="@+id/tvNoReviews"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="24dp"
                 android:fontFamily="@font/fredoka"
                 android:gravity="center"
-                android:text="No reviews yet. Be the first one!"
+                android:text="No reviews yet."
                 android:textColor="@color/grey_medium"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@+id/layoutReviewsHeader" />
+                android:visibility="gone" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <FrameLayout
-        android:id="@+id/bottomNavContainer"
+    <!-- Bottom Fixed Action Bar -->
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="110dp"
+        android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:cardCornerRadius="0dp"
+        app:cardElevation="16dp"
+        app:strokeWidth="0dp">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:background="@color/white"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBookAppointmentDetail"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:backgroundTint="@color/dark_blue"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:text="Book Appointment"
+                    android:textAllCaps="false"
+                    android:textSize="18sp"
+                    app:cornerRadius="18dp" />
+            </LinearLayout>
+
+            <FrameLayout
+                android:id="@+id/bottomNavContainer"
+                android:layout_width="match_parent"
+                android:layout_height="0dp" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

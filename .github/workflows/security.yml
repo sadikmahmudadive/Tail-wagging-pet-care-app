@@ -1,0 +1,50 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  gitleaks:
+    name: Gitleaks Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Gitleaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  build_check:
+    name: Verify Build Configuration
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Check for local.properties presence
+        run: |
+          if [ -f "local.properties" ]; then
+            echo "ERROR: local.properties should NOT be committed to the repository!"
+            exit 1
+          fi
+          
+      - name: Check for hardcoded OpenAI keys
+        run: |
+          if grep -r "sk-proj-" .; then
+            echo "ERROR: Hardcoded OpenAI API key detected!"
+            exit 1
+          fi
+          
+      - name: Check for hardcoded Google keys
+        run: |
+          if grep -r "AIza" .; then
+             # Filter out google-services.json which is often required but we should warn
+             if grep -r "AIza" . --exclude="google-services.json"; then
+                echo "ERROR: Hardcoded Google API key detected in source files!"
+                exit 1
+             fi
+          fi

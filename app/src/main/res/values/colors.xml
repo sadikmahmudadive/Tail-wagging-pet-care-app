@@ -90,6 +90,10 @@
     <color name="black_overlay_medium">#40000000</color>
     <color name="white_overlay_medium">#40FFFFFF</color>
 
+    <!-- App bar -->
+    <color name="app_bar_stroke">#1A006684</color>
+    <color name="app_bar_greeting">#4D616C</color>
+
     <!-- Pet Details Specific -->
     <color name="pet_attribute_bg">#DFF1E4</color>
     <color name="gender_female_bg">#F8BBD0</color>

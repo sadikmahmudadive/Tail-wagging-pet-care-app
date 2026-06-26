@@ -18,14 +18,17 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // Load OpenAI API Key from local.properties
+        // Load API Keys from local.properties
         val properties = Properties()
         val propertiesFile = project.rootProject.file("local.properties")
         if (propertiesFile.exists()) {
             properties.load(propertiesFile.inputStream())
         }
         val openAiKey = properties.getProperty("OPENAI_API_KEY") ?: ""
+        val geminiKey = properties.getProperty("GEMINI_API_KEY") ?: ""
+        
         buildConfigField("String", "OPENAI_API_KEY", "\"$openAiKey\"")
+        buildConfigField("String", "GEMINI_API_KEY", "\"$geminiKey\"")
     }
 
     buildFeatures {

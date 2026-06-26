@@ -147,4 +147,18 @@
         <item name="cornerSizeBottomRight">0dp</item>
     </style>
 
+    <style name="AppBarGreetingText">
+        <item name="android:fontFamily">@font/fredoka</item>
+        <item name="android:textColor">@color/app_bar_greeting</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+
+    <style name="AppBarUserNameText">
+        <item name="android:fontFamily">@font/fredoka_bold</item>
+        <item name="android:textColor">@color/md_theme_light_onSurface</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:letterSpacing">-0.01</item>
+    </style>
+
 </resources>

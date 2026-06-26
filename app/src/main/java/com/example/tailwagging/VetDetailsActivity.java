@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,7 +27,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -33,6 +38,10 @@ public class VetDetailsActivity extends AppCompatActivity {
 
     private Vet selectedVet;
     private DatabaseReference dbRef;
+    private RecyclerView rvReviews;
+    private TextView tvNoReviews;
+    private ReviewAdapter reviewAdapter;
+    private List<Review> reviewList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +59,17 @@ public class VetDetailsActivity extends AppCompatActivity {
 
         ImageButton btnBack = findViewById(R.id.btnBack);
         TextView tvHeaderName = findViewById(R.id.tvHeaderVetName);
+        
+        com.google.android.material.appbar.AppBarLayout appBarLayout = findViewById(R.id.appBar);
+        appBarLayout.addOnOffsetChangedListener((layout, verticalOffset) -> {
+            float percentage = (float) Math.abs(verticalOffset) / layout.getTotalScrollRange();
+            if (percentage >= 0.7f) {
+                tvHeaderName.setAlpha(1f);
+            } else {
+                tvHeaderName.setAlpha(0f);
+            }
+        });
+
         ImageView ivMain = findViewById(R.id.ivVetDetailMain);
         TextView tvName = findViewById(R.id.tvVetNameDetail);
         TextView tvQual = findViewById(R.id.tvVetQualificationDetail);
@@ -111,11 +131,39 @@ public class VetDetailsActivity extends AppCompatActivity {
 
         btnWriteReview.setOnClickListener(v -> showWriteReviewDialog());
 
+        rvReviews = findViewById(R.id.rvReviews);
+        tvNoReviews = findViewById(R.id.tvNoReviews);
+
+        rvReviews.setLayoutManager(new LinearLayoutManager(this));
+        reviewAdapter = new ReviewAdapter(this, reviewList);
+        rvReviews.setAdapter(reviewAdapter);
+
+        fetchReviews();
+
         ImageButton btnFav = findViewById(R.id.btnFavorite);
         checkIfFavorite(btnFav);
         btnFav.setOnClickListener(v -> toggleFavorite(btnFav));
 
         NavbarHelper.setupNavbar(this);
+    }
+
+    private void fetchReviews() {
+        dbRef.child("reviews").orderByChild("vetId").equalTo(selectedVet.getId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        reviewList.clear();
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            Review review = ds.getValue(Review.class);
+                            if (review != null) reviewList.add(review);
+                        }
+                        Collections.sort(reviewList, (r1, r2) -> Long.compare(r2.timestamp, r1.timestamp));
+                        reviewAdapter.notifyDataSetChanged();
+                        tvNoReviews.setVisibility(reviewList.isEmpty() ? View.VISIBLE : View.GONE);
+                    }
+
+                    @Override public void onCancelled(@NonNull DatabaseError error) {}
+                });
     }
 
     private void checkIfFavorite(ImageButton btnFav) {
@@ -130,7 +178,7 @@ public class VetDetailsActivity extends AppCompatActivity {
                             btnFav.setColorFilter(getColor(R.color.orange));
                             btnFav.setTag("fav");
                         } else {
-                            btnFav.setColorFilter(getColor(R.color.white));
+                            btnFav.setColorFilter(getColor(R.color.dark_blue));
                             btnFav.setTag("not_fav");
                         }
                     }
@@ -148,7 +196,7 @@ public class VetDetailsActivity extends AppCompatActivity {
         DatabaseReference favRef = dbRef.child("users").child(uid).child("favorites").child(selectedVet.getId());
         if ("fav".equals(btnFav.getTag())) {
             favRef.removeValue().addOnSuccessListener(aVoid -> {
-                btnFav.setColorFilter(getColor(R.color.white));
+                btnFav.setColorFilter(getColor(R.color.dark_blue));
                 btnFav.setTag("not_fav");
                 Toast.makeText(this, "Removed from favorites", Toast.LENGTH_SHORT).show();
             });

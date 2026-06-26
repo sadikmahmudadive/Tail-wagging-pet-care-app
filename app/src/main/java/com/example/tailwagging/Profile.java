@@ -134,6 +134,7 @@ public class Profile extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        NavbarHelper.refresh(this);
         reloadUserData();
     }
 

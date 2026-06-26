@@ -90,14 +90,17 @@ public class VetDashboardActivity extends AppCompatActivity {
 
         btnLogout.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(this, Login.class));
+            getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().clear().apply();
+            Intent intent = new Intent(this, Login.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
             finish();
         });
 
         fetchVetData();
         fetchAppointments();
         
-        ImageButton btnNotifications = findViewById(R.id.btnNotificationsVet);
+        ImageButton btnNotifications = findViewById(R.id.appBarNotifications);
         if (btnNotifications != null) {
             btnNotifications.setOnClickListener(v -> {
                 startActivity(new Intent(this, NotificationActivity.class));
@@ -108,8 +111,8 @@ public class VetDashboardActivity extends AppCompatActivity {
     }
 
     private void initWidgets() {
-        tvWelcomeVet = findViewById(R.id.tvWelcomeVet);
-        tvVetGreeting = findViewById(R.id.tvVetGreeting);
+        tvWelcomeVet = findViewById(R.id.appBarUserName);
+        tvVetGreeting = findViewById(R.id.appBarGreeting);
         tvTodayApptsCount = findViewById(R.id.tvTodayApptsCount);
         tvTotalPatients = findViewById(R.id.tvTotalPatients);
         tvVetRatingScore = findViewById(R.id.tvVetRatingScore);
@@ -117,8 +120,8 @@ public class VetDashboardActivity extends AppCompatActivity {
         tvTodayLabel = findViewById(R.id.tvTodayLabel);
         tvPatientsLabel = findViewById(R.id.tvPatientsLabel);
 
-        ivVetProfile = findViewById(R.id.vetProfilePhoto);
-        btnLogout = findViewById(R.id.btnLogoutVet);
+        ivVetProfile = findViewById(R.id.appBarProfilePhoto);
+        btnLogout = findViewById(R.id.appBarLogout);
         rvAppointments = findViewById(R.id.rvVetAppointments);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutVet);
         tvEmptyAppts = findViewById(R.id.tvEmptyAppts);
@@ -150,6 +153,7 @@ public class VetDashboardActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        NavbarHelper.refresh(this);
         if (vetId != null) {
             updateFcmToken(vetId);
         }

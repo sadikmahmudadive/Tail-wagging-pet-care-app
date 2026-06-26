@@ -65,10 +65,10 @@ public class MainActivity extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
-        logoutButton = findViewById(R.id.buttonLogout);
-        textView = findViewById(R.id.userName);
-        tvWelcomeMessage = findViewById(R.id.tvWelcomeMessage);
-        userProfilePhoto = findViewById(R.id.userProfilePhoto);
+        logoutButton = findViewById(R.id.appBarLogout);
+        textView = findViewById(R.id.appBarUserName);
+        tvWelcomeMessage = findViewById(R.id.appBarGreeting);
+        userProfilePhoto = findViewById(R.id.appBarProfilePhoto);
 
         setDynamicWelcomeMessage();
         requestLocationPermission();
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
             btnViewAllVets.setOnClickListener(v -> launchPetHealthActivity());
         }
 
-        ImageButton btnNotifications = findViewById(R.id.buttonNotifications);
+        ImageButton btnNotifications = findViewById(R.id.appBarNotifications);
         if (btnNotifications != null) {
             btnNotifications.setOnClickListener(v -> {
                 startActivity(new Intent(MainActivity.this, NotificationActivity.class));
@@ -118,7 +118,11 @@ public class MainActivity extends AppCompatActivity {
                     .setMessage("Are you sure you want to logout?")
                     .setPositiveButton("Yes", (dialog, which) -> {
                         mAuth.signOut();
-                        startActivity(new Intent(MainActivity.this, Login.class));
+                        // Clear cached role to avoid stale navbar after next login
+                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().clear().apply();
+                        Intent intent = new Intent(MainActivity.this, Login.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                         finish();
                     })
                     .setNegativeButton("No", null)
@@ -228,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        NavbarHelper.refresh(this);
         if (user != null) {
             updateFcmToken(user.getUid());
         }
