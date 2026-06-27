@@ -141,4 +141,12 @@ public class AdminUserListActivity extends AppCompatActivity implements AdminUse
                     Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
                 });
     }
+
+    @Override
+    public void onManageShop(AdminUser user) {
+        Intent intent = new Intent(this, InventoryManagementActivity.class);
+        intent.putExtra("SHOP_ID", user.id);
+        intent.putExtra("SHOP_NAME", user.name);
+        startActivity(intent);
+    }
 }

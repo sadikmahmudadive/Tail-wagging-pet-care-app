@@ -5,7 +5,7 @@
     android:id="@+id/petHealthRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray"
+    android:background="@drawable/background_dashboard"
     android:clipChildren="false"
     android:clipToPadding="false"
     tools:context=".PetHealthActivity">

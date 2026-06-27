@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/surface_container_low"
+    android:background="@drawable/background_dashboard"
     android:clipChildren="false"
     android:clipToPadding="false">
 

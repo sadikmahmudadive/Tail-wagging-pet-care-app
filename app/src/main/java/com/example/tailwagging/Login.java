@@ -171,6 +171,8 @@ public class Login extends AppCompatActivity {
                     }
                     if ("Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role)) {
                         startActivity(new Intent(Login.this, VetDashboardActivity.class));
+                    } else if ("Pet Shop".equalsIgnoreCase(role)) {
+                        startActivity(new Intent(Login.this, PetShopDashboardActivity.class));
                     } else {
                         startActivity(new Intent(Login.this, MainActivity.class));
                     }

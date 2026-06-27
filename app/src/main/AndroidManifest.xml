@@ -40,6 +40,24 @@
             android:name=".AdminBroadcastActivity"
             android:exported="false" />
         <activity
+            android:name=".PetShopDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ShopActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CartActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PetTrackerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProductDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".InventoryManagementActivity"
+            android:exported="false" />
+        <activity
             android:name=".FindPetTypeActivity"
             android:theme="@style/FloatingDialogActivity"
             android:exported="false" />

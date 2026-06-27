@@ -199,6 +199,39 @@
                             android:textColor="@color/grey_dark"
                             android:textSize="13sp" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/catPetShop"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:orientation="vertical">
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/cardShopIcon"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardCornerRadius="22dp"
+                            app:cardElevation="2dp"
+                            app:strokeWidth="0.5dp"
+                            app:strokeColor="@color/black_overlay_light">
+                            <ImageView
+                                android:layout_width="32dp"
+                                android:layout_height="32dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_money"
+                                app:tint="@color/grey_dark" />
+                        </com.google.android.material.card.MaterialCardView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:fontFamily="@font/fredoka_bold"
+                            android:text="Shop"
+                            android:textColor="@color/grey_dark"
+                            android:textSize="13sp" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <!-- Technical AI Section -->

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -16,6 +15,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,7 +32,7 @@ public class Registration extends AppCompatActivity {
     EditText textEmail, textPassword, textName;
     TextView btnLogin;
     Button btnSignup;
-    RadioButton radioPetOwner, radioVet, radioGroomer, radioBoarding;
+    TabLayout tabLayoutRoles;
 
     FirebaseAuth auth;
     DatabaseReference dbRef;
@@ -53,13 +53,9 @@ public class Registration extends AppCompatActivity {
         textName = findViewById(R.id.text_nameR);
         btnLogin = findViewById(R.id.btn_LoginR);
         btnSignup = findViewById(R.id.btn_SignupR);
-        
-        radioPetOwner = findViewById(R.id.radioPetOwner);
-        radioVet = findViewById(R.id.radioVet);
-        radioGroomer = findViewById(R.id.radioGroomer);
-        radioBoarding = findViewById(R.id.radioBoarding);
+        tabLayoutRoles = findViewById(R.id.tabLayoutRoles);
 
-        setupRadioButtons();
+        setupRolesSlider();
 
         auth = FirebaseAuth.getInstance();
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
@@ -123,11 +119,12 @@ public class Registration extends AppCompatActivity {
         });
     }
 
-    private void setupRadioButtons() {
-        radioPetOwner.setOnClickListener(v -> handleRadioSelection(radioPetOwner));
-        radioVet.setOnClickListener(v -> handleRadioSelection(radioVet));
-        radioGroomer.setOnClickListener(v -> handleRadioSelection(radioGroomer));
-        radioBoarding.setOnClickListener(v -> handleRadioSelection(radioBoarding));
+    private void setupRolesSlider() {
+        tabLayoutRoles.addTab(tabLayoutRoles.newTab().setIcon(R.drawable.ic_username));
+        tabLayoutRoles.addTab(tabLayoutRoles.newTab().setIcon(R.drawable.ic_vet));
+        tabLayoutRoles.addTab(tabLayoutRoles.newTab().setIcon(R.drawable.ic_pets));
+        tabLayoutRoles.addTab(tabLayoutRoles.newTab().setIcon(R.drawable.ic_profile_location));
+        tabLayoutRoles.addTab(tabLayoutRoles.newTab().setIcon(R.drawable.ic_money));
     }
 
     private void updateFcmToken(String uid) {
@@ -140,19 +137,15 @@ public class Registration extends AppCompatActivity {
                 });
     }
 
-    private void handleRadioSelection(RadioButton selected) {
-        radioPetOwner.setChecked(false);
-        radioVet.setChecked(false);
-        radioGroomer.setChecked(false);
-        radioBoarding.setChecked(false);
-        selected.setChecked(true);
-    }
-
     private String getSelectedRole() {
-        if (radioVet.isChecked()) return "Veterinarian";
-        if (radioGroomer.isChecked()) return "Grooming";
-        if (radioBoarding.isChecked()) return "Boarding";
-        return "Pet Owner";
+        int position = tabLayoutRoles.getSelectedTabPosition();
+        switch (position) {
+            case 1: return "Veterinarian";
+            case 2: return "Grooming";
+            case 3: return "Boarding";
+            case 4: return "Pet Shop";
+            default: return "Pet Owner";
+        }
     }
 
     private void checkUserRoleAndRedirect(String uid) {
@@ -175,6 +168,8 @@ public class Registration extends AppCompatActivity {
                     }
                     if ("Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role)) {
                         startActivity(new Intent(Registration.this, VetDashboardActivity.class));
+                    } else if ("Pet Shop".equalsIgnoreCase(role)) {
+                        startActivity(new Intent(Registration.this, PetShopDashboardActivity.class));
                     } else {
                         startActivity(new Intent(Registration.this, MainActivity.class));
                     }

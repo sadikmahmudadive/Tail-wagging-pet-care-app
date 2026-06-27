@@ -90,6 +90,18 @@
                 android:layout_height="wrap_content">
 
                 <ImageButton
+                    android:id="@+id/appBarCart"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/bg_app_bar_icon_button"
+                    android:contentDescription="Cart"
+                    android:padding="10dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_money"
+                    app:tint="@color/health_green" />
+
+                <ImageButton
                     android:id="@+id/appBarNotifications"
                     android:layout_width="44dp"
                     android:layout_height="44dp"

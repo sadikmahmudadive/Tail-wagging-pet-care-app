@@ -39,7 +39,7 @@ public class NavbarHelper {
         android.view.ViewGroup container = activity.findViewById(R.id.bottomNavContainer);
         String rolePref = activity.getSharedPreferences("UserPrefs", Activity.MODE_PRIVATE).getString("user_role", "Pet Owner");
         String role = (rolePref != null) ? rolePref.trim() : "Pet Owner";
-        boolean isProvider = "Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role);
+        boolean isProvider = "Veterinarian".equalsIgnoreCase(role) || "Grooming".equalsIgnoreCase(role) || "Boarding".equalsIgnoreCase(role) || "Pet Shop".equalsIgnoreCase(role);
 
         if (container != null) {
             // Check if we need to inflate or re-inflate the correct navbar layout
@@ -77,8 +77,10 @@ public class NavbarHelper {
                 R.id.chipBgProfile,  R.id.ivProfile,  R.id.tvProfile);
 
         // ── Provider / Vet tabs ──────────────────────────────────
+        Class<?> providerHomeClass = "Pet Shop".equalsIgnoreCase(role) ? PetShopDashboardActivity.class : VetDashboardActivity.class;
+
         setupItem(activity,
-                R.id.navProviderHome,     VetDashboardActivity.class,
+                R.id.navProviderHome,     providerHomeClass,
                 R.id.chipBgProHome,       R.id.ivProHome,     R.id.tvProHome);
 
         setupItem(activity,
@@ -147,7 +149,8 @@ public class NavbarHelper {
 
             Intent intent = new Intent(activity, targetClass);
             boolean isHome = targetClass.equals(MainActivity.class)
-                          || targetClass.equals(VetDashboardActivity.class);
+                          || targetClass.equals(VetDashboardActivity.class)
+                          || targetClass.equals(PetShopDashboardActivity.class);
             if (isHome) {
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
                               | Intent.FLAG_ACTIVITY_NEW_TASK);

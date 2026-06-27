@@ -72,9 +72,13 @@ public class SplashScreen extends AppCompatActivity {
                     boolean isProvider = "Veterinarian".equalsIgnoreCase(role) || 
                                          "Grooming".equalsIgnoreCase(role) || 
                                          "Boarding".equalsIgnoreCase(role);
+                    
+                    boolean isPetShop = "Pet Shop".equalsIgnoreCase(role);
 
                     if (isProvider) {
                         startActivity(new Intent(SplashScreen.this, VetDashboardActivity.class));
+                    } else if (isPetShop) {
+                        startActivity(new Intent(SplashScreen.this, PetShopDashboardActivity.class));
                     } else {
                         startActivity(new Intent(SplashScreen.this, MainActivity.class));
                     }

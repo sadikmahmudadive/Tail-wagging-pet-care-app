@@ -58,6 +58,13 @@ public class AdminDashboardActivity extends AppCompatActivity {
         findViewById(R.id.btnPushBroadcast).setOnClickListener(v -> 
             startActivity(new Intent(this, AdminBroadcastActivity.class)));
 
+        findViewById(R.id.btnManageOfficialShop).setOnClickListener(v -> {
+            Intent intent = new Intent(this, InventoryManagementActivity.class);
+            intent.putExtra("SHOP_ID", FirebaseAuth.getInstance().getUid());
+            intent.putExtra("SHOP_NAME", "Official Tail Wagging Shop");
+            startActivity(intent);
+        });
+
         findViewById(R.id.btnUserView).setOnClickListener(v -> {
             startActivity(new Intent(this, MainActivity.class));
         });

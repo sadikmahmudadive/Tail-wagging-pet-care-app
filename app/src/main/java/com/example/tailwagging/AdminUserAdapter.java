@@ -24,6 +24,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
     public interface OnUserActionListener {
         void onDelete(AdminUser user);
         void onToggleVerify(AdminUser user);
+        void onManageShop(AdminUser user);
     }
 
     public AdminUserAdapter(List<AdminUser> users, OnUserActionListener listener) {
@@ -53,6 +54,13 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
             holder.ivVerifiedBadge.setVisibility(View.GONE);
         }
 
+        if ("Pet Shop".equalsIgnoreCase(user.role)) {
+            holder.btnManageShop.setVisibility(View.VISIBLE);
+            holder.btnManageShop.setOnClickListener(v -> listener.onManageShop(user));
+        } else {
+            holder.btnManageShop.setVisibility(View.GONE);
+        }
+
         Glide.with(holder.itemView.getContext())
                 .load(user.photoUrl)
                 .placeholder(R.drawable.ic_profile)
@@ -73,7 +81,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
         CircleImageView ivPhoto;
         TextView tvName, tvEmail, tvRole;
         ImageView ivVerifiedBadge;
-        ImageButton btnDelete;
+        ImageButton btnDelete, btnManageShop;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +91,7 @@ public class AdminUserAdapter extends RecyclerView.Adapter<AdminUserAdapter.View
             tvEmail = itemView.findViewById(R.id.tvUserEmail);
             tvRole = itemView.findViewById(R.id.tvUserRole);
             btnDelete = itemView.findViewById(R.id.btnDeleteUser);
+            btnManageShop = itemView.findViewById(R.id.btnManageShopItems);
         }
     }
 }

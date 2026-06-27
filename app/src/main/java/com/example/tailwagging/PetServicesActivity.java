@@ -43,11 +43,11 @@ import java.util.Locale;
 public class PetServicesActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 102;
-    private enum ServiceType { VETERINARY, GROOMING, BOARDING }
+    private enum ServiceType { VETERINARY, GROOMING, BOARDING, PET_SHOP }
     private ServiceType currentType = ServiceType.VETERINARY;
 
-    private LinearLayout catVeterinary, catGrooming, catBoarding;
-    private MaterialCardView cardVetIcon, cardGroomIcon, cardBoardingIcon;
+    private LinearLayout catVeterinary, catGrooming, catBoarding, catPetShop;
+    private MaterialCardView cardVetIcon, cardGroomIcon, cardBoardingIcon, cardShopIcon;
     private View btnUploadDiseasePhoto, layoutFindDisease;
     private TextView tvNearbyTitle, tvRecommendedTitle;
     private RecyclerView rvNearby, rvRecommended;
@@ -77,10 +77,12 @@ public class PetServicesActivity extends AppCompatActivity {
         catVeterinary = findViewById(R.id.catVeterinary);
         catGrooming = findViewById(R.id.catGrooming);
         catBoarding = findViewById(R.id.catBoarding);
+        catPetShop = findViewById(R.id.catPetShop);
 
         cardVetIcon = findViewById(R.id.cardVetIcon);
         cardGroomIcon = findViewById(R.id.cardGroomIcon);
         cardBoardingIcon = findViewById(R.id.cardBoardingIcon);
+        cardShopIcon = findViewById(R.id.cardShopIcon);
 
         layoutFindDisease = findViewById(R.id.layoutFindDisease);
         btnUploadDiseasePhoto = findViewById(R.id.uploadPhotoFrame);
@@ -99,6 +101,7 @@ public class PetServicesActivity extends AppCompatActivity {
         catVeterinary.setOnClickListener(v -> switchService(ServiceType.VETERINARY));
         catGrooming.setOnClickListener(v -> switchService(ServiceType.GROOMING));
         catBoarding.setOnClickListener(v -> switchService(ServiceType.BOARDING));
+        catPetShop.setOnClickListener(v -> switchService(ServiceType.PET_SHOP));
 
         btnUploadDiseasePhoto.setOnClickListener(v -> openImagePicker());
 
@@ -214,15 +217,13 @@ public class PetServicesActivity extends AppCompatActivity {
         cardVetIcon.setCardBackgroundColor(inactiveBg);
         cardGroomIcon.setCardBackgroundColor(inactiveBg);
         cardBoardingIcon.setCardBackgroundColor(inactiveBg);
+        cardShopIcon.setCardBackgroundColor(inactiveBg);
         
         // Reset tints
-        // Actually, the ImageView is the only child of the card or inside a layout? 
-        // In the new XML: MaterialCardView -> ImageView (id is not set on the ImageView itself, but it is the first child)
-        
-        // Let's use getChildAt(0) safely
         if (cardVetIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardVetIcon.getChildAt(0)).setColorFilter(inactiveTint);
         if (cardGroomIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardGroomIcon.getChildAt(0)).setColorFilter(inactiveTint);
         if (cardBoardingIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardBoardingIcon.getChildAt(0)).setColorFilter(inactiveTint);
+        if (cardShopIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardShopIcon.getChildAt(0)).setColorFilter(inactiveTint);
 
         switch (type) {
             case VETERINARY:
@@ -248,6 +249,18 @@ public class PetServicesActivity extends AppCompatActivity {
                 tvNearbyTitle.setText("Nearby Boarding");
                 tvRecommendedTitle.setText("Trusted Stays");
                 fetchServices("Boarding");
+                break;
+            case PET_SHOP:
+                cardShopIcon.setCardBackgroundColor(activeBg);
+                if (cardShopIcon.getChildAt(0) instanceof ImageView) ((ImageView)cardShopIcon.getChildAt(0)).setColorFilter(activeTint);
+                if (layoutFindDisease != null) layoutFindDisease.setVisibility(View.GONE);
+                
+                // Navigate to the main shop experience
+                startActivity(new Intent(this, ShopActivity.class));
+
+                tvNearbyTitle.setText("Nearby Pet Shops");
+                tvRecommendedTitle.setText("Top Rated Shops");
+                fetchServices("Pet Shop");
                 break;
         }
     }
@@ -322,14 +335,18 @@ public class PetServicesActivity extends AppCompatActivity {
                         // Mock data for display if list is empty
                         if (list.isEmpty()) {
                             if ("Veterinarian".equals(role)) {
-                                list.add(new Vet("v1", "Dr. Nambuvan", "Bachelor of veterinary science", 5.0f, 100, "Expert", "2.5 km", "1000 LKR", "10 years", "25/11/2022", R.drawable.pet1));
-                                list.add(new Vet("v2", "Dr. Sambuvan", "Veterinary Dentist", 5.0f, 80, "Senior", "2.0 km", "1200 LKR", "8 years", "N/A", R.drawable.ic_profile));
+                                list.add(new Vet("v1", "Dr. Nambuvan", "Bachelor of veterinary science", 5.0f, 100, "Expert", "2.5 km", "1000 Tk", "10 years", "25/11/2022", R.drawable.pet1));
+                                list.add(new Vet("v2", "Dr. Sambuvan", "Veterinary Dentist", 5.0f, 80, "Senior", "2.0 km", "1200 Tk", "8 years", "N/A", R.drawable.ic_profile));
                             } else if ("Grooming".equals(role)) {
-                                list.add(new Vet("g1", "Comb and Collar", "Expert Grooming", 5.0f, 150, "Top Rated", "2.5 km", "1500 LKR", "5 years", "N/A", R.drawable.pet1));
-                                list.add(new Vet("g2", "Cosmo Dog Cares", "Full Service Spa", 4.8f, 90, "Luxury", "3.1 km", "2000 LKR", "3 years", "N/A", R.drawable.ic_profile));
-                            } else {
-                                list.add(new Vet("b1", "Tails of the city", "Dog Boarding", 5.0f, 200, "Spacious", "4.0 km", "2500 LKR", "7 years", "N/A", R.drawable.pet1));
-                                list.add(new Vet("b2", "Cutie Paws", "Home Environment", 4.9f, 60, "Cozy", "1.5 km", "1800 LKR", "4 years", "N/A", R.drawable.ic_profile));
+                                list.add(new Vet("g1", "Comb and Collar", "Expert Grooming", 5.0f, 150, "Top Rated", "2.5 km", "1500 Tk", "5 years", "N/A", R.drawable.pet1));
+                                list.add(new Vet("g2", "Cosmo Dog Cares", "Full Service Spa", 4.8f, 90, "Luxury", "3.1 km", "2000 Tk", "3 years", "N/A", R.drawable.ic_profile));
+                            } else if ("Boarding".equals(role)) {
+                                list.add(new Vet("b1", "Tails of the city", "Dog Boarding", 5.0f, 200, "Spacious", "4.0 km", "2500 Tk", "7 years", "N/A", R.drawable.pet1));
+                                list.add(new Vet("b2", "Cutie Paws", "Home Environment", 4.9f, 60, "Cozy", "1.5 km", "1800 Tk", "4 years", "N/A", R.drawable.ic_profile));
+                            }
+else if ("Pet Shop".equals(role)) {
+                                list.add(new Vet("s1", "The Pet Mart", "All-in-one Store", 5.0f, 300, "Big", "1.2 km", "N/A", "15 years", "N/A", R.drawable.pet1));
+                                list.add(new Vet("s2", "Puppy Love Shop", "Boutique", 4.7f, 50, "Cozy", "2.8 km", "N/A", "2 years", "N/A", R.drawable.ic_profile));
                             }
                         }
 

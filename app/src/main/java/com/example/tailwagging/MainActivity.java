@@ -85,13 +85,20 @@ public class MainActivity extends AppCompatActivity {
         Button btnTrackPets = findViewById(R.id.btnTrackPets);
         if (btnTrackPets != null) {
             btnTrackPets.setOnClickListener(v -> {
-                Toast.makeText(this, "Pet Location Tracking coming soon!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(MainActivity.this, PetTrackerActivity.class));
             });
         }
 
         Button btnCheckPets = findViewById(R.id.btnCheckPets);
         if (btnCheckPets != null) {
             btnCheckPets.setOnClickListener(v -> launchPetHealthActivity());
+        }
+
+        Button btnGoToShop = findViewById(R.id.btnGoToShop);
+        if (btnGoToShop != null) {
+            btnGoToShop.setOnClickListener(v -> {
+                startActivity(new Intent(MainActivity.this, ShopActivity.class));
+            });
         }
 
         View btnViewAllEvents = findViewById(R.id.btnViewAllEvents);
@@ -108,6 +115,13 @@ public class MainActivity extends AppCompatActivity {
         if (btnNotifications != null) {
             btnNotifications.setOnClickListener(v -> {
                 startActivity(new Intent(MainActivity.this, NotificationActivity.class));
+            });
+        }
+
+        ImageButton btnCart = findViewById(R.id.appBarCart);
+        if (btnCart != null) {
+            btnCart.setOnClickListener(v -> {
+                startActivity(new Intent(MainActivity.this, CartActivity.class));
             });
         }
 
@@ -212,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                         
                         if (vetList.isEmpty()) {
                             // Fallback mock if no vets registered yet for UI testing
-                            Vet mockVet = new Vet("mock_id", "Dr. Nambuvan", "Bachelor of veterinary science", 5.0f, 100, "Expert", "2.5 km", "1000 LKR", "10 years", "25/11/2022", R.drawable.pet1);
+                            Vet mockVet = new Vet("mock_id", "Dr. Nambuvan", "Bachelor of veterinary science", 5.0f, 100, "Expert", "2.5 km", "1000 Tk", "10 years", "25/11/2022", R.drawable.pet1);
                             mockVet.setBio("Dr. Shehan, one of the most skilled and experienced veterinarians and the owner of the most convenient animal clinic \"Petz & Vetz\". Our paradise is situated in the heart of the town with a pleasant environment. We are ready to treat your beloved doggos & puppers with love and involvement.");
                             mockVet.setRecommendedFor("Bella");
                             vetList.add(mockVet);
@@ -226,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         // Show mock data if database fails or no connection for testing
                         List<Vet> vetList = new ArrayList<>();
-                        Vet mockVet = new Vet("mock_id", "Dr. Nambuvan", "Bachelor of veterinary science", 5.0f, 100, "Expert", "2.5 km", "1000 LKR", "10 years", "25/11/2022", R.drawable.pet1);
+                        Vet mockVet = new Vet("mock_id", "Dr. Nambuvan", "Bachelor of veterinary science", 5.0f, 100, "Expert", "2.5 km", "1000 Tk", "10 years", "25/11/2022", R.drawable.pet1);
                         mockVet.setBio("Dr. Shehan, one of the most skilled and experienced veterinarians and the owner of the most convenient animal clinic \"Petz & Vetz\". Our paradise is situated in the heart of the town with a pleasant environment.");
                         mockVet.setRecommendedFor("Bella");
                         vetList.add(mockVet);

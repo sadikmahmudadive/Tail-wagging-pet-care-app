@@ -3,10 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/editProfileRoot"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/white"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_dashboard"
     android:orientation="vertical"
-    android:paddingBottom="16dp"
     android:gravity="center_horizontal">
 
     <!-- Top Bar -->

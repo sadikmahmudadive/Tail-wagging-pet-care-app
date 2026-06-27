@@ -1,5 +1,6 @@
 package com.example.tailwagging;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -91,16 +92,18 @@ public class AdminVerifyVetsActivity extends AppCompatActivity implements AdminU
 
     private void fetchVets() {
         pbVets.setVisibility(View.VISIBLE);
-        dbRef.child("users").orderByChild("role").equalTo("Veterinarian")
-                .addValueEventListener(new ValueEventListener() {
+        dbRef.child("users").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 allVets.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
                     AdminUser user = ds.getValue(AdminUser.class);
-                    if (user != null) {
-                        user.id = ds.getKey();
-                        allVets.add(user);
+                    if (user != null && user.role != null) {
+                        String r = user.role.toLowerCase();
+                        if (r.contains("vet") || r.contains("groom") || r.contains("boarding") || r.contains("shop")) {
+                            user.id = ds.getKey();
+                            allVets.add(user);
+                        }
                     }
                 }
                 filterVets(etSearch.getText().toString());
@@ -122,5 +125,13 @@ public class AdminVerifyVetsActivity extends AppCompatActivity implements AdminU
     @Override
     public void onToggleVerify(AdminUser user) {
         dbRef.child("users").child(user.id).child("isVerified").setValue(!user.isVerified);
+    }
+
+    @Override
+    public void onManageShop(AdminUser user) {
+        Intent intent = new Intent(this, InventoryManagementActivity.class);
+        intent.putExtra("SHOP_ID", user.id);
+        intent.putExtra("SHOP_NAME", user.name);
+        startActivity(intent);
     }
 }
