@@ -16,7 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/health_green"
+            android:background="@android:color/transparent"
             android:orientation="vertical"
             android:paddingBottom="32dp">
 
@@ -117,7 +117,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         app:cardBackgroundColor="@color/health_tab_inactive"
-                        app:cardCornerRadius="16dp"
+                        app:cardCornerRadius="24dp"
                         app:cardElevation="0dp">
                         <ImageView
                             android:layout_width="32dp"
@@ -147,7 +147,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         app:cardBackgroundColor="@color/white_overlay_medium"
-                        app:cardCornerRadius="16dp"
+                        app:cardCornerRadius="24dp"
                         app:cardElevation="0dp">
                         <ImageView
                             android:layout_width="32dp"
@@ -177,7 +177,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         app:cardBackgroundColor="@color/white_overlay_medium"
-                        app:cardCornerRadius="16dp"
+                        app:cardCornerRadius="24dp"
                         app:cardElevation="0dp">
                         <ImageView
                             android:layout_width="32dp"
@@ -207,7 +207,7 @@
                         android:layout_width="60dp"
                         android:layout_height="60dp"
                         app:cardBackgroundColor="@color/white_overlay_medium"
-                        app:cardCornerRadius="16dp"
+                        app:cardCornerRadius="24dp"
                         app:cardElevation="0dp">
                         <ImageView
                             android:layout_width="32dp"
@@ -265,17 +265,13 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnRetailStores"
-                    style="@style/Widget.Material3.Button.TonalButton"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:backgroundTint="@color/health_green"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:paddingHorizontal="12dp"
-                    android:text="Check Retail Stores"
+                    android:layout_height="wrap_content"
+                    android:text="Retail Stores"
                     android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    android:textSize="10sp"
-                    app:cornerRadius="8dp"
+                    android:textColor="@color/md_theme_light_primary"
+                    android:fontFamily="@font/fredoka_bold"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"/>
             </LinearLayout>

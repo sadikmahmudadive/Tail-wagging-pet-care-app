@@ -161,7 +161,7 @@ public class MyPetsActivity extends AppCompatActivity implements PetAdapter.OnPe
         };
 
         Log.d(TAG, "Querying pets for ownerID: " + currentUser.getUid());
-        petsRef.orderByChild("ownerID").equalTo(currentUser.getUid()).addListenerForSingleValueEvent(petsListener);
+        petsRef.orderByChild("ownerID").equalTo(currentUser.getUid()).addValueEventListener(petsListener);
         setRefreshing(true);
     }
 

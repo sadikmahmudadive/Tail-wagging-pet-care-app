@@ -293,12 +293,10 @@ public class PetDetailsActivity extends AppCompatActivity {
 
             int years = now.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
             int months = now.get(Calendar.MONTH) - birth.get(Calendar.MONTH);
-            int days = now.get(Calendar.DAY_OF_MONTH) - birth.get(Calendar.DAY_OF_MONTH);
 
-            if (days < 0) {
+            // Adjust months if current day is before DOB day
+            if (now.get(Calendar.DAY_OF_MONTH) < birth.get(Calendar.DAY_OF_MONTH)) {
                 months--;
-                now.add(Calendar.MONTH, -1);
-                days += now.getActualMaximum(Calendar.DAY_OF_MONTH);
             }
 
             if (months < 0) {
@@ -308,15 +306,12 @@ public class PetDetailsActivity extends AppCompatActivity {
 
             StringBuilder ageBuilder = new StringBuilder();
             if (years > 0) {
-                ageBuilder.append(years).append("y ");
-            }
-            if (months > 0) {
-                ageBuilder.append(months).append("m ");
-            }
-            if (days >= 0 && years == 0 && months == 0) {
-                ageBuilder.append(days).append("d");
-            } else if (days > 0) {
-                 ageBuilder.append(days).append("d");
+                ageBuilder.append(years).append(years == 1 ? " Year, " : " Years, ");
+                ageBuilder.append(months).append(months == 1 ? " Month" : " Months");
+            } else if (months >= 0) {
+                ageBuilder.append(months).append(months == 1 ? " Month" : " Months");
+            } else {
+                return "Future Date";
             }
 
             return ageBuilder.toString().trim();

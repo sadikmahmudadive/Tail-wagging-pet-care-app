@@ -4,119 +4,122 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="16dp"
+    android:layout_marginHorizontal="20dp"
     android:layout_marginVertical="8dp"
-    app:cardCornerRadius="20dp"
+    app:cardCornerRadius="24dp"
     app:cardElevation="2dp"
     app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="12dp">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/ivCartProduct"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/pet1"
-            app:shapeAppearanceOverlay="@style/RoundedCorner16" />
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
             android:layout_weight="1"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="12dp">
 
-            <TextView
-                android:id="@+id/tvCartProductName"
-                android:layout_width="wrap_content"
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/ivCartProduct"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/pet1"
+                app:shapeAppearanceOverlay="@style/RoundedCorner12" />
+
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/fredoka_bold"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                tools:text="Josera Mini Deluxe" />
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tvCartProductBrand"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fredoka"
-                android:textColor="@color/grey_medium"
-                android:textSize="12sp"
-                tools:text="Josera" />
+                <TextView
+                    android:id="@+id/tvCartProductPrice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/health_green"
+                    android:textSize="12sp"
+                    tools:text="Tk 7850.00 x 3" />
 
-            <TextView
-                android:id="@+id/tvCartProductPrice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/fredoka_bold"
-                android:textColor="@color/health_green"
-                android:textSize="14sp"
-                tools:text="Tk 1500.00" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/tvCartProductName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    tools:text="Royal Canin Rottweiler Puppy" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tvCartProductDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka"
+                    android:textColor="@color/grey_medium"
+                    android:textSize="11sp"
+                    tools:text="3kg" />
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:background="@drawable/bg_rounded_gray"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingHorizontal="4dp">
-
-                <ImageButton
-                    android:id="@+id/btnCartMinus"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_arrow_left"
-                    app:tint="@color/dark_blue"
-                    android:padding="4dp"
-                    android:scaleType="fitCenter" />
-
-                <TextView
-                    android:id="@+id/tvCartQuantity"
-                    android:layout_width="32dp"
-                    android:layout_height="match_parent"
-                    android:fontFamily="@font/fredoka_bold"
-                    android:gravity="center"
-                    android:text="1"
-                    android:textColor="@color/black"
-                    android:textSize="14sp" />
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <ImageButton
                     android:id="@+id/btnCartPlus"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:background="?attr/selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_add"
-                    app:tint="@color/dark_blue"
+                    android:src="@drawable/ic_quantity_add"
+                    app:tint="@color/health_green"
+                    android:padding="4dp"
+                    android:scaleType="fitCenter" />
+
+                <TextView
+                    android:id="@+id/tvCartQuantity"
+                    android:layout_width="32dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/fredoka_bold"
+                    android:gravity="center"
+                    android:text="3"
+                    android:textColor="@color/grey_medium"
+                    android:textSize="14sp" />
+
+                <ImageButton
+                    android:id="@+id/btnCartMinus"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:src="@drawable/ic_quantity_minus"
+                    app:tint="@color/health_green"
                     android:padding="4dp"
                     android:scaleType="fitCenter" />
             </LinearLayout>
-
-            <ImageButton
-                android:id="@+id/btnRemoveFromCart"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="8dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_delete"
-                app:tint="@color/red"
-                android:padding="6dp"
-                android:scaleType="fitCenter" />
         </LinearLayout>
+
+        <!-- Red Delete Area (visible when needed or always small) -->
+        <FrameLayout
+            android:id="@+id/btnRemoveFromCart"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
+            android:background="@color/red"
+            android:visibility="gone"
+            tools:visibility="visible">
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_delete"
+                app:tint="@color/white" />
+        </FrameLayout>
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

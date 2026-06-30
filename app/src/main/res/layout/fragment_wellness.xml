@@ -5,7 +5,7 @@
     android:id="@+id/swipeRefreshWellness"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/light_gray">
+    android:background="@drawable/background_dashboard">
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -27,19 +27,20 @@
                     style="@style/HealthSectionHeader"
                     android:text="@string/vaccinations_label" />
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSeeAllVaccinations"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:drawableEnd="@drawable/ic_chevron_right"
-                    android:drawablePadding="4dp"
-                    android:fontFamily="@font/fredoka"
                     android:text="@string/see_all"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="14sp"
-                    app:drawableTint="@color/dark_blue" />
+                    android:textColor="@color/md_theme_light_primary"
+                    android:fontFamily="@font/fredoka_bold"
+                    app:icon="@drawable/ic_chevron_right"
+                    app:iconGravity="end"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/md_theme_light_primary" />
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -62,19 +63,20 @@
                     style="@style/HealthSectionHeader"
                     android:text="@string/allergies_label" />
 
-                <TextView
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSeeAllAllergies"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:drawableEnd="@drawable/ic_chevron_right"
-                    android:drawablePadding="4dp"
-                    android:fontFamily="@font/fredoka"
                     android:text="@string/see_all"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="14sp"
-                    app:drawableTint="@color/dark_blue" />
+                    android:textColor="@color/md_theme_light_primary"
+                    android:fontFamily="@font/fredoka_bold"
+                    app:icon="@drawable/ic_chevron_right"
+                    app:iconGravity="end"
+                    app:iconSize="16dp"
+                    app:iconTint="@color/md_theme_light_primary" />
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView

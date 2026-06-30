@@ -65,7 +65,7 @@ public class PetShopDashboardActivity extends AppCompatActivity {
             startActivity(new Intent(this, InventoryManagementActivity.class)));
 
         findViewById(R.id.actionViewOrders).setOnClickListener(v -> 
-            Toast.makeText(this, "Order Tracking coming soon", Toast.LENGTH_SHORT).show());
+            startActivity(new Intent(this, ShopOrdersActivity.class)));
 
         NavbarHelper.setupNavbar(this);
     }

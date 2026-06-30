@@ -417,40 +417,36 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchAndShowRegisteredPets() {
         RecyclerView recyclerViewPets = findViewById(R.id.recyclerViewPets);
-        if (recyclerViewPets == null) return; // Guard if view is not found
+        if (recyclerViewPets == null) return;
 
         recyclerViewPets.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         FrameLayout petsProgressOverlay = findViewById(R.id.petsProgressOverlay);
         if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.VISIBLE);
 
-        if (user == null) { // Check if user is null before making DB call
+        if (user == null) {
             if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.GONE);
             if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
-            // Optionally show a message that user needs to be logged in to see pets
             return;
         }
 
+        // Use addValueEventListener for real-time updates when a new pet is added
         dbRef.child("pets")
                 .orderByChild("ownerID").equalTo(user.getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.GONE);
                         if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
 
                         List<Pet> petList = new ArrayList<>();
                         for (DataSnapshot petSnap : dataSnapshot.getChildren()) {
                             Pet pet = petSnap.getValue(Pet.class);
-                            if (pet != null) petList.add(pet);
+                            if (pet != null) {
+                                pet.setPetID(petSnap.getKey());
+                                petList.add(pet);
+                            }
                         }
-                        // Create adapter and set the simple click listener
-                        petAdapterHorizontal = new PetAdapter(MainActivity.this, petList);
-                        petAdapterHorizontal.setOnPetSimpleClickListener(clickedPet -> {
-                            // When a pet card is clicked, launch MyPetsActivity
-                            launchMyPetsActivity();
-                        });
-                        recyclerViewPets.setAdapter(petAdapterHorizontal);
-
+                        
                         // Handle empty state for pets
                         View cardEmptyPets = findViewById(R.id.cardEmptyPets);
                         if (cardEmptyPets != null) {
@@ -463,10 +459,19 @@ public class MainActivity extends AppCompatActivity {
                                 recyclerViewPets.setVisibility(View.VISIBLE);
                             }
                         }
+
+                        // Create/Update adapter
+                        if (petAdapterHorizontal == null) {
+                            petAdapterHorizontal = new PetAdapter(MainActivity.this, petList);
+                            petAdapterHorizontal.setOnPetSimpleClickListener(clickedPet -> launchMyPetsActivity());
+                            recyclerViewPets.setAdapter(petAdapterHorizontal);
+                        } else {
+                            petAdapterHorizontal.updatePets(petList);
+                        }
                     }
 
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
                         if (petsProgressOverlay != null) petsProgressOverlay.setVisibility(View.GONE);
                         if (swipeRefreshLayout != null) swipeRefreshLayout.setRefreshing(false);
                         Toast.makeText(MainActivity.this, "Failed to load pets: " + databaseError.getMessage(), Toast.LENGTH_LONG).show();

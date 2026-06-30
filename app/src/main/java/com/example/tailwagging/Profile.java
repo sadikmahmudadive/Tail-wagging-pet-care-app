@@ -80,7 +80,7 @@ public class Profile extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        dbRef = FirebaseDatabase.getInstance().getReference();
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         profileImage = findViewById(R.id.profileImage);
         userEmail = findViewById(R.id.userEmail);
@@ -110,6 +110,10 @@ public class Profile extends AppCompatActivity {
 
         findViewById(R.id.optionFavoriteVet).setOnClickListener(v -> {
             startActivity(new Intent(Profile.this, FavoriteVetsActivity.class));
+        });
+
+        findViewById(R.id.optionMyOrders).setOnClickListener(v -> {
+            startActivity(new Intent(Profile.this, ShopOrdersActivity.class));
         });
 
         View adminOption = findViewById(R.id.optionAdminDashboard);

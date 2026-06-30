@@ -79,7 +79,7 @@
             android:background="@drawable/bg_circle_light_blue"
             android:padding="10dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/ic_money"
+            android:src="@drawable/ic_quantity_add"
             app:tint="@color/white"
             android:contentDescription="Add to cart" />
 

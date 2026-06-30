@@ -1,5 +1,6 @@
 package com.example.tailwagging;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
@@ -15,10 +16,11 @@ import java.util.Locale;
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnCartActionListener {
 
     private RecyclerView rvCartItems;
-    private TextView tvTotalPrice;
-    private View layoutEmpty;
+    private TextView tvSubtotal, tvShipping, tvTotal;
+    private View layoutEmpty, layoutSummary;
     private CartAdapter adapter;
     private CartManager cartManager;
+    private final double shippingCharges = 520.0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,30 +32,28 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         initWidgets();
         setupRecyclerView();
         updateUI();
+        
+        UiUtils.fadeIn(findViewById(R.id.rvCartItems));
     }
 
     private void initWidgets() {
         rvCartItems = findViewById(R.id.rvCartItems);
-        tvTotalPrice = findViewById(R.id.tvTotalPrice);
+        tvSubtotal = findViewById(R.id.tvSubtotal);
+        tvShipping = findViewById(R.id.tvShipping);
+        tvTotal = findViewById(R.id.tvTotal);
         layoutEmpty = findViewById(R.id.layoutEmptyCart);
+        layoutSummary = findViewById(R.id.layoutSummary);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         findViewById(R.id.btnCheckout).setOnClickListener(v -> {
-            if (cartManager.getItems().isEmpty()) {
-                Toast.makeText(this, "Your cart is empty!", Toast.LENGTH_SHORT).show();
-            } else {
-                new androidx.appcompat.app.AlertDialog.Builder(this)
-                        .setTitle("Confirm Order")
-                        .setMessage("Total Amount: " + String.format(Locale.getDefault(), "Tk %.2f", cartManager.getTotalPrice()))
-                        .setPositiveButton("Place Order", (dialog, which) -> {
-                            Toast.makeText(this, "Order placed successfully!", Toast.LENGTH_LONG).show();
-                            cartManager.clearCart();
-                            updateUI();
-                            adapter.notifyDataSetChanged();
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
-            }
+            UiUtils.animateClick(v);
+            v.postDelayed(() -> {
+                if (cartManager.getItems().isEmpty()) {
+                    Toast.makeText(this, "Your cart is empty!", Toast.LENGTH_SHORT).show();
+                } else {
+                    startActivity(new Intent(this, CheckoutActivity.class));
+                }
+            }, 250);
         });
     }
 
@@ -67,12 +67,20 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnCar
         if (cartManager.getItems().isEmpty()) {
             layoutEmpty.setVisibility(View.VISIBLE);
             rvCartItems.setVisibility(View.GONE);
-            findViewById(R.id.cardCheckout).setVisibility(View.GONE);
+            layoutSummary.setVisibility(View.GONE);
+            findViewById(R.id.btnCheckout).setVisibility(View.GONE);
         } else {
             layoutEmpty.setVisibility(View.GONE);
             rvCartItems.setVisibility(View.VISIBLE);
-            findViewById(R.id.cardCheckout).setVisibility(View.VISIBLE);
-            tvTotalPrice.setText(String.format(Locale.getDefault(), "Tk %.2f", cartManager.getTotalPrice()));
+            layoutSummary.setVisibility(View.VISIBLE);
+            findViewById(R.id.btnCheckout).setVisibility(View.VISIBLE);
+
+            double subtotal = cartManager.getTotalPrice();
+            double total = subtotal + shippingCharges;
+
+            tvSubtotal.setText(String.format(Locale.getDefault(), "Tk %.2f", subtotal));
+            tvShipping.setText(String.format(Locale.getDefault(), "Tk %.2f", shippingCharges));
+            tvTotal.setText(String.format(Locale.getDefault(), "Tk %.2f", total));
         }
     }
 

@@ -65,6 +65,9 @@ public class AdminDashboardActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        findViewById(R.id.btnAdminOrders).setOnClickListener(v -> 
+            startActivity(new Intent(this, ShopOrdersActivity.class)));
+
         findViewById(R.id.btnUserView).setOnClickListener(v -> {
             startActivity(new Intent(this, MainActivity.class));
         });

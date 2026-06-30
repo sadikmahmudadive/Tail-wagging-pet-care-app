@@ -86,4 +86,13 @@
     <string name="thu_initial">T</string>
     <string name="fri_initial">F</string>
     <string name="sat_initial">S</string>
+    <string name="my_cart">My Cart</string>
+    <string name="checkout">Checkout</string>
+    <string name="total_price">Total Price</string>
+    <string name="empty_cart">Your cart is empty</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="smart_link_tracker">Smart Link Tracker</string>
+    <string name="real_time_vitals">Real-time Vitals</string>
+    <string name="inventory_management">Inventory Management</string>
+    <string name="official_shop">Official Shop</string>
 </resources>

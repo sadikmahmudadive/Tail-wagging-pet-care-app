@@ -81,7 +81,7 @@ public class AddEditPet extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         user = mAuth.getCurrentUser();
-        dbRef = FirebaseDatabase.getInstance().getReference();
+        dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
         petImageInput = findViewById(R.id.petImageInput);
         etPetName = findViewById(R.id.etPetName);
@@ -202,11 +202,33 @@ public class AddEditPet extends AppCompatActivity {
         dob.set(year, month, day);
         Calendar today = Calendar.getInstance();
 
-        int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
-        if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
-            age--;
+        int years = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
+        int months = today.get(Calendar.MONTH) - dob.get(Calendar.MONTH);
+        int days = today.get(Calendar.DAY_OF_MONTH) - dob.get(Calendar.DAY_OF_MONTH);
+
+        // Adjust months if current day is before DOB day
+        if (days < 0) {
+            months--;
         }
-        etPetAge.setText(age >= 0 ? String.valueOf(age) : "");
+
+        // Adjust years if months are negative
+        if (months < 0) {
+            years--;
+            months += 12;
+        }
+
+        String ageString;
+        if (years > 0) {
+            ageString = years + (years == 1 ? " Year, " : " Years, ") + months + (months == 1 ? " Month" : " Months");
+        } else {
+            ageString = months + (months == 1 ? " Month" : " Months");
+        }
+
+        if (years < 0) {
+            etPetAge.setText("Future Date");
+        } else {
+            etPetAge.setText(ageString);
+        }
     }
 
     private void populateFieldsForEdit() {
@@ -391,18 +413,17 @@ public class AddEditPet extends AppCompatActivity {
 
         String uid = (user != null) ? user.getUid() : null;
         if (uid == null) {
-            Toast.makeText(this, "User not authenticated.", Toast.LENGTH_SHORT).show();
             return;
         }
 
         DatabaseReference petsRef = dbRef.child("pets");
+        // Using addValueEventListener to ensure real-time updates after adding a pet
         petsRef.orderByChild("ownerID").equalTo(uid)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         layoutAddedPets.removeAllViews();
                         if (!dataSnapshot.exists()) {
-                            Toast.makeText(AddEditPet.this, "No pets found. Please add a pet.", Toast.LENGTH_SHORT).show();
                             return;
                         }
                         for (DataSnapshot petSnap : dataSnapshot.getChildren()) {

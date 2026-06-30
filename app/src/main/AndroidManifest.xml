@@ -49,6 +49,15 @@
             android:name=".CartActivity"
             android:exported="false" />
         <activity
+            android:name=".CheckoutActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ShopOrdersActivity"
+            android:exported="false" />
+        <activity
+            android:name=".OrderDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".PetTrackerActivity"
             android:exported="false" />
         <activity

@@ -114,7 +114,7 @@
                             android:layout_width="72dp"
                             android:layout_height="72dp"
                             app:cardBackgroundColor="@color/md_theme_light_primaryContainer"
-                            app:cardCornerRadius="22dp"
+                            app:cardCornerRadius="24dp"
                             app:cardElevation="2dp"
                             app:strokeWidth="0dp">
                             <ImageView
@@ -146,7 +146,7 @@
                             android:layout_width="72dp"
                             android:layout_height="72dp"
                             app:cardBackgroundColor="@color/white"
-                            app:cardCornerRadius="22dp"
+                            app:cardCornerRadius="24dp"
                             app:cardElevation="2dp"
                             app:strokeWidth="0.5dp"
                             app:strokeColor="@color/black_overlay_light">
@@ -179,7 +179,7 @@
                             android:layout_width="72dp"
                             android:layout_height="72dp"
                             app:cardBackgroundColor="@color/white"
-                            app:cardCornerRadius="22dp"
+                            app:cardCornerRadius="24dp"
                             app:cardElevation="2dp"
                             app:strokeWidth="0.5dp"
                             app:strokeColor="@color/black_overlay_light">
@@ -212,7 +212,7 @@
                             android:layout_width="72dp"
                             android:layout_height="72dp"
                             app:cardBackgroundColor="@color/white"
-                            app:cardCornerRadius="22dp"
+                            app:cardCornerRadius="24dp"
                             app:cardElevation="2dp"
                             app:strokeWidth="0.5dp"
                             app:strokeColor="@color/black_overlay_light">
@@ -388,14 +388,14 @@
                         android:text="Nearby Veterinarians"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
-                    <TextView
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSeeAllNearby"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/fredoka_bold"
                         android:text="See all"
                         android:textColor="@color/md_theme_light_primary"
-                        android:textSize="13sp" />
+                        android:fontFamily="@font/fredoka_bold" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -424,14 +424,14 @@
                         android:text="Recommended Experts"
                         android:textColor="@color/black"
                         android:textSize="18sp" />
-                    <TextView
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnSeeAllRecommended"
+                        style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/fredoka_bold"
                         android:text="See all"
                         android:textColor="@color/md_theme_light_primary"
-                        android:textSize="13sp" />
+                        android:fontFamily="@font/fredoka_bold" />
                 </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
