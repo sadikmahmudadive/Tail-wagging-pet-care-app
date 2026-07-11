@@ -1,5 +1,6 @@
 package com.example.tailwagging;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -98,7 +99,7 @@ public class PetDetailsActivity extends AppCompatActivity {
 
         // Status Section Buttons
         findViewById(R.id.buttonContactVet).setOnClickListener(v -> launchPetHealthActivity());
-        findViewById(R.id.buttonCheckFood).setOnClickListener(v -> launchPetHealthActivity());
+        findViewById(R.id.buttonCheckFood).setOnClickListener(v -> launchPetFoodActivity());
         findViewById(R.id.buttonWhistle).setOnClickListener(v -> launchPetHealthActivity());
 
         // Get Pet data from Intent
@@ -122,6 +123,12 @@ public class PetDetailsActivity extends AppCompatActivity {
 
         swipeRefreshLayout.setOnRefreshListener(this::refreshPetData);
         NavbarHelper.setupNavbar(this);
+    }
+
+    private void launchPetFoodActivity() {
+        Intent intent = new Intent(this, PetFoodActivity.class);
+        intent.putExtra("SELECTED_PET", selectedPet);
+        startActivity(intent);
     }
 
     private void setupHistoryList() {
@@ -252,11 +259,23 @@ public class PetDetailsActivity extends AppCompatActivity {
         setTextOrDefault(textViewPetHeightDetail, pet.getHeight(), "N/A");
         setTextOrDefault(textViewPetWeightDetail, pet.getWeight(), "N/A");
         
+        // Update Medication/Feeding label
+        List<String> feedTimes = pet.getFeedingTimes();
+        if (feedTimes != null && !feedTimes.isEmpty()) {
+            StringBuilder sb = new StringBuilder("Daily Schedule: ");
+            for (int i = 0; i < feedTimes.size(); i++) {
+                sb.append(feedTimes.get(i));
+                if (i < feedTimes.size() - 1) sb.append(", ");
+            }
+            textViewMedicationDetail.setText(sb.toString());
+            findViewById(R.id.textViewFoodStatus).setVisibility(View.GONE); // Hide "Hungry" status if schedule exists
+        } else {
+            textViewMedicationDetail.setText("No feeding times set");
+        }
+
         // Use dedicated description field
         setTextOrDefault(textViewPetDescriptionDetail, pet.getDescription(), "No description provided.");
-        
-        setTextOrDefault(textViewVaccinationDetail, "Last Vaccinated (2mon Ago)", "N/A");
-        setTextOrDefault(textViewMedicationDetail, "Last Fed (1h Ago)", "N/A");
+        setTextOrDefault(textViewVaccinationDetail, "N/A", "N/A");
 
         if (pet.getGender() != null) {
             if (pet.getGender().equalsIgnoreCase("Female")) {

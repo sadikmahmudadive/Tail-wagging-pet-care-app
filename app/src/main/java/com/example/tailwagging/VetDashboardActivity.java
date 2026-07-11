@@ -45,7 +45,6 @@ public class VetDashboardActivity extends AppCompatActivity {
     private TextView tvWelcomeVet, tvVetGreeting, tvTodayApptsCount, tvTotalPatients, tvVetRatingScore, tvEmptyAppts;
     private TextView tvTodayLabel, tvPatientsLabel;
     private CircleImageView ivVetProfile;
-    private ImageButton btnLogout;
     private RecyclerView rvAppointments;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -79,6 +78,11 @@ public class VetDashboardActivity extends AppCompatActivity {
         vetId = FirebaseAuth.getInstance().getUid();
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
+        // Ensure notification listener is running
+        if (vetId != null) {
+            ((App) getApplication()).startNotificationListener();
+        }
+
         setDynamicGreeting();
         setupNavigationBar();
         setupQuickActions();
@@ -88,14 +92,6 @@ public class VetDashboardActivity extends AppCompatActivity {
             fetchAppointments();
         });
 
-        btnLogout.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().clear().apply();
-            Intent intent = new Intent(this, Login.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-            finish();
-        });
 
         fetchVetData();
         fetchAppointments();
@@ -121,7 +117,6 @@ public class VetDashboardActivity extends AppCompatActivity {
         tvPatientsLabel = findViewById(R.id.tvPatientsLabel);
 
         ivVetProfile = findViewById(R.id.appBarProfilePhoto);
-        btnLogout = findViewById(R.id.appBarLogout);
         rvAppointments = findViewById(R.id.rvVetAppointments);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayoutVet);
         tvEmptyAppts = findViewById(R.id.tvEmptyAppts);
@@ -290,12 +285,25 @@ public class VetDashboardActivity extends AppCompatActivity {
             swipeRefreshLayout.setRefreshing(false);
             return;
         }
-        dbRef.child("users").child(vetId).addListenerForSingleValueEvent(new ValueEventListener() {
+        dbRef.child("users").child(vetId).addValueEventListener(new ValueEventListener() { // Changed to addValueEventListener for live points
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String name = snapshot.child("name").getValue(String.class);
                 String photoUrl = snapshot.child("photoUrl").getValue(String.class);
                 String role = snapshot.child("role").getValue(String.class);
+                Long points = snapshot.child("points").getValue(Long.class);
+
+                TextView tvUserPoints = findViewById(R.id.tvUserPoints);
+                if (tvUserPoints != null && points != null) {
+                    tvUserPoints.setText(String.valueOf(points));
+                }
+
+                // Ensure referral code exists for legacy users
+                if (!snapshot.hasChild("referralCode")) {
+                    String generatedCode = vetId.substring(0, 6).toUpperCase();
+                    dbRef.child("users").child(vetId).child("referralCode").setValue(generatedCode);
+                    dbRef.child("users").child(vetId).child("points").setValue(points == null ? 15 : points);
+                }
 
                 float rating = 0;
                 Object rVal = snapshot.child("rating").getValue();

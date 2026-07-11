@@ -9,6 +9,7 @@ public class NotificationItem implements Serializable {
     public String timestamp;
     public boolean isRead;
     public String type; // e.g., "ALARM", "INFO", "SYSTEM"
+    public long serverTimestamp;
 
     public NotificationItem() {}
 
@@ -19,5 +20,6 @@ public class NotificationItem implements Serializable {
         this.timestamp = timestamp;
         this.isRead = false;
         this.type = type;
+        this.serverTimestamp = System.currentTimeMillis();
     }
 }

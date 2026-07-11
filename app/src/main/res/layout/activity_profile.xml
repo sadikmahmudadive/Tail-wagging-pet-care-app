@@ -231,6 +231,54 @@
                     android:paddingLeft="0dp"
                     android:paddingRight="0dp">
 
+                    <!-- Referral Code Card -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="18dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        app:cardBackgroundColor="@color/md_theme_light_secondaryContainer"
+                        app:cardCornerRadius="16dp"
+                        app:cardElevation="0dp"
+                        app:strokeWidth="0dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="16dp"
+                            android:gravity="center_vertical">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Your Referral Code"
+                                    android:fontFamily="@font/fredoka"
+                                    android:textColor="@color/md_theme_light_secondary"
+                                    android:textSize="12sp" />
+                                <TextView
+                                    android:id="@+id/tvProfileReferralCode"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="LOADING"
+                                    android:fontFamily="@font/fredoka_bold"
+                                    android:textColor="@color/md_theme_light_onSecondaryContainer"
+                                    android:textSize="18sp" />
+                            </LinearLayout>
+                            <com.google.android.material.button.MaterialButton
+                                android:id="@+id/btnShareReferral"
+                                style="@style/Widget.Material3.Button.IconButton.Filled.Tonal"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                app:icon="@drawable/ic_more_vert"
+                                android:backgroundTint="@color/white_overlay_medium" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
                     <!-- Option Item 1 -->
                     <LinearLayout
                         android:id="@+id/optionAboutMe"

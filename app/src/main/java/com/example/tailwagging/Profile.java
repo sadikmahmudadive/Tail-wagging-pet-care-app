@@ -201,6 +201,18 @@ public class Profile extends AppCompatActivity {
                                 userAddress.setText("No address added");
                             }
 
+                            String referralCode = dataSnapshot.child("referralCode").getValue(String.class);
+                            TextView tvReferral = findViewById(R.id.tvProfileReferralCode);
+                            if (tvReferral != null && referralCode != null) {
+                                tvReferral.setText(referralCode);
+                                findViewById(R.id.btnShareReferral).setOnClickListener(v -> {
+                                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                                    shareIntent.setType("text/plain");
+                                    shareIntent.putExtra(Intent.EXTRA_TEXT, "Join me on Tail Wagging! Use my referral code " + referralCode + " to get 15 points! Download here: https://tailwagging.com/app");
+                                    startActivity(Intent.createChooser(shareIntent, "Share Referral Code"));
+                                });
+                            }
+
                             if (photoUrl != null && !photoUrl.isEmpty()) {
                                 Glide.with(Profile.this)
                                         .load(photoUrl)

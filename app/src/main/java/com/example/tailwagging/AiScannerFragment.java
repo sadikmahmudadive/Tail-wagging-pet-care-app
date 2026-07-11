@@ -134,6 +134,10 @@ public class AiScannerFragment extends Fragment {
                 @Override
                 public void onSuccess(String analysis) {
                     if (getActivity() == null) return;
+                    
+                    // Log the interaction
+                    LogManager.logAiAction("Skin Scan", "Analysis successful");
+
                     getActivity().runOnUiThread(() -> {
                         progressBarAi.setVisibility(View.GONE);
                         cardResult.setVisibility(View.VISIBLE);

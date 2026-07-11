@@ -2,8 +2,10 @@ package com.example.tailwagging;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Pet implements Parcelable { // Implements Parcelable
+public class Pet implements Parcelable {
     private String petID;
     private String name;
     private String breed;
@@ -16,36 +18,38 @@ public class Pet implements Parcelable { // Implements Parcelable
     private String sound;
     private String weight;
     private String description;
-    // New fields from the "My Pets" feature
     private String age;
     private String vaccinationDetails;
     private String medicationTime;
+    private List<String> feedingTimes;
+    private String currentFoodName;
+    private String foodType; // Dry, Wet, Mixed
 
     public Pet() {
         // Default constructor required for calls to DataSnapshot.getValue(Pet.class)
+        this.feedingTimes = new ArrayList<>();
     }
 
-    // Constructor including all fields (optional, but good for completeness)
     public Pet(String petID, String ownerID, String name, String breed, String gender, String age, String dob, String color, String sound, String height, String weight, String imageUrl, String vaccinationDetails, String medicationTime, String description) {
         this.petID = petID;
         this.ownerID = ownerID;
         this.name = name;
         this.breed = breed;
         this.gender = gender;
-        this.age = age; // New
+        this.age = age;
         this.dob = dob;
         this.color = color;
         this.sound = sound;
         this.height = height;
         this.weight = weight;
         this.imageUrl = imageUrl;
-        this.vaccinationDetails = vaccinationDetails; // New
-        this.medicationTime = medicationTime;     // New
+        this.vaccinationDetails = vaccinationDetails;
+        this.medicationTime = medicationTime;
         this.description = description;
+        this.feedingTimes = new ArrayList<>();
     }
 
-
-    // Getters (existing)
+    // Getters
     public String getPetID() { return petID; }
     public String getName() { return name; }
     public String getBreed() { return breed; }
@@ -58,13 +62,14 @@ public class Pet implements Parcelable { // Implements Parcelable
     public String getSound() { return sound; }
     public String getWeight() { return weight; }
     public String getDescription() { return description; }
-
-    // Getters for new fields
     public String getAge() { return age; }
     public String getVaccinationDetails() { return vaccinationDetails; }
     public String getMedicationTime() { return medicationTime; }
+    public List<String> getFeedingTimes() { return feedingTimes; }
+    public String getCurrentFoodName() { return currentFoodName; }
+    public String getFoodType() { return foodType; }
 
-    // Setters (you might need these if you ever construct/modify Pet objects manually after fetching)
+    // Setters
     public void setPetID(String petID) { this.petID = petID; }
     public void setName(String name) { this.name = name; }
     public void setBreed(String breed) { this.breed = breed; }
@@ -79,8 +84,10 @@ public class Pet implements Parcelable { // Implements Parcelable
     public void setAge(String age) { this.age = age; }
     public void setVaccinationDetails(String vaccinationDetails) { this.vaccinationDetails = vaccinationDetails; }
     public void setMedicationTime(String medicationTime) { this.medicationTime = medicationTime; }
+    public void setFeedingTimes(List<String> feedingTimes) { this.feedingTimes = feedingTimes; }
     public void setDescription(String description) { this.description = description; }
-
+    public void setCurrentFoodName(String currentFoodName) { this.currentFoodName = currentFoodName; }
+    public void setFoodType(String foodType) { this.foodType = foodType; }
 
     // --- Parcelable Implementation ---
     protected Pet(Parcel in) {
@@ -95,10 +102,13 @@ public class Pet implements Parcelable { // Implements Parcelable
         ownerID = in.readString();
         sound = in.readString();
         weight = in.readString();
-        age = in.readString(); // New
-        vaccinationDetails = in.readString(); // New
-        medicationTime = in.readString(); // New
         description = in.readString();
+        age = in.readString();
+        vaccinationDetails = in.readString();
+        medicationTime = in.readString();
+        feedingTimes = in.createStringArrayList();
+        currentFoodName = in.readString();
+        foodType = in.readString();
     }
 
     public static final Creator<Pet> CREATOR = new Creator<Pet>() {
@@ -131,9 +141,12 @@ public class Pet implements Parcelable { // Implements Parcelable
         dest.writeString(ownerID);
         dest.writeString(sound);
         dest.writeString(weight);
-        dest.writeString(age); // New
-        dest.writeString(vaccinationDetails); // New
-        dest.writeString(medicationTime); // New
         dest.writeString(description);
+        dest.writeString(age);
+        dest.writeString(vaccinationDetails);
+        dest.writeString(medicationTime);
+        dest.writeStringList(feedingTimes);
+        dest.writeString(currentFoodName);
+        dest.writeString(foodType);
     }
 }

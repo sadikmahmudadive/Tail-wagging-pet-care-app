@@ -120,6 +120,9 @@ public class Login extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         FirebaseUser user = authLogin.getCurrentUser();
                         if (user != null) {
+                            LogManager.logAction("Authentication", "User logged in: " + user.getEmail());
+                            // Start listening for notifications
+                            ((App) getApplication()).startNotificationListener();
                             checkUserRoleAndRedirect(user.getUid());
                         }
                     } else {

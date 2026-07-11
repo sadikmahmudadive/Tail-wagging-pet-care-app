@@ -85,6 +85,39 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <!-- Points Badge -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPoints"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_marginEnd="12dp"
+                app:cardBackgroundColor="@color/md_theme_light_tertiaryContainer"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="0dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="10dp">
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_star"
+                        app:tint="@color/md_theme_light_tertiary" />
+                    <TextView
+                        android:id="@+id/tvUserPoints"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:fontFamily="@font/fredoka_bold"
+                        android:text="15"
+                        android:textColor="@color/md_theme_light_tertiary"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
             <FrameLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
@@ -123,17 +156,6 @@
                     android:visibility="gone"
                     tools:visibility="visible" />
             </FrameLayout>
-
-            <ImageButton
-                android:id="@+id/appBarLogout"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/bg_app_bar_logout_button"
-                android:contentDescription="@string/logout"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_logout_modern" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

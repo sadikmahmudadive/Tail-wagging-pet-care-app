@@ -50,6 +50,11 @@ public class PetShopDashboardActivity extends AppCompatActivity {
         shopId = FirebaseAuth.getInstance().getUid();
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
+        // Ensure notification listener is running
+        if (shopId != null) {
+            ((App) getApplication()).startNotificationListener();
+        }
+
         setDynamicGreeting();
         fetchShopData();
 
@@ -95,11 +100,24 @@ public class PetShopDashboardActivity extends AppCompatActivity {
             return;
         }
 
-        dbRef.child("users").child(shopId).addListenerForSingleValueEvent(new ValueEventListener() {
+        dbRef.child("users").child(shopId).addValueEventListener(new ValueEventListener() { // Changed to addValueEventListener for live points
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String name = snapshot.child("name").getValue(String.class);
                 String photoUrl = snapshot.child("photoUrl").getValue(String.class);
+                Long points = snapshot.child("points").getValue(Long.class);
+
+                TextView tvUserPoints = findViewById(R.id.tvUserPoints);
+                if (tvUserPoints != null && points != null) {
+                    tvUserPoints.setText(String.valueOf(points));
+                }
+
+                // Ensure referral code exists for legacy users
+                if (!snapshot.hasChild("referralCode")) {
+                    String generatedCode = shopId.substring(0, 6).toUpperCase();
+                    dbRef.child("users").child(shopId).child("referralCode").setValue(generatedCode);
+                    dbRef.child("users").child(shopId).child("points").setValue(points == null ? 15 : points);
+                }
                 
                 float ratingValue = 0;
                 Object rVal = snapshot.child("rating").getValue();

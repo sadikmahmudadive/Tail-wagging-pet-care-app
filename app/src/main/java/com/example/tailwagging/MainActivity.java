@@ -65,7 +65,11 @@ public class MainActivity extends AppCompatActivity {
         user = mAuth.getCurrentUser();
         dbRef = FirebaseDatabase.getInstance("https://tail-wagging-d03de-default-rtdb.firebaseio.com/").getReference();
 
-        logoutButton = findViewById(R.id.appBarLogout);
+        // Ensure notification listener is running
+        if (user != null) {
+            ((App) getApplication()).startNotificationListener();
+        }
+
         textView = findViewById(R.id.appBarUserName);
         tvWelcomeMessage = findViewById(R.id.appBarGreeting);
         userProfilePhoto = findViewById(R.id.appBarProfilePhoto);
@@ -126,22 +130,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        logoutButton.setOnClickListener(v -> {
-            new AlertDialog.Builder(MainActivity.this)
-                    .setTitle("Logout")
-                    .setMessage("Are you sure you want to logout?")
-                    .setPositiveButton("Yes", (dialog, which) -> {
-                        mAuth.signOut();
-                        // Clear cached role to avoid stale navbar after next login
-                        getSharedPreferences("UserPrefs", MODE_PRIVATE).edit().clear().apply();
-                        Intent intent = new Intent(MainActivity.this, Login.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
-        });
 
         if (user == null) {
             Toast.makeText(this, "No user logged in", Toast.LENGTH_SHORT).show();
@@ -310,8 +298,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void requestLocationPermission() {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            List<String> permissions = new ArrayList<>();
             if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
-                androidx.core.app.ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, android.Manifest.permission.ACCESS_COARSE_LOCATION}, 102);
+                permissions.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
+                permissions.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+            if (android.os.Build.VERSION.SDK_INT >= 33) { // TIRAMISU
+                if (androidx.core.content.ContextCompat.checkSelfPermission(this, "android.permission.POST_NOTIFICATIONS") != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    permissions.add("android.permission.POST_NOTIFICATIONS");
+                }
+            }
+
+            if (!permissions.isEmpty()) {
+                androidx.core.app.ActivityCompat.requestPermissions(this, permissions.toArray(new String[0]), 102);
             }
         }
     }
@@ -364,12 +363,25 @@ public class MainActivity extends AppCompatActivity {
         if (user == null) return; // Guard clause
 
         dbRef.child("users").child(user.getUid())
-                .addListenerForSingleValueEvent(new ValueEventListener() {
+                .addValueEventListener(new ValueEventListener() { // Changed to addValueEventListener for live points update
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot.exists()) {
                             String username = dataSnapshot.child("name").getValue(String.class);
                             String photoUrl = dataSnapshot.child("photoUrl").getValue(String.class);
+                            Long points = dataSnapshot.child("points").getValue(Long.class);
+                            
+                            TextView tvUserPoints = findViewById(R.id.tvUserPoints);
+                            if (tvUserPoints != null && points != null) {
+                                tvUserPoints.setText(String.valueOf(points));
+                            }
+                            
+                            // Ensure referral code exists for legacy users
+                            if (!dataSnapshot.hasChild("referralCode")) {
+                                String generatedCode = user.getUid().substring(0, 6).toUpperCase();
+                                dbRef.child("users").child(user.getUid()).child("referralCode").setValue(generatedCode);
+                                dbRef.child("users").child(user.getUid()).child("points").setValue(points == null ? 15 : points);
+                            }
                             
                             userLat = dataSnapshot.child("latitude").getValue(Double.class);
                             userLng = dataSnapshot.child("longitude").getValue(Double.class);

@@ -135,6 +135,71 @@ public class ChatGptAiHelper {
         }
     }
 
+    /**
+     * Generates text response using ChatGPT (gpt-4o-mini) based on a text prompt.
+     */
+    public static void generateText(@NonNull String prompt, @NonNull GeminiCallback callback) {
+        OkHttpClient client = new OkHttpClient();
+
+        try {
+            JSONObject root = new JSONObject();
+            root.put("model", "gpt-4o-mini");
+
+            JSONArray messages = new JSONArray();
+            JSONObject userMsg = new JSONObject();
+            userMsg.put("role", "user");
+            userMsg.put("content", prompt);
+            messages.put(userMsg);
+
+            root.put("messages", messages);
+
+            RequestBody body = RequestBody.create(
+                    root.toString(),
+                    MediaType.parse("application/json")
+            );
+
+            Request request = new Request.Builder()
+                    .url(OPENAI_CHAT_COMPLETIONS_URL)
+                    .post(body)
+                    .addHeader("Authorization", "Bearer " + API_KEY)
+                    .addHeader("Content-Type", "application/json")
+                    .build();
+
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    callback.onFailure(e.getMessage());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    try (ResponseBody responseBody = response.body()) {
+                        String rawJson = responseBody != null ? responseBody.string() : "";
+                        if (!response.isSuccessful()) {
+                            callback.onFailure("OpenAI Error: " + response.code());
+                            return;
+                        }
+
+                        JSONObject json = new JSONObject(rawJson);
+                        JSONArray choices = json.optJSONArray("choices");
+                        if (choices != null && choices.length() > 0) {
+                            JSONObject message = choices.getJSONObject(0).optJSONObject("message");
+                            String aiContent = message != null ? message.optString("content", "") : "";
+                            callback.onSuccess(aiContent.trim());
+                        } else {
+                            callback.onFailure("No response from AI.");
+                        }
+                    } catch (JSONException e) {
+                        callback.onFailure("Parsing error.");
+                    }
+                }
+            });
+
+        } catch (JSONException e) {
+            callback.onFailure("Request construction error.");
+        }
+    }
+
     private static String encodeImageToBase64(Context context, Uri imageUri) {
         try {
             InputStream inputStream = context.getContentResolver().openInputStream(imageUri);

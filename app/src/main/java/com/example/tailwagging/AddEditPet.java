@@ -56,6 +56,8 @@ public class AddEditPet extends AppCompatActivity {
     private CircleImageView petImageInput;
     private EditText etPetName, etBreedName, etPetAge, etPetDob, etPetColor, etPetSound, etPetHeight, etPetWeight, etPetDescription;
     private AutoCompleteTextView etPetGender;
+    private com.google.android.material.chip.ChipGroup cgFeedingTimes;
+    private java.util.List<String> feedingTimesList = new java.util.ArrayList<>();
     private ImageView backBtn;
     private Button btnFindBreedType;
     private View btnUploadPhoto, btnAddPet;
@@ -94,12 +96,16 @@ public class AddEditPet extends AppCompatActivity {
         etPetHeight = findViewById(R.id.etPetHeight);
         etPetWeight = findViewById(R.id.etPetWeight);
         etPetDescription = findViewById(R.id.etPetDescription);
+        cgFeedingTimes = findViewById(R.id.cgFeedingTimes);
         btnUploadPhoto = findViewById(R.id.btnUploadPhoto);
         btnAddPet = findViewById(R.id.btnAddPet);
         layoutAddedPets = findViewById(R.id.layoutAddedPets);
         backBtn = findViewById(R.id.backBtn);
         btnFindBreedType = findViewById(R.id.btnFindBreedType);
         swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+
+        findViewById(R.id.btnAddFeedingTime).setOnClickListener(v -> showTimePickerDialog());
+        findViewById(R.id.btnAiFeedingSuggest).setOnClickListener(v -> suggestAiFeedingTimes());
 
         String[] genderOptions = new String[] { "Male", "Female", "Other" };
         ArrayAdapter<String> genderAdapter = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, genderOptions);
@@ -197,6 +203,96 @@ public class AddEditPet extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    private void showTimePickerDialog() {
+        final Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        android.app.TimePickerDialog timePickerDialog = new android.app.TimePickerDialog(
+                this,
+                (view, selectedHour, selectedMinute) -> {
+                    String time = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute);
+                    if (!feedingTimesList.contains(time)) {
+                        feedingTimesList.add(time);
+                        addTimeChip(time);
+                    }
+                },
+                hour, minute, true
+        );
+        timePickerDialog.show();
+    }
+
+    private void addTimeChip(String time) {
+        com.google.android.material.chip.Chip chip = new com.google.android.material.chip.Chip(this);
+        chip.setText(time);
+        chip.setCloseIconVisible(true);
+        chip.setChipBackgroundColorResource(R.color.health_tab_inactive);
+        chip.setOnCloseIconClickListener(v -> {
+            feedingTimesList.remove(time);
+            cgFeedingTimes.removeView(chip);
+        });
+        cgFeedingTimes.addView(chip);
+    }
+
+    private void suggestAiFeedingTimes() {
+        String breed = etBreedName.getText().toString().trim();
+        String age = etPetAge.getText().toString().trim();
+        String weight = etPetWeight.getText().toString().trim();
+
+        if (breed.isEmpty() || age.isEmpty()) {
+            Toast.makeText(this, "Please fill Breed and DOB first for AI suggestion", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage("AI is calculating feeding schedule...");
+        pd.show();
+
+        // Create prompt for AI
+        String prompt = "Suggest a strict daily feeding schedule (just times in HH:MM format, 24h, comma separated) for a " + 
+                        breed + " pet, aged " + age + (weight.isEmpty() ? "" : ", weight " + weight + "kg") + 
+                        ". Return only the times, e.g. 08:00, 13:00, 19:00. Limit to 3-4 times.";
+
+        ChatGptAiHelper.generateText(prompt, new ChatGptAiHelper.GeminiCallback() {
+            @Override
+            public void onSuccess(String result) {
+                runOnUiThread(() -> {
+                    pd.dismiss();
+                    parseAndAddAiTimes(result);
+                });
+            }
+
+            @Override
+            public void onFailure(String error) {
+                runOnUiThread(() -> {
+                    pd.dismiss();
+                    Toast.makeText(AddEditPet.this, "AI Suggestion failed: " + error, Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
+    private void parseAndAddAiTimes(String result) {
+        // Simple parsing: looking for HH:MM patterns
+        String[] parts = result.split("[,\\s\\n]+");
+        boolean addedAny = false;
+        for (String p : parts) {
+            String clean = p.replaceAll("[^0-9:]", "");
+            if (clean.matches("^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$")) {
+                if (!feedingTimesList.contains(clean)) {
+                    feedingTimesList.add(clean);
+                    addTimeChip(clean);
+                    addedAny = true;
+                }
+            }
+        }
+        if (addedAny) {
+            Toast.makeText(this, "AI suggested feeding times added!", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "AI suggested: " + result, Toast.LENGTH_LONG).show();
+        }
+    }
+
     private void setPetAgeFromDob(int year, int month, int day) {
         Calendar dob = Calendar.getInstance();
         dob.set(year, month, day);
@@ -241,6 +337,16 @@ public class AddEditPet extends AppCompatActivity {
         etPetSound.setText(petToEdit.getSound());
         etPetHeight.setText(petToEdit.getHeight());
         etPetWeight.setText(petToEdit.getWeight());
+        
+        if (petToEdit.getFeedingTimes() != null) {
+            feedingTimesList.clear();
+            cgFeedingTimes.removeAllViews();
+            for (String time : petToEdit.getFeedingTimes()) {
+                feedingTimesList.add(time);
+                addTimeChip(time);
+            }
+        }
+
         etPetDescription.setText(petToEdit.getDescription());
         if (petToEdit.getImageUrl() != null && !petToEdit.getImageUrl().isEmpty()) {
             Glide.with(this).load(petToEdit.getImageUrl()).placeholder(R.drawable.ic_profile).into(petImageInput);
@@ -335,14 +441,26 @@ public class AddEditPet extends AppCompatActivity {
         petMap.put("sound", etPetSound.getText().toString().trim());
         petMap.put("height", etPetHeight.getText().toString().trim());
         petMap.put("weight", etPetWeight.getText().toString().trim());
+        petMap.put("feedingTimes", feedingTimesList);
         petMap.put("description", etPetDescription.getText().toString().trim());
         petMap.put("imageUrl", imageUrl);
 
         petsRef.child(petId)
                 .setValue(petMap)
                 .addOnSuccessListener(aVoid -> {
+                    // Log the interaction
+                    LogManager.logAction("Pet Management", (petToEdit == null ? "Registered " : "Updated ") + etPetName.getText().toString());
+
                     // Automatically add birthday to local events
                     addBirthdayToEvents(petId, etPetName.getText().toString(), etPetDob.getText().toString());
+
+                    // Schedule feeding notifications
+                    Pet newPet = new Pet();
+                    newPet.setPetID(petId);
+                    newPet.setOwnerID(uid);
+                    newPet.setName(etPetName.getText().toString().trim());
+                    newPet.setFeedingTimes(feedingTimesList);
+                    AlarmHelper.setFeedingAlarms(this, newPet);
 
                     progressDialog.dismiss();
                     String msg = (petToEdit == null) ? "Pet added!" : "Pet updated!";
@@ -404,6 +522,8 @@ public class AddEditPet extends AppCompatActivity {
         etPetName.setText(""); etBreedName.setText(""); etPetGender.setText(""); etPetAge.setText("");
         etPetDob.setText(""); etPetColor.setText(""); etPetSound.setText(""); etPetHeight.setText(""); 
         etPetWeight.setText(""); etPetDescription.setText("");
+        feedingTimesList.clear();
+        cgFeedingTimes.removeAllViews();
         petImageInput.setImageResource(R.drawable.ic_profile);
         imageUri = null;
     }

@@ -58,6 +58,9 @@
             android:name=".OrderDetailsActivity"
             android:exported="false" />
         <activity
+            android:name=".AdminLogsActivity"
+            android:exported="false" />
+        <activity
             android:name=".PetTrackerActivity"
             android:exported="false" />
         <activity
@@ -75,6 +78,9 @@
             android:exported="false" />
         <activity
             android:name=".PetDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PetFoodActivity"
             android:exported="false" />
         <activity
             android:name=".PetServicesActivity"

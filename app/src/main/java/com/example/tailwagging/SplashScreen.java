@@ -44,7 +44,7 @@ public class SplashScreen extends AppCompatActivity {
                     finish();
                 }
             }
-        }, 2000);
+        }, 5000);
     }
 
     private void checkUserRoleAndRedirect(String uid) {
