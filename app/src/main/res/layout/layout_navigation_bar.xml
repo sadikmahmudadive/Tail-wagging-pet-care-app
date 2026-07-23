@@ -134,9 +134,9 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1" />
 
-            <!-- ══════════════ SCHEDULE ══════════════ -->
+            <!-- ══════════════ COMMUNITY ══════════════ -->
             <LinearLayout
-                android:id="@+id/navCalendar"
+                android:id="@+id/navCommunity"
                 android:layout_width="0dp"
                 android:layout_height="52dp"
                 android:layout_weight="1"
@@ -150,27 +150,27 @@
                     android:layout_height="32dp">
 
                     <View
-                        android:id="@+id/chipBgCalendar"
+                        android:id="@+id/chipBgCommunity"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_nav_active_chip"
                         android:alpha="0" />
 
                     <ImageView
-                        android:id="@+id/ivCalendar"
+                        android:id="@+id/ivCommunity"
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:layout_gravity="center"
-                        android:src="@drawable/ic_calendar"
+                        android:src="@drawable/ic_paw"
                         app:tint="@color/dark_blue"
                         android:alpha="0.55" />
                 </FrameLayout>
 
                 <TextView
-                    android:id="@+id/tvCalendar"
+                    android:id="@+id/tvCommunity"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Schedule"
+                    android:text="Community"
                     android:textSize="9.5sp"
                     android:fontFamily="@font/fredoka_bold"
                     android:textColor="@color/dark_blue"

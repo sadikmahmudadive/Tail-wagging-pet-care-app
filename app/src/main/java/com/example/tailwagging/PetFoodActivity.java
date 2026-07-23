@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -146,9 +147,12 @@ public class PetFoodActivity extends AppCompatActivity {
         pd.setMessage("Consulting AI...");
         pd.show();
 
-        String prompt = "Suggest a daily feeding schedule (times in HH:MM, 24h, comma separated) for a " + 
+        // Optimized prompt for consistency and trust
+        String prompt = "Create a professional, strict daily feeding schedule for a " + 
                         selectedPet.getBreed() + ", aged " + selectedPet.getAge() + 
-                        ", weight " + selectedPet.getWeight() + "kg. Return ONLY the times.";
+                        ", weight " + selectedPet.getWeight() + "kg. " +
+                        "Return ONLY the times in HH:MM (24h) format, comma separated. " +
+                        "Example: 08:00, 13:00, 19:00. Do not add any extra text.";
 
         ChatGptAiHelper.generateText(prompt, new ChatGptAiHelper.GeminiCallback() {
             @Override
@@ -170,15 +174,49 @@ public class PetFoodActivity extends AppCompatActivity {
     }
 
     private void parseAndAddTimes(String result) {
+        if (!feedingTimesList.isEmpty()) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Replace with AI Schedule?")
+                    .setMessage("To ensure a professional and balanced schedule, the AI suggestion will replace your current feeding times. Would you like to proceed?")
+                    .setPositiveButton("Yes, Replace", (dialog, which) -> {
+                        feedingTimesList.clear();
+                        cgFeedingTimes.removeAllViews();
+                        applyAiSuggestions(result);
+                    })
+                    .setNegativeButton("Keep Current", null)
+                    .show();
+        } else {
+            applyAiSuggestions(result);
+        }
+    }
+
+    private void applyAiSuggestions(String result) {
         String[] parts = result.split("[,\\s\\n]+");
+        boolean added = false;
         for (String p : parts) {
             String clean = p.replaceAll("[^0-9:]", "");
             if (clean.matches("^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$")) {
-                if (!feedingTimesList.contains(clean)) {
-                    feedingTimesList.add(clean);
-                    addTimeChip(clean);
+                String normalized = normalizeTime(clean);
+                if (!feedingTimesList.contains(normalized)) {
+                    feedingTimesList.add(normalized);
+                    addTimeChip(normalized);
+                    added = true;
                 }
             }
+        }
+        if (added) {
+            Toast.makeText(this, "Professional AI schedule applied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String normalizeTime(String time) {
+        try {
+            String[] parts = time.split(":");
+            int h = Integer.parseInt(parts[0]);
+            int m = Integer.parseInt(parts[1]);
+            return String.format(Locale.getDefault(), "%02d:%02d", h, m);
+        } catch (Exception e) {
+            return time;
         }
     }
 

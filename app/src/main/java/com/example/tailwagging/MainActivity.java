@@ -105,6 +105,13 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        Button btnGoToCommunity = findViewById(R.id.btnGoToCommunity);
+        if (btnGoToCommunity != null) {
+            btnGoToCommunity.setOnClickListener(v -> {
+                startActivity(new Intent(MainActivity.this, CommunityActivity.class));
+            });
+        }
+
         View btnViewAllEvents = findViewById(R.id.btnViewAllEvents);
         if (btnViewAllEvents != null) {
             btnViewAllEvents.setOnClickListener(v -> launchCalendarActivity());

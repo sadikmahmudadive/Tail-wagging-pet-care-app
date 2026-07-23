@@ -63,14 +63,14 @@ public class NavbarHelper {
                 R.id.navManage,      PetServicesActivity.class,
                 R.id.chipBgSearch,   R.id.ivSearch,   R.id.tvSearch);
 
-        // Centre FAB — no chip, handled separately (always gradient)
+        // Center FAB — no chip, handled separately (always gradient)
         setupFabItem(activity,
                 R.id.navAddPet,      AddEditPet.class,
                 R.id.ivAdd,          R.id.tvAdd);
 
         setupItem(activity,
-                R.id.navCalendar,    Calendar.class,
-                R.id.chipBgCalendar, R.id.ivCalendar, R.id.tvCalendar);
+                R.id.navCommunity,   CommunityActivity.class,
+                R.id.chipBgCommunity, R.id.ivCommunity, R.id.tvCommunity);
 
         setupItem(activity,
                 R.id.navProfile,     Profile.class,
@@ -84,8 +84,8 @@ public class NavbarHelper {
                 R.id.chipBgProHome,       R.id.ivProHome,     R.id.tvProHome);
 
         setupItem(activity,
-                R.id.navProviderCalendar, Calendar.class,
-                R.id.chipBgProCalendar,   R.id.ivProCalendar, R.id.tvProCalendar);
+                R.id.navProviderCommunity, CommunityActivity.class,
+                R.id.chipBgProCommunity,  R.id.ivProCommunity, R.id.tvProCommunity);
 
         // Provider centre FAB
         setupFabItem(activity,
@@ -102,13 +102,13 @@ public class NavbarHelper {
 
         // Hide the opposite side's views to be doubly sure (though usually handled by inflation)
         if (isProvider) {
-            int[] userIds = {R.id.navVet, R.id.navManage, R.id.navCalendar, R.id.navProfile, R.id.navAddPet};
+            int[] userIds = {R.id.navVet, R.id.navManage, R.id.navCommunity, R.id.navProfile, R.id.navAddPet};
             for (int id : userIds) {
                 View v = activity.findViewById(id);
                 if (v != null) v.setVisibility(View.GONE);
             }
         } else {
-            int[] providerIds = {R.id.navProviderHome, R.id.navProviderCalendar, R.id.navProviderPatients, R.id.navProviderProfile, R.id.navProviderAdd};
+            int[] providerIds = {R.id.navProviderHome, R.id.navProviderCommunity, R.id.navProviderPatients, R.id.navProviderProfile, R.id.navProviderAdd};
             for (int id : providerIds) {
                 View v = activity.findViewById(id);
                 if (v != null) v.setVisibility(View.GONE);

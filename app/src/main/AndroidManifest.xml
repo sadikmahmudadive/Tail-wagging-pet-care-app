@@ -55,6 +55,12 @@
             android:name=".ShopOrdersActivity"
             android:exported="false" />
         <activity
+            android:name=".CommunityActivity"
+            android:exported="false" />
+        <activity
+            android:name=".CreatePostActivity"
+            android:exported="false" />
+        <activity
             android:name=".OrderDetailsActivity"
             android:exported="false" />
         <activity

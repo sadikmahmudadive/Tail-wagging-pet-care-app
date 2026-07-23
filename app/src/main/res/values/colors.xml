@@ -110,5 +110,6 @@
     <color name="rating_3">#CDDC39</color>
     <color name="rating_2">#FFC107</color>
     <color name="rating_1">#F44336</color>
+    <color name="tab_indicator_background">#BFE9FF</color>
 
 </resources>
